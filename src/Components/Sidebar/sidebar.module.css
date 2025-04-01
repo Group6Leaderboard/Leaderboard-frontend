@@ -1,5 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@400;700&display=swap");
- 
+
 .sidebar {
     width: 250px;
     background-color: white;
@@ -16,14 +16,14 @@
     top: 0;
     z-index: 1000;
 }
- 
+
 /* Sidebar should always be visible on large screens */
 @media (min-width: 1025px) {
     .sidebar {
         transform: translateX(0) !important;
     }
 }
- 
+
 /* Hide Sidebar by default on small screens */
 @media (max-width: 1024px) {
     .sidebar {
@@ -32,12 +32,12 @@
         height: 100vh;
         background: white;
     }
- 
+
     .sidebar.open {
         transform: translateX(0);
     }
 }
- 
+
 /* Hamburger Button */
 .hamburger {
     position: fixed;
@@ -45,25 +45,26 @@
     left: 15px;
     background: none;
     border: none;
-    font-size: 24px;
+    font-size: 30px; /* Made it bigger for visibility */
     cursor: pointer;
-    z-index: 1100;
+    z-index: 2000; /* Increased z-index */
+    color: black;
     display: none;
 }
- 
+
 /* Show Hamburger only on small screens */
 @media (max-width: 1024px) {
     .hamburger {
         display: block;
     }
 }
- 
+
 ul, ol {
   list-style: none !important;
   padding: 0 !important;
   margin: 0 !important;
 }
- 
+
 .logo {
     width: 150px;
     height: auto;
@@ -71,22 +72,25 @@ ul, ol {
     display: block;
     margin: 0 auto 20px auto;
 }
- 
+
 .nav {
   list-style: none !important;
   padding: 0;
   margin: 0;
+  width: 100%; 
 }
- 
+
 .nav-item {
   list-style: none !important;
   display: flex;
   align-items: center;
+  width: 100%; 
 }
- 
+
 .navLink {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     color: black !important;
     padding: 12px 15px;
     border-radius: 5px;
@@ -94,43 +98,37 @@ ul, ol {
     text-decoration: none;
     font-size: 16px;
     font-weight: 500;
+    width: 100%;
 }
- 
+
 .navLink:hover {
     background-color: #ebf0f3;
-    padding-left: 18px;
+    padding-left: 15px;
 }
- 
+
 .active {
     font-weight: bold;
     color: #5EB5AE !important;
     background-color: rgba(94, 181, 174, 0.1);
 }
- 
+
 .navLink svg {
     font-size: 20px;
     margin-right: 10px;
 }
- 
+
 .arrowIcon {
     color: #5EB5AE;
     transition: transform 0.3s ease-in-out;
     font-size: 14px;
     margin-left: auto;
 }
- 
-/* Responsive Styles */
-@media (max-width: 768px) {
-    .logo {
-        width: 120px;
-    }
- 
-    .navLink {
-        font-size: 14px;
-        padding: 10px;
-    }
- 
-    .navLink svg {
-        font-size: 18px;
-    }
+
+/* Ensure Sidebar Closes When Clicking Outside */
+.sidebar.open ~ .overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 1001;
 }

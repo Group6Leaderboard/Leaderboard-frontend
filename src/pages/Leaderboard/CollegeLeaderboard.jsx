@@ -1,8 +1,10 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import styles from "./leaderboard.module.css";
 
 const CollegeLeaderboard = () => {
+  const navigate = useNavigate(); // Hook for navigation
+
   const leaders = [
     { name: "ST Thomas", points: "98", wins: 43, tasks: 167, achievements: 476, image: "collegea.png" },
     { name: "Rajadhani", points: "96", wins: 37, tasks: 132, achievements: 482, image: "collegea.png" },
@@ -17,9 +19,15 @@ const CollegeLeaderboard = () => {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>College Leaderboard</h1>
+      {/* Title and Login Button Wrapper */}
+      <div className={styles.header}>
+        <h1 className={styles.title}>College Leaderboard</h1>
+        <button className={styles.loginButton} onClick={() => navigate("/login")}>
+          Login
+        </button>
+      </div>
 
-      {/* Navbar with NavLink */}
+      {/* Navbar */}
       <div className={styles.navbar}>
         <NavLink to="/leaderboard/projects" className={({ isActive }) => (isActive ? styles.active : "")}>
           Projects
@@ -35,24 +43,24 @@ const CollegeLeaderboard = () => {
       {/* Content */}
       <h2 className={styles.sectionTitle}>Current Leaders</h2>
       <div className={styles.leaders}>
-  {leaders.map((leader, index) => (
-    <div 
-      key={index} 
-      className={`${styles.leaderCard} ${index === 0 ? styles.first : index === 1 ? styles.second : styles.third}`}
-    >
-    <img src={`/${leader.image}`} alt={leader.name} className={styles.leaderImage} />
-      <div>
-        <h3>{leader.name}</h3>
-        <p>{leader.points} pts.</p>
-        <div className={styles.statsRow}>
-          <span>Proj: {leader.wins}</span>
-          <span>Tasks: {leader.tasks}</span>
-          <span>Ach.: {leader.achievements}</span>
-        </div>
+        {leaders.map((leader, index) => (
+          <div 
+            key={index} 
+            className={`${styles.leaderCard} ${index === 0 ? styles.first : index === 1 ? styles.second : styles.third}`}
+          >
+            <img src={`/${leader.image}`} alt={leader.name} className={styles.leaderImage} />
+            <div>
+              <h3>{leader.name}</h3>
+              <p>{leader.points} pts.</p>
+              <div className={styles.statsRow}>
+                <span>Proj: {leader.wins}</span>
+                <span>Tasks: {leader.tasks}</span>
+                <span>Ach.: {leader.achievements}</span>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
-    </div>
-  ))}
-</div>
 
       <h2 className={styles.sectionTitle}>Global Ranking</h2>
       <div className={styles.tableContainer}>

@@ -20,7 +20,7 @@ const DashboardRoutes = () => {
         <Route path="/admin/mentors" element={<AdminDashboard />} />
         <Route path="/admin/colleges" element={<AdminDashboard />} />
         <Route path="/admin/assign-project" element={<AssignForm role="admin" />} />
-        <Route path="/admin/*" element={<NotFound />} /> {/* Handles invalid admin routes */}
+
 
         {/* Mentor Routes */}
         <Route path="/mentor" element={<DashboardMentor />} />
@@ -37,6 +37,9 @@ const DashboardRoutes = () => {
 
         {/* College Routes */}
         <Route path="/college" element={<CollegeDashboard />} />
+        <Route path="/college/projects" element={<CollegeDashboard />} />
+        <Route path="/college/students" element={<CollegeDashboard />} />
+        <Route path="/college/leaderboard" element={<CollegeDashboard />} />
 
         {/* Catch-All for Any Invalid Route */}
         <Route path="*" element={<NotFound />} />

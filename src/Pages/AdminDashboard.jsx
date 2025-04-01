@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getUsers } from "../services/userService";
-import { FaPlus } from "react-icons/fa"; 
+import { FaPlus } from "react-icons/fa";
 import styles from "./adminDashboard.module.css";
 import List from "../Components/List/List";
 import AddUser from "../Components/AddUser/AddUser";
@@ -12,7 +12,14 @@ const AdminDashboard = () => {
   const [showAddUser, setShowAddUser] = useState(false);
   const [userType, setUserType] = useState("");
 
-  // Determine user type based on the URL path
+  // Mock leaderboard data (Replace with API call)
+  const leaderboardData = {
+    projects: ["Project Alpha", "Project Beta", "Project Gamma"],
+    students: ["John Doe", "Jane Smith", "Emily Brown"],
+    colleges: ["MIT", "Harvard", "Stanford"],
+  };
+
+  // Determine user type based on URL path
   const type = window.location.pathname.includes("students")
     ? "student"
     : window.location.pathname.includes("colleges")
@@ -42,7 +49,7 @@ const AdminDashboard = () => {
     fetchUsers();
   }, [type]);
 
-  // Toggle AddUser card visibility
+  // Toggle AddUser modal
   const handleToggleAddUser = () => {
     setShowAddUser(!showAddUser);
     setUserType(type);
@@ -59,7 +66,7 @@ const AdminDashboard = () => {
         )}
       </div>
 
-      {/* Show AddUser card when button is clicked */}
+      {/* Show AddUser card */}
       {showAddUser && (
         <div className={styles.overlay}>
           <div className={styles.addUserCard}>
@@ -68,6 +75,22 @@ const AdminDashboard = () => {
         </div>
       )}
 
+      {/* Heading for Current Toppers */}
+      <h2 className={styles.sectionTitle}>Current Toppers</h2>
+
+      {/* Grid for Leaderboard (3 Rows × 3 Columns) */}
+      <div className={styles.leaderboardGrid}>
+        {["projects", "students", "colleges"].map((category, index) =>
+          leaderboardData[category].map((item, i) => (
+            <div key={`${category}-${i}`} className={styles.card}>
+              <h3>{category.charAt(0).toUpperCase() + category.slice(1)} #{i + 1}</h3>
+              <p>{item}</p>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* User List */}
       <div className={styles.contentWrapper}>
         {loading ? (
           <p className={styles.loading}>Loading...</p>
@@ -78,7 +101,7 @@ const AdminDashboard = () => {
             <List type={type} data={users} />
           </div>
         ) : (
-          <p className={styles.info}>Select an option from the sidebar to view details.</p>
+          <p className={styles.info}></p>
         )}
       </div>
     </div>

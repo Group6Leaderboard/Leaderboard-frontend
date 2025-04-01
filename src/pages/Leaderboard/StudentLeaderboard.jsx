@@ -1,8 +1,9 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import styles from "./leaderboard.module.css";
 
 const StudentLeaderboard = () => {
+  const navigate = useNavigate();
   const leaders = [
     { name: "Varun K", points: "98", wins: 43, tasks: 167, achievements: 476, image: "v.png" },
     { name: "Aparna KP", points: "96", wins: 37, tasks: 132, achievements: 482, image: "aa.png" },
@@ -17,7 +18,14 @@ const StudentLeaderboard = () => {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Student Leaderboard</h1>
+      {/* Title and Login Button Wrapper */}
+            <div className={styles.header}>
+              <h1 className={styles.title}>Student Leaderboard</h1>
+              <button className={styles.loginButton} onClick={() => navigate("/login")}>
+                Login
+              </button>
+            </div>
+      
 
       {/* Navbar with NavLink */}
       <div className={styles.navbar}>

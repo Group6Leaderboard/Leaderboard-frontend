@@ -1,16 +1,15 @@
 import React, { useState } from "react";
-import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
-// Import SweetAlert2
-import AlertModal from "../AlertModal/AlertModal";// Assuming you have the AlertModal component
+import AlertModal from "../AlertModal/AlertModal"; 
+import "./dashboardMentor.css"; // Import the CSS file
 
 const DashboardMentor = () => {
-  // Sample Data
-  const data = [
-    { name: "Assigned Mentors", value: 70 }, // 70% assigned
-    { name: "Unassigned Mentors", value: 30 }, // 30% unassigned
+  // Sample Data for Projects Assigned to Mentor
+  const projects = [
+    { id: 1, name: "AI Chatbot", description: "Develop an AI chatbot for customer support." },
+    { id: 2, name: "E-commerce Platform", description: "Build a fully functioning e-commerce platform." },
+    { id: 3, name: "Smart Attendance System", description: "AI-based facial recognition attendance system." },
+    { id: 4, name: "Healthcare Monitoring", description: "IoT-based patient health monitoring system." },
   ];
-
-  const COLORS = ["#5EB5AE", "#FF5733"]; // Green for assigned, Red for unassigned
 
   const [alertData, setAlertData] = useState({
     show: false,
@@ -29,30 +28,10 @@ const DashboardMentor = () => {
 
   return (
     <div className="mentor-dashboard">
-      <h2>Mentor Assignment Status</h2>
-      
-      <PieChart width={300} height={300}>
-        <Pie
-          data={data}
-          cx="50%"
-          cy="50%"
-          innerRadius={60}
-          outerRadius={100}
-          fill="#02414B"
-          paddingAngle={5}
-          dataKey="value"
-          label
-        >
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Pie>
-        <Tooltip />
-        <Legend />
-      </PieChart>
+      <h2 className="dashboard-title">Projects Assigned to Mentor</h2>
 
       {/* Button to trigger alert */}
-      <button onClick={showAlert}>Show Alert</button>
+      {/* <button className="alert-button" onClick={showAlert}>Show Alert</button> */}
 
       {/* Render the AlertModal */}
       {alertData.show && (
@@ -63,6 +42,17 @@ const DashboardMentor = () => {
           onClose={() => setAlertData({ show: false, title: "", message: "" })}
         />
       )}
+
+      {/* Cards for Projects */}
+      <div className="projects-grid">
+        {projects.map((project) => (
+          <div className="project-card" key={project.id}>
+            <h4>{project.name}</h4>
+            <p>{project.description}</p>
+            <button className="view-button">View Details</button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";  // ✅ Import useNavigate
+import { useNavigate } from "react-router-dom"; 
 import { FaSearch, FaUserCircle, FaCaretDown, FaSignOutAlt, FaUser } from "react-icons/fa";
 import ProfileEdit from "../ProfileEdit/ProfileEdit";
 import styles from "./navbar.module.css";
@@ -13,7 +13,7 @@ const Navbar = ({ userType, userData }) => {
   const mobileMenuRef = useRef(null);
   const modalRef = useRef(null);
 
-  const navigate = useNavigate();  // ✅ Initialize navigate function
+  const navigate = useNavigate();  
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -37,10 +37,10 @@ const Navbar = ({ userType, userData }) => {
     };
   }, [isOpen, isMobileMenuOpen, isProfileModalOpen]);
 
-  // ✅ Handle Logout Function
+ 
   const handleLogout = () => {
-    // Perform logout logic if needed (e.g., clear tokens, user state)
-    navigate("/login");  // Redirect to login page
+   
+    navigate("/login");  
   };
 
   return (
@@ -67,7 +67,7 @@ const Navbar = ({ userType, userData }) => {
                   <li onClick={() => setIsProfileModalOpen(true)}>
                     <FaUser className={styles.menuIcon} />Profile
                   </li>
-                  <li onClick={handleLogout}>  {/* ✅ Call handleLogout on click */}
+                  <li onClick={handleLogout}>  
                     <FaSignOutAlt className={styles.menuIcon} />
                     Logout
                   </li>
