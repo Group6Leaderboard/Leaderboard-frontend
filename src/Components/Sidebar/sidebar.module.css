@@ -45,9 +45,10 @@
     left: 15px;
     background: none;
     border: none;
-    font-size: 24px;
+    font-size: 30px; /* Made it bigger for visibility */
     cursor: pointer;
-    z-index: 1100;
+    z-index: 2000; /* Increased z-index */
+    color: black;
     display: none;
 }
 
@@ -69,36 +70,40 @@ ul, ol {
     height: auto;
     cursor: pointer;
     display: block;
-    margin: 0 auto 20px auto; 
+    margin: 0 auto 20px auto;
 }
 
 .nav {
   list-style: none !important;
   padding: 0;
   margin: 0;
+  width: 100%; 
 }
 
 .nav-item {
   list-style: none !important;
   display: flex;
   align-items: center;
+  width: 100%; 
 }
 
 .navLink {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     color: black !important;
     padding: 12px 15px;
     border-radius: 5px;
     transition: all 0.3s ease-in-out;
-    text-decoration: none; 
+    text-decoration: none;
     font-size: 16px;
     font-weight: 500;
+    width: 100%;
 }
 
 .navLink:hover {
     background-color: #ebf0f3;
-    padding-left: 18px;
+    padding-left: 15px;
 }
 
 .active {
@@ -119,18 +124,11 @@ ul, ol {
     margin-left: auto;
 }
 
-/* Responsive Styles */
-@media (max-width: 768px) {
-    .logo {
-        width: 120px;
-    }
-
-    .navLink {
-        font-size: 14px;
-        padding: 10px;
-    }
-
-    .navLink svg {
-        font-size: 18px;
-    }
+/* Ensure Sidebar Closes When Clicking Outside */
+.sidebar.open ~ .overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 1001;
 }

@@ -1,28 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import styles from "./Login.module.css"; 
+import styles from "./login.module.css"; 
 import bgImage from "../../assets/logog.webp";
-import {login} from "../../services/authService";
+import { login } from "../../services/authService";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(localStorage.getItem("rememberedEmail") || ""); // Load saved email
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const remembered = localStorage.getItem("rememberedEmail");
+    if (remembered) {
+      setRememberMe(true);
+    }
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(""); 
 
-    try {    const data = await login(email, password);
-
+    try {
+      const data = await login(email, password);
 
       if (data.message === "Success") {
         const { token, role } = data.response; 
-        
         localStorage.setItem("token", token);
-        // localStorage.setItem("role", role);
+
+        if (rememberMe) {
+          localStorage.setItem("rememberedEmail", email);
+        } else {
+          localStorage.removeItem("rememberedEmail");
+        }
 
         if (role === "ADMIN") {
           navigate("/admin");
@@ -31,19 +42,14 @@ const Login = () => {
         } else if (role === "STUDENT") {
           navigate("/student");
         } else {
-          navigate("/"); // Default route if role is unknown
+          navigate("/");
         }
       } else {
         setError("Invalid credentials. Please try again.");
       }
     } catch (err) {
       console.error("Login error:", err);
-
-      if (err.response && err.response.status === 404) {
-        setError("Invalid credentials. Please try again.");
-      } else {
-        setError("Login failed. Check your connection and try again.");
-      }
+      setError("Login failed. Check your connection and try again.");
     }
   };
 
@@ -54,7 +60,7 @@ const Login = () => {
       <div className={styles.rightHalf}>
         <div className={styles.loginBox}>
           <div className={styles.welcomeBack}>
-            <h2>Welcome Back!</h2>
+            <h2>Sign in to Continue</h2>
           </div>
           {error && <p className={styles.errorMessage}>{error}</p>}
           <form onSubmit={handleLogin}>
@@ -76,6 +82,18 @@ const Login = () => {
                 required
               />
             </div>
+
+            {/* 🔹 Remember Me Checkbox */}
+            <div className={styles.rememberMe}>
+              <input
+                type="checkbox"
+                id="rememberMe"
+                checked={rememberMe}
+                onChange={() => setRememberMe(!rememberMe)}
+              />
+              <label htmlFor="rememberMe">Remember Me</label>
+            </div>
+
             <button type="submit" className={styles.loginBtn}>Login</button>
           </form>
         </div>

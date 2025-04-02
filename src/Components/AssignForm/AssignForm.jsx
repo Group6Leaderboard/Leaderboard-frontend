@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import styles from "./assignForm.module.css";
 import StatsCard from "../RectangleCards/Statscard";
 import { createProject, getAllProjects } from "../../services/projectService";
@@ -7,6 +6,7 @@ import { getAllColleges } from "../../services/collegeService";
 import { getUsers } from "../../services/userService";
 import { assignProject } from "../../services/studentProjectService";
 import { getAllTasks } from "../../services/taskService";
+import AlertModal from "../AlertModal/AlertModal"; // Importing the AlertModal
 
 const AssignForm = ({ role }) => {
   const [colleges, setColleges] = useState([]);
@@ -34,12 +34,15 @@ const AssignForm = ({ role }) => {
     lastDate: ""
   });
 
+  // State for controlling modal visibility
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertTitle, setAlertTitle] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
 
   useEffect(() => {
 
     const fetchStats = async () => {
       try {
- 
         const tasks = await getAllTasks();
         setTotalTasks(tasks.response.length);
 
@@ -49,16 +52,13 @@ const AssignForm = ({ role }) => {
         setSubmittedTasks(submittedCount);
         setToBeReviewedTasks(toBeReviewedCount);
 
-        
-
       } catch (error) {
         console.error("Error fetching stats", error);
       }
-    }
+    };
 
     const fetchStatsAdmin = async () => {
       try {
-
         const projects = await getAllProjects();
         setTotalProjects(projects.response.length);
 
@@ -66,13 +66,10 @@ const AssignForm = ({ role }) => {
         setStudents(studentsResponse.response); 
         setTotalStudents(studentsResponse.response.length);
 
-       
-        
-
       } catch (error) {
         console.error("Error fetching stats", error);
       }
-    }
+    };
 
     const fetchColleges = async () => {
       try {
@@ -93,31 +90,31 @@ const AssignForm = ({ role }) => {
       }
     };
 
-    
-
     if (role === "admin") {
       fetchColleges();
       fetchMentors();
       fetchStatsAdmin();
-    }
-    else {
+    } else {
       fetchStats();
     }
   }, [role]);
 
   const fetchStudentsByCollege = async (collegeId) => {
     if (!collegeId) {
-      alert("Please select a college first");
+      setAlertTitle("Error");
+      setAlertMessage("Please select a college first");
+      setShowAlert(true);
       return [];
     }
 
     try {
-
       const filteredStudents = students.filter(student => student.collegeId === String(collegeId));
-
       return filteredStudents;
     } catch (error) {
       console.error("Error fetching students:", error);
+      setAlertTitle("Error");
+      setAlertMessage("Error fetching students");
+      setShowAlert(true);
       return [];
     }
   };
@@ -132,26 +129,24 @@ const AssignForm = ({ role }) => {
 
   const handleMemberClick = async (index) => {
     if (!selectedCollege || selectedCollege === "") {
-      alert("Please select a college first");
+      setAlertTitle("Error");
+      setAlertMessage("Please select a college first");
+      setShowAlert(true);
       return;
     }
 
-
     setCurrentMemberIndex(index);
-
     const collegeStudents = await fetchStudentsByCollege(selectedCollege);
-
     setStudents(collegeStudents);
     setIsModalOpen(true);
   };
 
   const handleStudentSelect = (student) => {
     const updatedMembers = [...members];
-    updatedMembers[currentMemberIndex] = { id: student.id, name: student.name }; // Store both ID & name
+    updatedMembers[currentMemberIndex] = { id: student.id, name: student.name };
     setMembers(updatedMembers);
     setIsModalOpen(false);
   };
-
 
   const addMember = () => {
     if (members.length < 4) {
@@ -192,6 +187,7 @@ const AssignForm = ({ role }) => {
       mentorName: selectedMentorObj ? `${selectedMentorObj.name} (${selectedMentorObj.email})` : ''
     }));
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -214,7 +210,9 @@ const AssignForm = ({ role }) => {
             })
           );
 
-          alert("Project Assigned Successfully");
+          setAlertTitle("Success");
+          setAlertMessage("Project Assigned Successfully");
+          setShowAlert(true);
           resetForm();
         } else {
           throw new Error("Project ID not found in response");
@@ -224,11 +222,11 @@ const AssignForm = ({ role }) => {
       }
     } catch (error) {
       console.error("Error:", error);
-      alert(error.message || "Something went wrong");
+      setAlertTitle("Error");
+      setAlertMessage(error.message || "Something went wrong");
+      setShowAlert(true);
     }
   };
-
-
 
   const resetForm = () => {
     setFormData({
@@ -248,7 +246,6 @@ const AssignForm = ({ role }) => {
 
   return (
     <div className={styles.container}>
-
       <div className={styles.statsContainer}>
         {role === "admin" ? (
           <>
@@ -393,37 +390,20 @@ const AssignForm = ({ role }) => {
             </div>
           )}
 
-          <button type="submit" className={styles.assignButton}>
+          <button type="submit" className={styles.submitButton}>
             {role === "admin" ? "Assign Project" : "Assign Task"}
           </button>
         </form>
       </div>
-      {isModalOpen && (
-        <div className={styles.modal}>
-          <div className={styles.modalContent}>
-            <h3>Select a Student</h3>
-            {students.length > 0 ? (
-              <ul>
-                {students.map((student) => (
-                  <li key={student.id}
-                    onClick={() => handleStudentSelect(student)}>
-                    {student.name}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No students found for this college.</p>
-            )}
-            <button onClick={() => setIsModalOpen(false)}>Close</button>
-          </div>
-        </div>
-      )}
+
+      <AlertModal
+        isOpen={showAlert}
+        title={alertTitle}
+        message={alertMessage}
+        onClose={() => setShowAlert(false)}
+      />
     </div>
-
-
   );
-
 };
-
 
 export default AssignForm;

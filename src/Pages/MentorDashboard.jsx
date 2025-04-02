@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
+import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import styles from "./mentorDashboard.module.css";
-
-import DashboardLayout from "../Layouts/Dashboard/DashboardLayout";
-
 import AssignForm from "../Components/AssignForm/AssignForm";
 import MentorProjectCard from "../Components/MentorProjectCard/MentorProjectCard";
 import MentorProjectDescriptionCard from "../Components/MentorprojectDescription/MentorProjectDescription";
@@ -16,20 +14,17 @@ const MentorDashboard = () => {
     {
       id: 1,
       name: "PROJECT 1",
-      college:"College1 ",
+      college: "College1 ",
       description: "Project 1 description",
       members: [
         { name: "abc", email: "abc@example.com" },
         { name: "xyz", email: "xyz@example.com" },
-    
-
-
       ],
     },
     {
       id: 2,
       name: "PROJECT 2",
-      college:"College1 ",
+      college: "College1 ",
       description: "Project 2 description",
       members: [
         { name: "mno", email: "mno@example.com" },
@@ -37,6 +32,13 @@ const MentorDashboard = () => {
       ],
     },
   ];
+
+  // Sample Data for Pie Chart
+  const data = [
+    { name: "Assigned Mentors", value: 70 },
+    { name: "Unassigned Mentors", value: 30 },
+  ];
+  const COLORS = ["#5EB5AE", "#FF5733"]; // Green for assigned, Red for unassigned
 
   // State to track selected project (default: first project)
   const [selectedProject, setSelectedProject] = useState(projects[0]);
@@ -55,9 +57,34 @@ const MentorDashboard = () => {
               </div>
             ))}
           </div>
-          {/* Right Side: Project Description */}
+
+          {/* Middle Section: Project Details */}
           <div className={styles.projectDetails}>
             <MentorProjectDescriptionCard project={selectedProject} />
+          </div>
+
+          {/* Right Side: Mentor Assignment Pie Chart */}
+          <div className={styles.pieChartContainer}>
+            <h3>Mentor Assignment Status</h3>
+            <PieChart width={300} height={300}>
+              <Pie
+                data={data}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={100}
+                fill="#02414B"
+                paddingAngle={5}
+                dataKey="value"
+                label
+              >
+                {data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
           </div>
         </div>
       )}
