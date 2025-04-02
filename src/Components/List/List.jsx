@@ -4,9 +4,30 @@ import { FaEdit, FaTrash, FaEllipsisH } from "react-icons/fa";
 import { getCollegeById, deleteCollege } from "../../services/collegeService";
 import { deleteUser } from "../../services/userService";
 
+// Modal component
+const AlertModal = ({ isOpen, title, message, onClose, onConfirm }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className={styles.modalOverlay}>
+      <div className={styles.modalContent}>
+        <h3>{title}</h3>
+        <p>{message}</p>
+        <div className={styles.modalActions}>
+          <button onClick={onClose}>Cancel</button>
+          <button onClick={onConfirm}>Confirm</button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const List = ({ type = "student", data = [], onDeleteSuccess }) => {
   const [collegeNames, setCollegeNames] = useState({});
+  const [showModal, setShowModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
+  const [pendingDelete, setPendingDelete] = useState(null); // Track item to be deleted
 
   useEffect(() => {
     if (type === "student") {
@@ -28,9 +49,17 @@ const List = ({ type = "student", data = [], onDeleteSuccess }) => {
     }
   }, [data, type]);
 
-  const handleDelete = async (type, userId) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
-    if (!confirmDelete) return;
+  const handleDeleteConfirmation = (type, userId) => {
+    setModalTitle("Delete Confirmation");
+    setModalMessage("Are you sure you want to delete this item?");
+    setPendingDelete({ type, userId });
+    setShowModal(true); // Show confirmation modal
+  };
+
+  const handleDelete = async () => {
+    if (!pendingDelete) return;
+
+    const { type, userId } = pendingDelete;
 
     try {
       if (type === "college") {
@@ -38,13 +67,19 @@ const List = ({ type = "student", data = [], onDeleteSuccess }) => {
         alert("User deleted successfully!");
 
       } else {
-        await deleteUser(userId); 
-        alert("User deleted successfully!");
-
+        await deleteUser(userId);
+        setModalTitle("Success");
+        setModalMessage("User deleted successfully!");
       }
+      setShowModal(true); // Show modal on success
+      onDeleteSuccess && onDeleteSuccess(); // Callback on delete success if any
     } catch (error) {
-      alert("Failed to delete user. Please try again.");
+      setModalTitle("Error");
+      setModalMessage("Failed to delete user. Please try again.");
+      setShowModal(true); // Show modal on error
       console.error("Error deleting user:", error);
+    } finally {
+      setPendingDelete(null); // Reset pending delete
     }
   };
 
@@ -75,13 +110,22 @@ const List = ({ type = "student", data = [], onDeleteSuccess }) => {
 
               <div className={styles.icons}>
                 <FaEdit className={styles.icon} title="Edit" />
-                <FaTrash className={styles.icon} title="Delete" onClick={() => handleDelete(type, item.id)} />
+                <FaTrash className={styles.icon} title="Delete" onClick={() => handleDeleteConfirmation(type, item.id)} />
                 <FaEllipsisH className={styles.icon} title="View More" />
               </div>
             </div>
           </div>
         ))
       )}
+
+      {/* Custom Alert Modal */}
+      <AlertModal
+        isOpen={showModal}
+        title={modalTitle}
+        message={modalMessage}
+        onClose={() => setShowModal(false)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 };

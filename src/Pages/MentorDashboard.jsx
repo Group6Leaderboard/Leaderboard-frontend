@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import styles from "./mentorDashboard.module.css";
 import AssignForm from "../Components/AssignForm/AssignForm";
 import MentorProjectCard from "../Components/MentorProjectCard/MentorProjectCard";
@@ -41,6 +42,30 @@ const MentorDashboard = () => {
           
           <div className={styles.projectDetails}>
             <MentorProjectDescriptionCard project={selectedProject} />
+          </div>
+
+          {/* Right Side: Mentor Assignment Pie Chart */}
+          <div className={styles.pieChartContainer}>
+            <h3>Mentor Assignment Status</h3>
+            <PieChart width={300} height={300}>
+              <Pie
+                data={data}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={100}
+                fill="#02414B"
+                paddingAngle={5}
+                dataKey="value"
+                label
+              >
+                {data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
           </div>
         </div>
       )}
