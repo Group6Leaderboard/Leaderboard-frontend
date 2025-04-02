@@ -155,6 +155,14 @@ h2 {
   gap: 5px;
 }
 
+.dueDate {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  margin-bottom: 20px;
+  width: 50%;
+  
+}
 .memberContainer {
   display: flex;
   flex-direction: column;
@@ -174,6 +182,99 @@ h2 {
   border-radius: 4px;
   font-size: 14px;
 }
+.dropdownContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 320px;
+}
+
+/* Label */
+.dropdownLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Input Field */
+.inputField {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #5eb5ae;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: white;
+  color: #333;
+  transition: border-color 0.3s, background-color 0.3s;
+}
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Modal Content */
+.modalContent {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  width: 320px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+.inputField {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #5eb5ae;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: white;
+  color: #333;
+  transition: border-color 0.3s, background-color 0.3s;
+}
+/* Modal Title */
+.modalTitle {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #5eb5ae;
+}
+
+/* Scrollable List */
+.modalList {
+  max-height: 240px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 8px;
+}
+
+/* List Items */
+.modalItem {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.modalItem:last-child {
+  border-bottom: none;
+}
+
+.modalItem:hover {
+  background: #e0f2f1;
+}
+
 
 .actionButtons {
   display: flex;

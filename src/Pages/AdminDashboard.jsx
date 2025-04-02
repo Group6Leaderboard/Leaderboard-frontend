@@ -49,7 +49,6 @@ const AdminDashboard = () => {
     fetchUsers();
   }, [type]);
 
-  // Toggle AddUser modal
   const handleToggleAddUser = () => {
     setShowAddUser(!showAddUser);
     setUserType(type);
@@ -66,7 +65,6 @@ const AdminDashboard = () => {
         )}
       </div>
 
-      {/* Show AddUser card */}
       {showAddUser && (
         <div className={styles.overlay}>
           <div className={styles.addUserCard}>

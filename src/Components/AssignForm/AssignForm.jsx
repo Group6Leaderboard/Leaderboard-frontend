@@ -5,8 +5,8 @@ import { createProject, getAllProjects } from "../../services/projectService";
 import { getAllColleges } from "../../services/collegeService";
 import { getUsers } from "../../services/userService";
 import { assignProject } from "../../services/studentProjectService";
-import { getAllTasks } from "../../services/taskService";
-import AlertModal from "../AlertModal/AlertModal"; // Importing the AlertModal
+import { getAllTasks, createTask } from "../../services/taskService";
+import ListModal from "../ListModal/ListModal";
 
 const AssignForm = ({ role }) => {
   const [colleges, setColleges] = useState([]);
@@ -15,6 +15,7 @@ const AssignForm = ({ role }) => {
   const [selectedMentor, setSelectedMentor] = useState("");
   const [members, setMembers] = useState([""]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isListModal, setIsListModal] = useState(false);
   const [students, setStudents] = useState([]);
   const [currentMemberIndex, setCurrentMemberIndex] = useState(null);
   const [totalProjects, setTotalProjects] = useState(0);
@@ -23,6 +24,8 @@ const AssignForm = ({ role }) => {
   const [totalTasks, setTotalTasks] = useState(0);
   const [submittedTasks, setSubmittedTasks] = useState(0);
   const [toBeReviewedTasks, setToBeReviewedTasks] = useState(0);
+  const [projects, setProjects] = useState([]);
+
 
   const [formData, setFormData] = useState({
     name: "",
@@ -31,18 +34,19 @@ const AssignForm = ({ role }) => {
     mentorId: "",
     members: [],
     collegeName: "",
-    lastDate: ""
+    lastDate: "",
+    localDateTime: "",
+    projectId: "",
+    projectName: ""
   });
 
-  // State for controlling modal visibility
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertTitle, setAlertTitle] = useState("");
-  const [alertMessage, setAlertMessage] = useState("");
+
 
   useEffect(() => {
 
     const fetchStats = async () => {
       try {
+
         const tasks = await getAllTasks();
         setTotalTasks(tasks.response.length);
 
@@ -51,6 +55,8 @@ const AssignForm = ({ role }) => {
 
         setSubmittedTasks(submittedCount);
         setToBeReviewedTasks(toBeReviewedCount);
+
+
 
       } catch (error) {
         console.error("Error fetching stats", error);
@@ -63,14 +69,26 @@ const AssignForm = ({ role }) => {
         setTotalProjects(projects.response.length);
 
         const studentsResponse = await getUsers("STUDENT");
-        setStudents(studentsResponse.response); 
+        setStudents(studentsResponse.response);
         setTotalStudents(studentsResponse.response.length);
+
 
       } catch (error) {
         console.error("Error fetching stats", error);
       }
-    };
+    }
 
+    const fetchProjects = async () => {
+      try {
+
+        const projects = await getAllProjects();
+
+        setProjects(projects.response);
+
+      } catch (error) {
+        console.error("Error fetching stats", error);
+      }
+    }
     const fetchColleges = async () => {
       try {
         const response = await getAllColleges();
@@ -90,12 +108,15 @@ const AssignForm = ({ role }) => {
       }
     };
 
+
+
     if (role === "admin") {
       fetchColleges();
       fetchMentors();
       fetchStatsAdmin();
     } else {
       fetchStats();
+      fetchProjects();
     }
   }, [role]);
 
@@ -121,11 +142,29 @@ const AssignForm = ({ role }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevData => ({
-      ...prevData,
-      [name]: value,
-    }));
+
+    if (name === "lastDate") {
+      // Convert the date input to LocalDateTime format
+      const localDateTime = `${value}T00:00:00`; // Midnight by default
+
+      console.log("Raw Date Input:", value); // Debugging
+      console.log("Formatted LocalDateTime:", localDateTime); // Debugging
+
+      setFormData((prevData) => ({
+        ...prevData,
+        lastDate: value, // Store raw date (YYYY-MM-DD)
+        localDateTime: localDateTime, // Store formatted LocalDateTime (YYYY-MM-DDTHH:mm:ss)
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
   };
+
+
+
 
   const handleMemberClick = async (index) => {
     if (!selectedCollege || selectedCollege === "") {
@@ -161,6 +200,7 @@ const AssignForm = ({ role }) => {
     }
   };
 
+
   const handleCollegeChange = (e) => {
     const selectedCollegeId = e.target.value;
     const selectedCollegeObj = colleges.find(college => college.id === selectedCollegeId);
@@ -174,6 +214,15 @@ const AssignForm = ({ role }) => {
 
     e.target.size = 1;
     e.target.blur();
+  };
+
+  const handleProjectSelect = (selectedProject) => {
+    setFormData(prevData => ({
+      ...prevData,
+      projectId: selectedProject.id,
+      projectName: selectedProject.name
+    }));
+    setIsListModal(false);
   };
 
   const handleMentorChange = (e) => {
@@ -217,8 +266,21 @@ const AssignForm = ({ role }) => {
         } else {
           throw new Error("Project ID not found in response");
         }
-      } else {
-        console.log("No task assignment implemented");
+      } else if (role === "mentor") {
+
+        const taskData = {
+          name: formData.name,
+          description: formData.description,
+          dueDate: formData.localDateTime,
+          assignedTo: formData.projectId
+        };
+        const response = await createTask(taskData);
+
+        alert("Task Assigned Successfully");
+        resetForm();
+
+
+
       }
     } catch (error) {
       console.error("Error:", error);
@@ -227,6 +289,7 @@ const AssignForm = ({ role }) => {
       setShowAlert(true);
     }
   };
+
 
   const resetForm = () => {
     setFormData({
@@ -238,10 +301,14 @@ const AssignForm = ({ role }) => {
       collegeName: "",
       mentorName: "",
       lastDate: "",
+      localDateTime: "",
+      projectId: "",
+      projectName: "",
     });
     setSelectedCollege("");
     setSelectedMentor("");
     setMembers([""]);
+    setProjects("");
   };
 
   return (
@@ -377,17 +444,37 @@ const AssignForm = ({ role }) => {
 
             </>
           ) : (
-            <div className={styles.formGroup}>
-              <label>Last Date</label>
-              <input
-                type="date"
-                name="lastDate"
-                value={formData.lastDate}
-                onChange={handleChange}
-                className={styles.inputBox}
-                required
-              />
-            </div>
+            <>
+              <div className={styles.dropdownContainer}>
+                <label className={styles.dropdownLabel}>Select Project</label>
+                <input
+                  type="text"
+                  className={styles.inputField}
+                  readOnly
+                  value={formData.projectName || "Choose a project"}
+                  onClick={() => setIsListModal(true)}
+                />
+
+                <ListModal
+                  isOpen={isListModal}
+                  onClose={() => setIsListModal(false)}
+                  data={projects}
+                  onSelect={handleProjectSelect}
+                />
+              </div>
+
+              <div className={styles.dueDate}>
+                <label>Due Date</label>
+                <input
+                  type="date"
+                  name="lastDate"
+                  value={formData.lastDate}
+                  onChange={handleChange}
+                  className={styles.inputBox}
+                  required
+                />
+              </div>
+            </>
           )}
 
           <button type="submit" className={styles.submitButton}>

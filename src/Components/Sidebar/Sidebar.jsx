@@ -70,12 +70,11 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Hamburger Button - Now Always Visible on Small Screens */}
       <button className={styles.hamburger} onClick={toggleSidebar}>
         {isOpen ? <FaTimes /> : <FaBars />}
       </button>
 
-      {/* Sidebar */}
+    
       <div className={`${styles.sidebar} ${isOpen ? styles.open : ""}`}>
         <div className={styles.logoContainer}>
           {logo ? <img src={logo} alt="Logo" className={styles.logo} /> : <h3>Inspiro</h3>}
@@ -86,8 +85,10 @@ const Sidebar = () => {
             <li key={index} className="nav-item">
               <Link
                 to={item.path}
-                className={`${styles.navLink} ${location.pathname === item.path ? styles.active : ""}`}
-                onClick={() => setIsOpen(false)} // Close sidebar on click
+                className={`nav-link d-flex align-items-center justify-content-between ${styles.navLink} ${
+                  location.pathname === item.path ? styles.active : ""
+                }`}
+                onClick={() => setIsOpen(false)} 
               >
                 <div className="d-flex align-items-center">
                   {item.icon} <span className="ms-2">{item.name}</span>
