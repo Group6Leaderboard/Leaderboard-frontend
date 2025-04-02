@@ -45,12 +45,11 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Hamburger Button (Hidden on Large Screens) */}
       <button className={styles.hamburger} onClick={toggleSidebar}>
         {isOpen ? <FaTimes /> : <FaBars />}
       </button>
 
-      {/* Sidebar */}
+    
       <div className={`${styles.sidebar} ${isOpen ? styles.open : ""}`}>
         <div className="text-center mb-3">
           <img src={logo} alt="Logo" className={styles.logo} />
@@ -64,7 +63,7 @@ const Sidebar = () => {
                 className={`nav-link d-flex align-items-center justify-content-between ${styles.navLink} ${
                   location.pathname === item.path ? styles.active : ""
                 }`}
-                onClick={() => setIsOpen(false)} // Close sidebar on click
+                onClick={() => setIsOpen(false)} 
               >
                 <div className="d-flex align-items-center">
                   {item.icon} <span className="ms-2">{item.name}</span>

@@ -21,8 +21,8 @@ const Login = () => {
       if (data.message === "Success") {
         const { token, role } = data.response; 
         
+        localStorage.setItem("role", role);
         localStorage.setItem("token", token);
-        // localStorage.setItem("role", role);
 
         if (role === "ADMIN") {
           navigate("/admin");
@@ -31,7 +31,7 @@ const Login = () => {
         } else if (role === "STUDENT") {
           navigate("/student");
         } else {
-          navigate("/"); // Default route if role is unknown
+          navigate("/"); 
         }
       } else {
         setError("Invalid credentials. Please try again.");
@@ -42,7 +42,7 @@ const Login = () => {
       if (err.response && err.response.status === 404) {
         setError("Invalid credentials. Please try again.");
       } else {
-        setError("Login failed. Check your connection and try again.");
+        setError("Invalid credentials. Please try again");
       }
     }
   };

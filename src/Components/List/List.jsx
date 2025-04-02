@@ -34,7 +34,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess }) => {
 
     try {
       if (type === "college") {
-        await deleteCo(userId); 
+        await deleteCollege(userId); 
         alert("User deleted successfully!");
 
       } else {
@@ -67,7 +67,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess }) => {
               <div className={styles.details}>
                 <h3 className={styles.name}>{item.name}</h3>
                 <p className={styles.info}>
-                  {type === "student" && (collegeNames[item.collegeId] || "Fetching...")}
+                  {type === "student" && (item.collegeName || "No info")}
                   {type === "college" && (item.location || "No Location Info")}
                   {type === "mentor" && (item.email || "No Email Info")}
                 </p>

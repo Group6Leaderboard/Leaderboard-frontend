@@ -23,7 +23,6 @@ const AppRoutes = () => {
 
       <Route path="/mentor" element={<MentorDashboard />} />
       <Route path="/mentor/assign-task" element={<AssignForm role="mentor" />} />
-
       <Route path="/student" element={<StudentDashboard />} />
       <Route path="/college" element={<CollegeDashboard />} />
 
