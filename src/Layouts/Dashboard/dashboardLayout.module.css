@@ -4,9 +4,9 @@ body, html {
 }
 .dashboardContainer {
     display: flex;
+    flex-direction: column;
     height: 100vh;
-    margin: 0;  /* Ensure no unwanted margin */
-    padding: 0; /* Ensure no unwanted padding */
+    width: 100%;
 }
 
 
@@ -27,19 +27,19 @@ body, html {
     flex: 1;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    min-height: 100vh; 
+
+    transition: margin-left 0.3s ease-in-out;
 }
 
-
-/* Navbar at the top */
 .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    background: #fff;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 10px 20px;
+    z-index: 999;
+    height: 60px;
 }
-
-/* Main Page Content */
 .pageContent {
     margin-left: 255px;
     flex: 1;

@@ -5,7 +5,7 @@
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.08); /* Reduce shadow */
   display: flex;
   flex-direction: column;
-  width: 480px;
+  width: 100%;
   transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
   cursor: pointer;
 }
@@ -63,6 +63,7 @@
     display: flex;
     align-items: center;
     gap: 5px;
+    margin-left: auto;
   }
   
   .viewMore:hover {

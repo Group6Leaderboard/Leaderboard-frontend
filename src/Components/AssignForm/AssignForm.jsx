@@ -25,6 +25,7 @@ const AssignForm = ({ role }) => {
   const [submittedTasks, setSubmittedTasks] = useState(0);
   const [toBeReviewedTasks, setToBeReviewedTasks] = useState(0);
   const [projects, setProjects] = useState([]);
+  const [collegename, setCollegeName] = useState("");
 
 
   const [formData, setFormData] = useState({
@@ -108,8 +109,6 @@ const AssignForm = ({ role }) => {
       }
     };
 
-
-
     if (role === "admin") {
       fetchColleges();
       fetchMentors();
@@ -120,8 +119,10 @@ const AssignForm = ({ role }) => {
     }
   }, [role]);
 
-  const fetchStudentsByCollege = async (collegeId) => {
-    if (!collegeId) {
+  const fetchStudentsByCollege = async (selectedCollege) => {
+
+    if (!selectedCollege) {
+      console.log("No college selected. Showing alert.");
       setAlertTitle("Error");
       setAlertMessage("Please select a college first");
       setShowAlert(true);
@@ -129,7 +130,10 @@ const AssignForm = ({ role }) => {
     }
 
     try {
-      const filteredStudents = students.filter(student => student.collegeId === String(collegeId));
+      const filteredStudents = students.filter(student => {
+        console.log(`Checking student: ${student.name}, College: ${student.collegeName}`);
+        return student.collegeName === String(selectedCollege);
+      });
       return filteredStudents;
     } catch (error) {
       console.error("Error fetching students:", error);
@@ -140,20 +144,17 @@ const AssignForm = ({ role }) => {
     }
   };
 
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     if (name === "lastDate") {
-      // Convert the date input to LocalDateTime format
-      const localDateTime = `${value}T00:00:00`; // Midnight by default
-
-      console.log("Raw Date Input:", value); // Debugging
-      console.log("Formatted LocalDateTime:", localDateTime); // Debugging
+      const localDateTime = `${value}T00:00:00`;
 
       setFormData((prevData) => ({
         ...prevData,
-        lastDate: value, // Store raw date (YYYY-MM-DD)
-        localDateTime: localDateTime, // Store formatted LocalDateTime (YYYY-MM-DDTHH:mm:ss)
+        lastDate: value,
+        localDateTime: localDateTime,
       }));
     } else {
       setFormData((prevData) => ({
@@ -162,8 +163,6 @@ const AssignForm = ({ role }) => {
       }));
     }
   };
-
-
 
 
   const handleMemberClick = async (index) => {
@@ -203,9 +202,10 @@ const AssignForm = ({ role }) => {
 
   const handleCollegeChange = (e) => {
     const selectedCollegeId = e.target.value;
+
     const selectedCollegeObj = colleges.find(college => college.id === selectedCollegeId);
 
-    setSelectedCollege(selectedCollegeId);
+    setSelectedCollege(selectedCollegeObj ? selectedCollegeObj.name : '');
     setFormData(prevData => ({
       ...prevData,
       collegeId: selectedCollegeId,
@@ -275,12 +275,8 @@ const AssignForm = ({ role }) => {
           assignedTo: formData.projectId
         };
         const response = await createTask(taskData);
-
         alert("Task Assigned Successfully");
         resetForm();
-
-
-
       }
     } catch (error) {
       console.error("Error:", error);
@@ -330,7 +326,7 @@ const AssignForm = ({ role }) => {
       </div>
 
       <div className={styles.formContainer}>
-        <h2>{role === "admin" ? "Assign Project" : "Assign Task"}</h2>
+        <h2>{role === "admin" ? "CREATE PROJECT" : "ASSIGN TASK"}</h2>
         <form onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
             <label>Name</label>
@@ -392,7 +388,7 @@ const AssignForm = ({ role }) => {
                     onChange={handleCollegeChange}
                     className={styles.selectBox}
                     required
-                    onFocus={(e) => e.target.size = 4}
+                    // onFocus={(e) => e.target.size = 4}
                     onBlur={(e) => e.target.size = 1}
                   >
                     <option value="" disabled>Select College</option>
@@ -449,7 +445,7 @@ const AssignForm = ({ role }) => {
                 <label className={styles.dropdownLabel}>Select Project</label>
                 <input
                   type="text"
-                  className={styles.inputField}
+                  className={styles.inputBox}
                   readOnly
                   value={formData.projectName || "Choose a project"}
                   onClick={() => setIsListModal(true)}
@@ -482,13 +478,26 @@ const AssignForm = ({ role }) => {
           </button>
         </form>
       </div>
-
-      <AlertModal
-        isOpen={showAlert}
-        title={alertTitle}
-        message={alertMessage}
-        onClose={() => setShowAlert(false)}
-      />
+      {isModalOpen && (
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
+            <h3>Select a Student</h3>
+            {students.length > 0 ? (
+              <ul>
+                {students.map((student) => (
+                  <li key={student.id}
+                    onClick={() => handleStudentSelect(student)}>
+                    {student.name}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No students found for this college.</p>
+            )}
+            <button onClick={() => setIsModalOpen(false)}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

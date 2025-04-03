@@ -10,7 +10,6 @@ const MentorProjectDescriptionCard = ({ project, onAssignTask }) => {
 
   return (
     <div className={styles.card}>
-      {/* Section 1: Project Name & Description */}
       <div className={styles.header}>
         <h2>{project?.name || "No Project Selected"}</h2>
         <p>{project?.description || "No description available"}</p>

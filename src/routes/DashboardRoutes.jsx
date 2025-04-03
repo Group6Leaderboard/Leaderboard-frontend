@@ -9,6 +9,7 @@ import AssignForm from "../Components/AssignForm/AssignForm";
 import MentorProject from "../Components/MentorProject/MentorProject";
 import SubmittedTask from "../Components/MentorProject/SubmittedTask";
 import NotFound from "../Components/NotFound/NotFound"; // Import NotFound
+import MentorDashboard from "../Pages/MentorDashboard";
 
 const DashboardRoutes = () => {
   return (
@@ -23,11 +24,10 @@ const DashboardRoutes = () => {
 
 
         {/* Mentor Routes */}
-        <Route path="/mentor" element={<DashboardMentor />} />
-        <Route path="/mentor/projects" element={<DashboardMentor />} />
-        <Route path="/mentor/assign-task" element={<AssignForm role="mentor" />} />
-        <Route path="/mentor/projects" element={<MentorProject role="mentor" />} />
-        <Route path="/mentor/task" element={<SubmittedTask />} />
+        <Route path="/mentor" element={<MentorDashboard />} />
+        <Route path="/mentor/assign-task" element={<MentorDashboard />} />
+        <Route path="/mentor/projects" element={<MentorDashboard />} />
+        <Route path="/mentor/task" element={<MentorDashboard />} />
         <Route path="/mentor/*" element={<NotFound />} /> {/* Handles invalid mentor routes */}
 
         {/* Student Routes */}
