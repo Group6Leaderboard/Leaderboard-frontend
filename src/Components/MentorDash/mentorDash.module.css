@@ -1,19 +1,17 @@
-
-  
-  .dashboardContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 60px;
-    padding: 20px;
-    background-color: #f8f9fa;
-    min-height: 100vh;
+.dashboardContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
   }
   
-  /* First Row: Summary Cards */
   .summaryContainer {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     gap: 20px;
+    flex-wrap: wrap;
   }
   
   .card {
@@ -27,7 +25,7 @@
   }
   
   .card h3 {
-    font-size: 18px;
+    margin-bottom: 18px;
     color: #333;
   }
   
@@ -37,7 +35,6 @@
     margin-top: 5px;
   }
   
-  /* Second Row: Graph & LeaderboardCard */
   .rowContainer {
     display: flex;
     justify-content: space-between;
@@ -45,7 +42,6 @@
     gap: 80px;
   }
   
-  /* Chart Section */
   .chartContainer {
     background: white;
     padding: 20px;
@@ -55,21 +51,15 @@
     min-width:  1000px;
   }
   
-  .chartContainer h2 {
-    text-align: center;
-    margin-bottom: 15px;
-    font-size: 20px;
+  .leaderboardCard {
+       /* Makes leaderboard card take less space */
+       min-width:250px;
+       /* margin-right: 150px; */
+       margin-bottom: 35px;
   }
   
-  /* Leaderboard Card */
-  .leaderboardCard {
-    /* Makes leaderboard card take less space */
-    min-width:250px;
-    /* margin-right: 150px; */
-    margin-bottom: 35px;
-    
-  }
-  /* Responsive Styles */
+
+/* Responsive Styles */
 @media (max-width: 1024px) {
   .rowContainer {
     flex-direction: column; /* Stack chart and leaderboard */
@@ -134,4 +124,3 @@
     width: 100%; /* Make leaderboard cards full width */
   }
 }
-  

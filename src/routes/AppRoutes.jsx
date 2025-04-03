@@ -11,6 +11,7 @@ import LoginPage from "../pages/LoginPage/LoginPage";
 import CollegeLeaderboard from "../pages/Leaderboard/CollegeLeaderboard";
 import ProjectLeaderboard from "../pages/Leaderboard/ProjectLeaderboard";
 import StudentLeaderboard from "../pages/Leaderboard/StudentLeaderboard";
+import SubmittedTask from "../Components/SubmittedTask/SubmittedTask";
 
 const AppRoutes = () => {
   return (
@@ -22,6 +23,7 @@ const AppRoutes = () => {
       <Route path="/admin/assign-project" element={<AssignForm role="admin" />} />
 
       <Route path="/mentor" element={<MentorDashboard />} />
+      <Route path="/mentor/task" element={<SubmittedTask />} />
       <Route path="/mentor/assign-task" element={<AssignForm role="mentor" />} />
 
       <Route path="/student" element={<StudentDashboard />} />

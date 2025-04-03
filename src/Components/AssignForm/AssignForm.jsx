@@ -39,7 +39,7 @@ const AssignForm = ({ role }) => {
 
     const fetchStats = async () => {
       try {
- 
+
         const tasks = await getAllTasks();
         setTotalTasks(tasks.response.length);
 
@@ -49,7 +49,7 @@ const AssignForm = ({ role }) => {
         setSubmittedTasks(submittedCount);
         setToBeReviewedTasks(toBeReviewedCount);
 
-        
+
 
       } catch (error) {
         console.error("Error fetching stats", error);
@@ -63,11 +63,11 @@ const AssignForm = ({ role }) => {
         setTotalProjects(projects.response.length);
 
         const studentsResponse = await getUsers("STUDENT");
-        setStudents(studentsResponse.response); 
+        setStudents(studentsResponse.response);
         setTotalStudents(studentsResponse.response.length);
 
-       
-        
+
+
 
       } catch (error) {
         console.error("Error fetching stats", error);
@@ -93,7 +93,7 @@ const AssignForm = ({ role }) => {
       }
     };
 
-    
+
 
     if (role === "admin") {
       fetchColleges();
@@ -328,8 +328,6 @@ const AssignForm = ({ role }) => {
                     onChange={handleCollegeChange}
                     className={styles.selectBox}
                     required
-                    onFocus={(e) => e.target.size = 4}
-                    onBlur={(e) => e.target.size = 1}
                   >
                     <option value="" disabled>Select College</option>
                     {colleges.map((college) => (
@@ -338,6 +336,7 @@ const AssignForm = ({ role }) => {
                       </option>
                     ))}
                   </select>
+
                 </div>
               </div>
 

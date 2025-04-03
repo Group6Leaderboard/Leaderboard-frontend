@@ -304,3 +304,20 @@ label {
     width: 95%;
   }
 }
+.selectBox {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  appearance: none; /* Removes default styling */
+  background-color: white;
+  cursor: pointer;
+  overflow-y: auto; /* Enables scrolling */
+}
+
+/* Make the dropdown options scrollable */
+.selectBox option {
+  max-height: 200px; /* Adjust height as needed */
+  overflow-y: auto;  /* Enables vertical scrolling */
+}
+

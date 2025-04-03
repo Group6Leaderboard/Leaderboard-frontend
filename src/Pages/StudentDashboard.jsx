@@ -5,6 +5,7 @@ import StudentDash from "../Components/StudentDash/StudentDash";
 import styles from "./studentDashboard.module.css";
 import ProjectCard from "../Components/ProjectCard/ProjectCard";
 import ProjectDescriptionCard from "../Components/ProjectDescriptionCrad/ProjectDescriptionCard";
+import StudentTasks from "../Components/StudentTasks/StudentTask";
 
 const StudentDashboard = () => {
   const location = useLocation();
@@ -34,27 +35,32 @@ const StudentDashboard = () => {
 
   return (
     <div className={styles.dashboardContainer}>
-      {location.pathname === "/student/projects" ? (
-        <div className={styles.projectLayout}>
-          {/* Left Side: Project List */}
-          <div className={styles.projectList}>
-            {projects.map((project) => (
-              <div key={project.id} onClick={() => setSelectedProject(project)}>
-                <ProjectCard project={project} />
-              </div>
-            ))}
-          </div>
-
-          {/* Right Side: Project Description */}
-          <div className={styles.projectDetails}>
-            <ProjectDescriptionCard project={selectedProject} />
-          </div>
+    {location.pathname === "/student/projects" ? (
+      <div className={styles.projectLayout}>
+        {/* Project List */}
+        <div className={styles.projectList}>
+          {projects.map((project) => (
+            <div key={project.id} onClick={() => setSelectedProject(project)}>
+              <ProjectCard project={project} />
+            </div>
+          ))}
         </div>
-      ) : (
-        
-        <StudentDash />
-      )}
-    </div>
+
+        {/* Project Details */}
+        <div className={styles.projectDetails}>
+          {selectedProject ? (
+            <ProjectDescriptionCard project={selectedProject} />
+          ) : (
+            <p className={styles.placeholderText}>Select a project to view details</p>
+          )}
+        </div>
+      </div>
+    ) : location.pathname === "/student/tasks" ? (
+      <StudentTasks />
+    ) : (
+      <StudentDash />
+    )}
+  </div>
   );
 };
 
