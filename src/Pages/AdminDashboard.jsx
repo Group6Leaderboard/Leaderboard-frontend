@@ -49,7 +49,6 @@ const AdminDashboard = () => {
     fetchUsers();
   }, [type]);
 
-  // Toggle AddUser modal
   const handleToggleAddUser = () => {
     setShowAddUser(!showAddUser);
     setUserType(type);
@@ -66,7 +65,6 @@ const AdminDashboard = () => {
         )}
       </div>
 
-      {/* Show AddUser card */}
       {showAddUser && (
         <div className={styles.overlay}>
           <div className={styles.addUserCard}>
@@ -75,10 +73,8 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      {/* Heading for Current Toppers */}
       <h2 className={styles.sectionTitle}>Current Toppers</h2>
 
-      {/* Grid for Leaderboard (3 Rows × 3 Columns) */}
       <div className={styles.leaderboardGrid}>
         {["projects", "students", "colleges"].map((category, index) =>
           leaderboardData[category].map((item, i) => (

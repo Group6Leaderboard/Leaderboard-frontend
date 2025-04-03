@@ -63,9 +63,9 @@ const List = ({ type = "student", data = [], onDeleteSuccess }) => {
 
     try {
       if (type === "college") {
-        await deleteCollege(userId); // Make sure this is the correct function
-        setModalTitle("Success");
-        setModalMessage("College deleted successfully!");
+        await deleteCollege(userId); 
+        alert("User deleted successfully!");
+
       } else {
         await deleteUser(userId);
         setModalTitle("Success");
@@ -102,7 +102,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess }) => {
               <div className={styles.details}>
                 <h3 className={styles.name}>{item.name}</h3>
                 <p className={styles.info}>
-                  {type === "student" && (collegeNames[item.collegeId] || "Fetching...")}
+                  {type === "student" && (item.collegeName || "No info")}
                   {type === "college" && (item.location || "No Location Info")}
                   {type === "mentor" && (item.email || "No Email Info")}
                 </p>
