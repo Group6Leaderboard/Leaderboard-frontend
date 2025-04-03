@@ -8,9 +8,9 @@ import NotFound from "../Components/NotFound/NotFound";
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="colleges" element={<CollegeLeaderboard />} />
+      {/* <Route path="colleges" element={<CollegeLeaderboard />} />
       <Route path="projects" element={<ProjectLeaderboard />} />
-      <Route path="students" element={<StudentLeaderboard />} />
+      <Route path="students" element={<StudentLeaderboard />} /> */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

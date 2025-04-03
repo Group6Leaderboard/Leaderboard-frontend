@@ -20,6 +20,7 @@ const DashboardRoutes = () => {
         <Route path="/admin/mentors" element={<AdminDashboard />} />
         <Route path="/admin/colleges" element={<AdminDashboard />} />
         <Route path="/admin/assign-project" element={<AssignForm role="admin" />} />
+        
 
 
         {/* Mentor Routes */}
@@ -28,12 +29,12 @@ const DashboardRoutes = () => {
         <Route path="/mentor/assign-task" element={<AssignForm role="mentor" />} />
         <Route path="/mentor/projects" element={<MentorProject role="mentor" />} />
         <Route path="/mentor/task" element={<SubmittedTask />} />
-        <Route path="/mentor/*" element={<NotFound />} /> {/* Handles invalid mentor routes */}
+        <Route path="/mentor/*" element={<NotFound />} /> 
 
         {/* Student Routes */}
         <Route path="/student" element={<StudentDashboard />} />
         <Route path="/student/projects" element={<StudentDashboard />} />
-        <Route path="/student/*" element={<NotFound />} /> {/* Handles invalid student routes */}
+        <Route path="/student/*" element={<NotFound />} /> 
 
         {/* College Routes */}
         <Route path="/college" element={<CollegeDashboard />} />
