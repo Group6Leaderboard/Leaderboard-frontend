@@ -1,19 +1,33 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom"; 
-import { FaSearch, FaUserCircle, FaCaretDown, FaSignOutAlt, FaUser } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { FaSearch, FaUserCircle, FaCaretDown, FaSignOutAlt, FaUser, FaBars } from "react-icons/fa";
 import ProfileEdit from "../ProfileEdit/ProfileEdit";
 import styles from "./navbar.module.css";
+import { getUsers } from "../../services/userService";
 
 const Navbar = ({ userType, userData }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  
+  const [userD, setUserD] = useState(null);
+
   const dropdownRef = useRef(null);
   const mobileMenuRef = useRef(null);
   const modalRef = useRef(null);
 
-  const navigate = useNavigate();  
+  const navigate = useNavigate();
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await getUsers(); // Call API
+        setUserD(response.response); // Store data in state
+      } catch (error) {
+        console.error("Failed to fetch user data", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -28,7 +42,7 @@ const Navbar = ({ userType, userData }) => {
       }
     };
 
-    if (isOpen || isProfileModalOpen) {
+    if (isOpen || isProfileModalOpen || isMobileMenuOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
@@ -37,10 +51,8 @@ const Navbar = ({ userType, userData }) => {
     };
   }, [isOpen, isMobileMenuOpen, isProfileModalOpen]);
 
- 
   const handleLogout = () => {
-   
-    navigate("/login");  
+    navigate("/login");
   };
 
   return (
@@ -49,25 +61,22 @@ const Navbar = ({ userType, userData }) => {
         <div className={styles.logo}></div>
 
         <div className={styles.desktopRightSection}>
-          <div className={styles.searchBar}>
-            <FaSearch className={styles.searchIcon} />
-            <input type="text" placeholder="Search..." className={styles.searchInput} />
-          </div>
+      
           <div className={styles.userSection}>
             <FaUserCircle className={styles.profileIcon} />
             <span className={styles.username}>Abhishek</span>
-            <div 
-              className={styles.dropdown} 
-              onClick={() => setIsOpen(!isOpen)}
+            <div
+              className={styles.dropdown}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               ref={dropdownRef}
             >
               <FaCaretDown className={styles.dropdownIcon} />
               {isOpen && (
                 <ul className={styles.dropdownMenu}>
                   <li onClick={() => setIsProfileModalOpen(true)}>
-                    <FaUser className={styles.menuIcon} />Profile
+                    <FaUser className={styles.menuIcon} /> Profile
                   </li>
-                  <li onClick={handleLogout}>  
+                  <li onClick={handleLogout}>
                     <FaSignOutAlt className={styles.menuIcon} />
                     Logout
                   </li>
@@ -76,9 +85,41 @@ const Navbar = ({ userType, userData }) => {
             </div>
           </div>
         </div>
+
+        {/* Mobile Navbar */}
+        <div className={styles.mobileTopBar}>
+          <div className={styles.mobileUserInfo} onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+            <FaUserCircle className={styles.mobileProfileIcon} />
+            <span className={styles.mobileUsername}>Abhishek</span>
+            <FaCaretDown className={styles.dropdownIcon} />
+          </div>
+
+          {isOpen && (
+            <ul className={styles.mobileDropdownMenu} ref={dropdownRef}>
+              <li onClick={() => setIsProfileModalOpen(true)}>
+                <FaUser className={styles.menuIcon} /> Profile
+              </li>
+              <li onClick={handleLogout}>
+                <FaSignOutAlt className={styles.menuIcon} /> Logout
+              </li>
+            </ul>
+          )}
+        </div>
+
+
+        {/* Mobile Dropdown Menu */}
+        {isMobileMenuOpen && (
+          <ul className={styles.mobileDropdownMenu} ref={mobileMenuRef}>
+            <li onClick={() => setIsProfileModalOpen(true)}>
+              <FaUser className={styles.menuIcon} /> Profile
+            </li>
+            <li onClick={handleLogout}>
+              <FaSignOutAlt className={styles.menuIcon} /> Logout
+            </li>
+          </ul>
+        )}
       </nav>
 
-      {/* Profile Edit Modal */}
       {isProfileModalOpen && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent} ref={modalRef}>
@@ -89,7 +130,7 @@ const Navbar = ({ userType, userData }) => {
           </div>
         </div>
       )}
-    </> 
+    </>
   );
 };
 

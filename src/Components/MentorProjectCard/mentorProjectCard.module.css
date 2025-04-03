@@ -2,17 +2,19 @@
     background: #ffffff;
     border-radius: 12px;
     padding: 15px;
-    box-shadow: 0px 4px 10px #5ea5abcc;
     display: flex;
     flex-direction: column;
     width: 480px;
     transition: 0.3s ease-in-out;
     cursor: pointer;
+
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
   }
   
   .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+
+    box-shadow: 0px 4px 10px #5ea5abcc;
   }
   
   .header {

@@ -6,7 +6,6 @@ import { GoProjectRoadmap } from "react-icons/go";
 const MentorProjectCard = ({ project, onClick }) => {
   return (
     <div className={styles.card} onClick={onClick}>
-      {/* Project Icon and Name */}
       <div className={styles.header}>
         <GoProjectRoadmap className={styles.projectIcon} />
         <h3 className={styles.projectName}>{project.name}</h3>
@@ -16,7 +15,7 @@ const MentorProjectCard = ({ project, onClick }) => {
       <div className={styles.footer}>
         <div className={styles.college}>
           <FaUniversity className={styles.universityIcon} />
-          <span> College: {project.college}</span>
+          <span> College: {project.collegeName}</span>
         </div>
         <button className={styles.viewMore}>
           View More <FaArrowRight className={styles.arrowIcon} />

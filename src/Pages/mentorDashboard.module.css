@@ -1,58 +1,89 @@
-/* Dashboard container */
 .dashboardContainer {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  padding: 16px;
-  background: #ffff;
+  padding: 20px;
 }
 
 .projectLayout {
   display: flex;
-  height: calc(100vh - 32px); /* Adjusted to fit inside the viewport */
+  flex-wrap: wrap; 
+  justify-content: space-between;
+  height: 100vh;
+  overflow: hidden;
+  width: 100%;
+  align-items: center;
 }
 
-/* Left: Scrollable project list */
 .projectList {
-  flex: 0 0 40%;
-  max-height: 100%;
-  overflow-y: auto;
-  padding-right: 16px; /* Space between left and right */
-  border-right: 2px solid #ffffff;
-  margin-right: 20px;
+  flex: 0 0 40%; 
+  min-width: 60%;
   max-width: 50%;
+  overflow-y: auto;
+  padding-right: 16px;
+  max-height: calc(100vh - 32px);
 }
 
-/* Hide scrollbar */
 .projectList::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
+  display: none;
 }
 .projectList {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-/* Each project card container */
 .projectCardContainer {
-  margin-left: 15px;
-  margin-right: 10px;
-  margin-bottom: 45px; 
+  margin: 10px;
   border-radius: 10px;
-  background: white;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  border-right: none;
+  background: none;
+  display: flex;
+  width:100%;
+  justify-content: center;
   transition: transform 0.2s ease-in-out;
+  margin-bottom: 25px;
 }
 
 .projectCardContainer:hover {
   transform: scale(1.02);
 }
-
-/* Right: Fixed project details */
 .projectDetails {
   flex: 1;
   padding-left: 30px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  max-width: 50%;
+  max-width: 40%;
+  height: 100%;
+  margin-right: 28px; 
+  margin-top: 100px;
+}
+
+@media screen and (max-width: 768px) {
+  .projectLayout {
+    flex-direction: column; 
+    height: auto;
+  }
+
+  .projectList {
+    flex: 1;
+    max-width: 100%;
+    border-right: none; 
+    padding-right: 0;
+  }
+
+  .projectDetails {
+    flex: 1;
+    max-width: 100%;
+    padding-left: 0;
+    margin-top: 20px;
+  }
+}
+
+/* For Mobile Devices */
+@media screen and (max-width: 480px) {
+  .projectCardContainer {
+    margin: 5px; /* Reduce margin for smaller screens */
+  }
+
+  .projectDetails {
+    padding: 10px; /* Reduce padding */
+  }
 }

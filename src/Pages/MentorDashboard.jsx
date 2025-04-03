@@ -6,6 +6,8 @@ import AssignForm from "../Components/AssignForm/AssignForm";
 import MentorProjectCard from "../Components/MentorProjectCard/MentorProjectCard";
 import MentorProjectDescriptionCard from "../Components/MentorprojectDescription/MentorProjectDescription";
 import { getAllProjects } from "../services/projectService";
+import SubmittedTask from "../Components/MentorProject/SubmittedTask";
+import MentorDash from "../Components/MentorDash/MentorDash";
 
 const MentorDashboard = () => {
   const location = useLocation();
@@ -27,9 +29,13 @@ const MentorDashboard = () => {
 
   return ( 
     <div className={styles.dashboardContainer}>
-      {location.pathname === "/mentor/assign-task" ? (
+      {location.pathname === "/mentor" ? ( <MentorDash /> ) 
+      : location.pathname === "/mentor/assign-task" ? (
         <AssignForm role="mentor" />
+      ) : location.pathname === "/mentor/task" ? (
+        <SubmittedTask />
       ) : (
+
         <div className={styles.projectLayout}>
       
           <div className={styles.projectList}>
@@ -43,9 +49,16 @@ const MentorDashboard = () => {
           <div className={styles.projectDetails}>
             <MentorProjectDescriptionCard project={selectedProject} />
           </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
-          {/* Right Side: Mentor Assignment Pie Chart */}
-          <div className={styles.pieChartContainer}>
+export default MentorDashboard;
+
+
+          {/* <div className={styles.pieChartContainer}>
             <h3>Mentor Assignment Status</h3>
             <PieChart width={300} height={300}>
               <Pie
@@ -66,11 +79,4 @@ const MentorDashboard = () => {
               <Tooltip />
               <Legend />
             </PieChart>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default MentorDashboard;
+          </div> */}
