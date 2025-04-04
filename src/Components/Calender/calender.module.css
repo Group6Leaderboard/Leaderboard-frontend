@@ -1,0 +1,35 @@
+.calendarContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    width: 350px;
+  }
+  
+  .react-calendar {
+    width: 100%;
+    border: none;
+  }
+  
+  .react-calendar__tile {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    transition: 0.3s;
+  }
+  
+  .react-calendar__tile:hover {
+    background: #f0f0f0;
+  }
+  
+  .highlight {
+    background: #5EB5AE !important;
+    color: #000 !important;
+    font-weight: bold;
+    border-radius: 50%;
+  }
+  

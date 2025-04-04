@@ -1,0 +1,116 @@
+.mentor-dashboard {
+  padding: 20px;
+  text-align: center;
+}
+
+.dashboard-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #02414B;
+}
+
+/* Alert Button */
+.alert-button {
+  display: inline-block;
+  padding: 12px 20px;
+  background-color: #02414B;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.alert-button:hover {
+  background-color: #026a71;
+}
+
+/* Grid Layout for Projects */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Two cards per row (default) */
+  gap: 20px;
+  margin-top: 20px;
+  justify-content: center;
+}
+
+/* Project Cards */
+.project-card {
+  width: 600px;
+  margin-top: 100px;
+  background-color: #f8f8f8;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  text-align: center;
+}
+
+.project-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.project-card h4 {
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.project-card p {
+  margin-bottom: 15px;
+  color: #555;
+}
+
+/* View Button */
+.view-button {
+  padding: 10px 16px;
+  background-color: #5EB5AE;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.view-button:hover {
+  background-color: #4b9c87;
+}
+
+/* Responsive Design */
+
+/* For screens below 950px (Smaller Laptops/Tablets) */
+@media (max-width: 950px) {
+  .projects-grid {
+    grid-template-columns: repeat(2, 1fr); /* Two cards per row */
+  }
+  .project-card {
+    width: 350px;
+  }
+}
+
+/* For screens below 768px (Tablets) */
+@media (max-width: 768px) {
+  .projects-grid {
+    grid-template-columns: repeat(2, 1fr); /* One card per row */
+  }
+  .project-card {
+    width: 350px;
+    margin-top: 100px;
+  }
+}
+
+/* For iPhone screen size (430px width) */
+@media (max-width: 430px) {
+  .projects-grid {
+    grid-template-columns: repeat(1, 1fr); /* Ensure one card per row */
+  }
+  .project-card {
+    width: 90%; /* Make it responsive */
+    margin: auto;
+  }
+}

@@ -1,16 +1,19 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./Login.jsx"; 
-import "./App.css";
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import DashboardRoutes from "./routes/DashboardRoutes";
+import LoginPage from "./pages/LoginPage/LoginPage";
+import AppRoutes from "./routes/AppRoutes";
+import NotFound from "./Components/NotFound/NotFound"; 
 
-function App() {
+const App = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<h1>Home Page</h1>} /> 
-        <Route path="/login" element={<Login />} />
-      </Routes>
-    </Router>
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/leaderboard/*" element={<AppRoutes />} />
+      <Route path="/*" element={<DashboardRoutes />} />
+      <Route path="*" element={<NotFound />} /> 
+    </Routes>
   );
-}
+};
 
 export default App;

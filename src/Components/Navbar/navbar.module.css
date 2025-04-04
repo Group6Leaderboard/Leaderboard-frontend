@@ -1,0 +1,195 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 10px 20px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  height: 65px;
+}
+
+/* Desktop Navbar */
+.desktopRightSection {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.searchBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.searchInput {
+  border: 1px solid #ddd;
+  padding: 5px 10px;
+  border-radius: 5px;
+  outline: none;
+  width: 150px;
+}
+
+.searchInput:focus {
+  box-shadow: 0px 2px 8px #5EB5AE;
+}
+
+.userSection {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profileIcon {
+  font-size: 24px;
+}
+
+.username {
+  font-size: 14px;
+  color: #333;
+}
+
+.dropdown {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.dropdownIcon {
+  font-size: 16px;
+  color: #555;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  width: 120px;
+  z-index: 10;
+}
+
+.dropdownMenu li {
+  padding: 10px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.dropdownMenu li:hover {
+  background: #f0f0f0;
+}
+
+/* Mobile Navbar */
+.mobileTopBar {
+  display: none;
+  width: 100%;
+  justify-content: flex-end;
+  gap: 15px;
+}
+
+.mobileProfileIcon {
+  font-size: 20px;
+}
+
+.mobileUsername {
+  font-size: 14px;
+  color: #333;
+}
+
+.mobileMenuToggle {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.mobileDropdownMenu {
+  position: absolute;
+  top: 60px;
+  right: 10px;
+  background: white;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  width: 150px;
+  z-index: 10;
+}
+
+.mobileDropdownMenu li {
+  padding: 10px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.mobileDropdownMenu li:hover {
+  background: #f0f0f0;
+}
+.modalOverlay {
+  position: fixed;  
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Dark transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  position: relative;  /* This ensures the close button is positioned inside the modal */
+  background: white;
+  padding: 20px;
+  width: 400px;
+  max-width: 90%;
+  border-radius: 8px;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.closeButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: black;  /* Black color */
+  cursor: pointer;
+}
+
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+  .desktopRightSection {
+    display: none;
+  }
+
+  .mobileTopBar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* Aligns content to the right */
+    width: 100%;
+    padding: 10px;
+  }
+
+  .mobileUserInfo {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Adds spacing between icon and username */
+  }
+
+  .mobileProfileIcon {
+    font-size: 24px;
+  }
+
+  .mobileUsername {
+    font-size: 14px;
+    font-weight: bold;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .mobileUsername {
+    font-size: 12px;
+  }
+}
+

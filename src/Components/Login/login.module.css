@@ -1,0 +1,117 @@
+
+.loginContainer {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+  }
+  
+  .leftHalf {
+    flex: 1;
+    background-size: cover;
+    background-position: center;
+  }
+  
+  .rightHalf {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f5f5eb;
+    padding: 10px;
+    transition: background-image 0.3s ease-in-out;
+  }
+  
+  .loginBox {
+    background-color: #e2e2d1;
+    width: 90%; /* Adjusts to screen size */
+    max-width: 450px; /* Smaller width for compact look */
+    max-height: 500px; /* Prevents it from stretching */
+    padding: 25px; /* Slightly reduced padding */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  .welcomeBack h2 {
+    font-size: 1.8rem;
+    text-align: left;
+    color: #333;
+    margin-bottom: 10px;
+    font-weight: 300;
+  }
+  
+  .inputGroup {
+    margin-bottom: 8px;
+    text-align: left;
+  }
+  
+  .inputGroup label {
+    display: block;
+    font-weight: 300;
+    margin-bottom: 2px;
+  }
+  
+  .inputGroup input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  .loginBtn {
+    margin-top: 10px;
+    width: 100%;
+    background-color: #5EB5AE;
+    color: white;
+    padding: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  
+  .loginBtn:hover {
+    background-color: #02414B;
+  }
+  .rememberMe {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    font-size: 14px;
+  }
+  
+  .rememberMe input {
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  
+  .rememberMe label {
+    cursor: pointer;
+    margin-top: 0px;
+  }
+  
+  @media (max-width: 1000px) {
+    .loginContainer {
+      flex-direction: column; 
+    }
+  
+    .leftHalf {
+      display: none; 
+    }
+  
+    .rightHalf {
+      flex: 1;
+      background-image: url("../../assets/logog.webp"); 
+      background-size: cover;
+      background-position: center;
+    }
+  
+    .loginBox {
+      background-color: rgba(255, 255, 255, 0.85); 
+      padding: 40px;
+      border-radius: 10px;
+    }
+  }
+  

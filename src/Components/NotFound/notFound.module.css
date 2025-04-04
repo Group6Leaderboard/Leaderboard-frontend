@@ -1,0 +1,66 @@
+.container {
+  text-align: center;
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #ffffff;
+  color: white;
+}
+
+h1 {
+  font-size: 100px;
+  color: #5EB5AE;
+  text-shadow: 2px 2px 4px rgba(255, 76, 76, 0.5);
+}
+
+.text {
+  font-size: 20px;
+  color: #000000;
+  margin-bottom: 20px;
+}
+
+/* Glitch Effect */
+.glitch {
+  font-size: 100px;
+  position: relative;
+  animation: glitch 1s infinite alternate;
+}
+
+@keyframes glitch {
+  0% {
+    text-shadow: -5px -5px 0 #ff4c4c, 5px 5px 0 #00ffff;
+  }
+  100% {
+    text-shadow: 5px 5px 0 #ff4c4c, -5px -5px 0 #00ffff;
+  }
+}
+
+
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(10px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.homeLink {
+  text-decoration: none;  /* Removes underline */
+  color: white;
+  background-color: #000000;
+  padding: 10px 20px;
+  border-radius: 5px;
+  margin-top: 50px;
+  transition: background-color 0.3s ease-in-out;
+  display: inline-block;  /* Ensures it behaves like a button */
+}
+
+.homeLink:hover {
+  background-color: #5EB5AE;
+  text-decoration: none;  /* Prevents underline from reappearing */
+}

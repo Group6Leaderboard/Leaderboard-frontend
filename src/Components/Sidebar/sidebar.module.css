@@ -1,0 +1,140 @@
+
+.sidebar {
+    width: 250px;
+    background-color: white;
+    color: black;
+    box-shadow: 4px 0px 10px rgba(0, 0, 0, 0.1);
+    font-family: "Inknut Antiqua", serif;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 20px;
+    transition: transform 0.3s ease-in-out;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    font-size: 24px;
+}
+ 
+/* Sidebar should always be visible on large screens */
+@media (min-width: 1025px) {
+    .sidebar {
+        transform: translateX(0) !important;
+    }
+}
+ 
+@media (max-width: 1024px) {
+    .sidebar {
+        transform: translateX(-100%);
+        position: fixed;
+        height: 100vh;
+        background: white;
+    }
+ 
+    .sidebar.open {
+        transform: translateX(0);
+    }
+}
+ 
+.hamburger {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1600;
+    display: none;
+}
+ 
+@media (max-width: 1024px) {
+    .hamburger {
+        display: block;
+        z-index: 2000;
+        color: black;
+    }
+}
+ 
+ul, ol {
+  list-style: none !important;
+  padding: 30px;
+  gap: 20px;
+  font-size: 34px;
+}
+ 
+.logo {
+    width: 150px;
+    height: auto;
+    cursor: pointer;
+    display: block;
+    margin: 0 auto 20px auto;
+}
+ 
+.nav {
+  list-style: none !important;
+  padding: 0;
+  margin: 0;
+}
+ 
+.nav-item {
+  list-style: none !important;
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+}
+ 
+.navLink {
+    display: flex;
+    align-items: center;
+    color: black !important;
+    padding: 12px 15px;
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+    text-decoration: none;
+    font-size: 30px;
+    font-weight: 500;
+
+}
+ 
+.navLink:hover {
+    background-color: #ebf0f3;
+    padding-left: 18px;
+    width: 100%;
+}
+
+.active {
+    font-weight: bold;
+    color: #5EB5AE !important;
+    background: rgba(94, 181, 174, 0.1) !important;
+    width: 100%;
+}
+ 
+.navLink svg {
+    font-size: 20px;
+    margin-right: 10px;
+}
+ 
+.arrowIcon {
+    color: #5EB5AE;
+    transition: transform 0.3s ease-in-out;
+    font-size: 14px;
+    margin-left: auto;
+}
+ 
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .logo {
+        width: 120px;
+    }
+ 
+    .navLink {
+        font-size: 14px;
+        padding: 10px;
+    }
+ 
+    .navLink svg {
+        font-size: 18px;
+    }
+}

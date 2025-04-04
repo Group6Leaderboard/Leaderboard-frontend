@@ -1,0 +1,29 @@
+.dashboardContainer {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    gap: 30px;
+  }
+  
+  /* Project Layout */
+  .projectLayout {
+    display: flex;
+    gap: 20px;
+  }
+  
+  /* Left Side: Project List */
+  .projectList {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 55px;
+    cursor: pointer;
+  }
+  
+  /* Right Side: Project Description */
+  .projectDetails {
+    width: 70%;
+  }
+  
