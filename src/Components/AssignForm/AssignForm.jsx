@@ -6,7 +6,11 @@ import { getAllColleges } from "../../services/collegeService";
 import { getUsers } from "../../services/userService";
 import { assignProject } from "../../services/studentProjectService";
 import { getAllTasks, createTask } from "../../services/taskService";
-import ListModal from "../ListModal/ListModal";
+import Select from 'react-select';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import AlertModal from "../AlertModal/AlertModal";
+
 
 const AssignForm = ({ role }) => {
   const [colleges, setColleges] = useState([]);
@@ -41,6 +45,71 @@ const AssignForm = ({ role }) => {
     projectId: "",
     projectName: ""
   });
+
+  const mentorOptions = mentors.map((mentor) => ({
+    value: mentor.id,
+    label: `${mentor.name}`,
+  }));
+  const collegeOptions = colleges.map((college) => ({
+    value: college.id,
+    label: college.name,
+  }));
+  const handleDateChange = (date) => {
+    setFormData((prev) => ({
+      ...prev,
+      lastDate: date ? date.toISOString().split("T")[0] : '',
+    }));
+  };
+  const projectOptions = projects.map((project) => ({
+    value: project.id,
+    label: project.name,
+  }));
+  const customSelectStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      width: "100%",
+      padding: "0.7rem",
+      backgroundColor: "#fafafa",
+      border: "1px solid #ccc",
+      borderColor: state.isFocused ? "#5eb5ae" : "#ccc",
+      borderRadius: "8px",
+      fontSize: "1rem",
+      transition: "all 0.3s ease",
+      boxShadow: state.isFocused ? "0 0 5px rgba(94, 181, 174, 0.3)" : "none",
+      cursor: "pointer",
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isFocused
+        ? "#5eb5ae"
+        : "#fff",
+      color: state.isFocused ? "#fff" : "#333",
+      fontSize: "1rem",
+      padding: "0.75rem 1rem",
+      cursor: "pointer",
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: "#888",
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      color: "#333",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      borderRadius: "8px",
+      boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+      zIndex: 20,
+    }),
+    dropdownIndicator: (provided) => ({
+      ...provided,
+      color: "#5eb5ae",
+    }),
+    indicatorSeparator: () => ({
+      display: "none",
+    }),
+  };
 
 
   useEffect(() => {
@@ -186,18 +255,18 @@ const AssignForm = ({ role }) => {
     setCurrentMemberIndex(index);
     setIsModalOpen(true);
   };
-  
+
   const handleStudentSelect = (student) => {
     setMembers((prevMembers) => {
       const newMembers = [...prevMembers];
       newMembers[currentMemberIndex] = student;
       return newMembers;
     });
-  
+
     setFilteredStudents((prevFiltered) =>
       prevFiltered.filter((s) => s.id !== student.id)
     );
-  
+
     setIsModalOpen(false);
   };
 
@@ -211,18 +280,16 @@ const AssignForm = ({ role }) => {
     setMembers((prevMembers) => {
       const removedMember = prevMembers[index];
       const updatedMembers = prevMembers.filter((_, i) => i !== index);
-  
+
       if (removedMember) {
         setFilteredStudents((prevFiltered) => [...prevFiltered, removedMember]);
       }
-  
+
       return updatedMembers;
     });
   };
 
-
-  const handleCollegeChange = (e) => {
-    const selectedCollegeId = e.target.value;
+  const handleCollegeChange = (selectedCollegeId) => {
     const selectedCollegeObj = colleges.find(college => college.id === selectedCollegeId);
 
     if (selectedCollegeObj) {
@@ -241,19 +308,20 @@ const AssignForm = ({ role }) => {
       setCollegeName('');
       setSelectedCollege('');
     }
-
-    e.target.size = 1;
-    e.target.blur();
   };
 
-  const handleProjectSelect = (selectedProject) => {
-    setFormData(prevData => ({
-      ...prevData,
-      projectId: selectedProject.id,
-      projectName: selectedProject.name
-    }));
-    setIsListModal(false);
+  const handleProjectSelect = (selectedOption) => {
+    const selectedProject = projects.find(p => p.id === selectedOption.value);
+
+    if (selectedProject) {
+      setFormData(prevData => ({
+        ...prevData,
+        projectId: selectedProject.id,
+        projectName: selectedProject.name
+      }));
+    }
   };
+
 
   const handleMentorChange = (e) => {
     const selectedMentorId = e.target.value;
@@ -269,50 +337,44 @@ const AssignForm = ({ role }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
     try {
       if (role === "admin") {
         const projectData = {
           name: formData.name,
           description: formData.description,
           collegeId: selectedCollege,
-          mentorId: selectedMentor
+          mentorId: selectedMentor,
         };
-
+  
         const response = await createProject(projectData);
         const projectId = response?.response?.id;
-
-        console.log("Extracted Project ID:", projectId);
+  
         if (projectId) {
           await Promise.all(
-            members.map(async (member) => {
-              await assignProject(member.id, projectId);
-            })
+            members.map((member) => assignProject(member.id, projectId))
           );
-
-          setAlertTitle("Success");
-          setAlertMessage("Project Assigned Successfully");
-          setShowAlert(true);
+  
+          AlertModal.success("Success", "Project Assigned Successfully!");
           resetForm();
         } else {
           throw new Error("Project ID not found in response");
         }
       } else if (role === "mentor") {
-
         const taskData = {
           name: formData.name,
           description: formData.description,
           dueDate: formData.localDateTime,
-          assignedTo: formData.projectId
+          assignedTo: formData.projectId,
         };
-        const response = await createTask(taskData);
-        alert("Task Assigned Successfully");
+  
+        await createTask(taskData);
+        AlertModal.success("Success", "Task Assigned Successfully!");
         resetForm();
       }
     } catch (error) {
       console.error("Error:", error);
-      setAlertTitle("Error");
-      setAlertMessage(error.message || "Something went wrong");
-      setShowAlert(true);
+      AlertModal.error("Error", error.message || "Something went wrong!");
     }
   };
 
@@ -333,7 +395,7 @@ const AssignForm = ({ role }) => {
     });
     setSelectedCollege("");
     setSelectedMentor("");
-    setMembers([""]);
+    setMembers([]);
     setProjects("");
   };
 
@@ -356,7 +418,7 @@ const AssignForm = ({ role }) => {
       </div>
 
       <div className={styles.formContainer}>
-        <h2>{role === "admin" ? "CREATE PROJECT" : "ASSIGN TASK"}</h2>
+        <h2>{role === "admin" ? "ASSIGN NEW PROJECT" : "ASSIGN TASK"}</h2>
         <form onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
             <label>Name</label>
@@ -387,24 +449,13 @@ const AssignForm = ({ role }) => {
               <div className={styles.formGroup}>
                 <label>Mentor</label>
                 <div className={styles.selectWrapper}>
-                  <select
-                    name="mentorId"
-                    value={selectedMentor}
-                    onChange={handleMentorChange}
-                    className={styles.selectBox}
-                    required
-                  >
-                    <option value="" disabled>Select Mentor</option>
-                    {mentors.map((mentor) => (
-                      <option
-                        key={mentor.id}
-                        value={mentor.id}
-                        className={styles.optionItem}
-                      >
-                        {mentor.name} ({mentor.email})
-                      </option>
-                    ))}
-                  </select>
+                  <Select
+                    options={mentorOptions}
+                    onChange={(selected) => setSelectedMentor(selected.value)}
+                    placeholder="Select Mentor"
+                    styles={customSelectStyles}
+                    className={styles.customDropdown}
+                  />
                 </div>
               </div>
 
@@ -412,22 +463,13 @@ const AssignForm = ({ role }) => {
 
                 <label>College</label>
                 <div className={styles.selectWrapper}>
-                  <select
-                    name="collegeId"
-                    value={selectedCollege}
-                    onChange={handleCollegeChange}
-                    className={styles.selectBox}
-                    required
-                    // onFocus={(e) => e.target.size = 4}
-                    onBlur={(e) => e.target.size = 1}
-                  >
-                    <option value="" disabled>Select College</option>
-                    {colleges.map((college) => (
-                      <option key={college.id} value={college.id} className={styles.optionItem}>
-                        {college.name}
-                      </option>
-                    ))}
-                  </select>
+                  <Select
+                    options={collegeOptions}
+                    onChange={(selected) => handleCollegeChange(selected?.value)}
+                    placeholder="Select College"
+                    styles={customSelectStyles}
+                    className={styles.customDropdown}
+                  />
 
                 </div>
               </div>
@@ -474,30 +516,29 @@ const AssignForm = ({ role }) => {
             <>
               <div className={styles.dropdownContainer}>
                 <label className={styles.dropdownLabel}>Select Project</label>
-                <input
-                  type="text"
-                  className={styles.inputBox}
-                  readOnly
-                  value={formData.projectName || "Choose a project"}
-                  onClick={() => setIsListModal(true)}
+                <Select
+                  options={projectOptions}
+                  onChange={handleProjectSelect}
+                  value={
+                    formData.projectId
+                      ? { value: formData.projectId, label: formData.projectName }
+                      : null
+                  }
+                  placeholder="Choose a project"
+                  styles={customSelectStyles}
+                  className={styles.customDropdown}
                 />
 
-                <ListModal
-                  isOpen={isListModal}
-                  onClose={() => setIsListModal(false)}
-                  data={projects}
-                  onSelect={handleProjectSelect}
-                />
               </div>
 
-              <div className={styles.dueDate}>
+              <div className={styles.formGroup}>
                 <label>Due Date</label>
-                <input
-                  type="date"
-                  name="lastDate"
-                  value={formData.lastDate}
-                  onChange={handleChange}
-                  className={styles.inputBox}
+                <DatePicker
+                  selected={formData.lastDate ? new Date(formData.lastDate) : null}
+                  onChange={handleDateChange}
+                  dateFormat="yyyy-MM-dd"
+                  placeholderText="Select a due date"
+                  className={styles.dateInput}
                   required
                 />
               </div>
@@ -528,6 +569,8 @@ const AssignForm = ({ role }) => {
           </div>
         </div>
       )}
+
+
 
     </div>
   );
