@@ -11,6 +11,7 @@ const CollegeLeaderboard = () => {
     { name: "Christ", points: "92", wins: 32, tasks: 68, achievements: 268, image: "collegea.png" },
   ];
 
+  // Updated 10 records
   const ranking = [
     { rank: 1, name: "ST Thomas", id: "1591245", proj: 236, college: "ST Thomas", points: "98" },
     { rank: 2, name: "Rajadhani", id: "1391245", proj: 167, college: "Rajadhani", points: "96" },
@@ -55,7 +56,6 @@ const CollegeLeaderboard = () => {
               <div className={styles.statsRow}>
                 <span>Proj: {leader.wins}</span>
                 <span>Tasks: {leader.tasks}</span>
-                <span>Ach.: {leader.achievements}</span>
               </div>
             </div>
           </div>
@@ -74,7 +74,7 @@ const CollegeLeaderboard = () => {
             </tr>
           </thead>
           <tbody>
-            {ranking.map((user, index) => (
+            {currentItems.map((user, index) => (
               <tr key={index}>
                 <td>{user.rank}</td>
                 <td>{user.name} <br /><small>ID {user.id}</small></td>
@@ -84,6 +84,26 @@ const CollegeLeaderboard = () => {
             ))}
           </tbody>
         </table>
+
+        {/* Pagination Buttons */}
+        <div className={styles.pagination}>
+  <button
+    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+    disabled={currentPage === 1}
+    className={styles.pageButton}
+  >
+    <img src="/p.png"  className={styles.pageIcon} />
+  </button>
+
+  <button
+    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+    disabled={currentPage === totalPages}
+    className={styles.pageButton}
+  >
+    <img src="/next.png"  className={styles.pageIcon} />
+  </button>
+</div>
+        
       </div>
     </div>
   );

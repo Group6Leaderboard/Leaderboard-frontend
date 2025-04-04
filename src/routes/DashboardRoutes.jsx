@@ -6,10 +6,7 @@ import DashboardMentor from "../Components/MentorProject/DashboardMentor";
 import StudentDashboard from "../Pages/StudentDashboard";
 import CollegeDashboard from "../Pages/CollegeDashboard";
 import AssignForm from "../Components/AssignForm/AssignForm";
-import MentorProject from "../Components/MentorProject/MentorProject";
-import SubmittedTask from "../Components/MentorProject/SubmittedTask";
-import NotFound from "../Components/NotFound/NotFound"; // Import NotFound
-import MentorDashboard from "../Pages/MentorDashboard";
+import SubmittedTask from "../Components/SubmittedTask/SubmittedTask";
 
 const DashboardRoutes = () => {
   return (
@@ -27,13 +24,14 @@ const DashboardRoutes = () => {
         <Route path="/mentor" element={<MentorDashboard />} />
         <Route path="/mentor/assign-task" element={<MentorDashboard />} />
         <Route path="/mentor/projects" element={<MentorDashboard />} />
-        <Route path="/mentor/task" element={<MentorDashboard />} />
-        <Route path="/mentor/*" element={<NotFound />} /> {/* Handles invalid mentor routes */}
+ 
+        <Route path="/mentor/assign-task" element={<AssignForm role="mentor" />} />
+        <Route path="/mentor/task" element={<SubmittedTask />} />
 
         {/* Student Routes */}
         <Route path="/student" element={<StudentDashboard />} />
         <Route path="/student/projects" element={<StudentDashboard />} />
-        <Route path="/student/*" element={<NotFound />} /> {/* Handles invalid student routes */}
+        <Route path="/student/tasks" element={<StudentDashboard />} />
 
         {/* College Routes */}
         <Route path="/college" element={<CollegeDashboard />} />

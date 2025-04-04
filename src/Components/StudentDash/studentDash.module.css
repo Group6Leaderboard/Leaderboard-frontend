@@ -1,53 +1,4 @@
-/* .dashboardContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    padding: 20px;
-    background-color: #f8f9fa;
-    min-height: 100vh;
-  }
-  
 
-  .summaryContainer {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-  }
-  
-  .card {
-    background: #d5ebe9;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    min-width: 350px;
-  }
-  
-  .card h3 {
-    font-size: 18px;
-    color: #333;
-  }
-  
-  .card p {
-    font-size: 24px;
-    font-weight: bold;
-    margin-top: 5px;
-  }
-  
-
-  .chartContainer {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    max-width: 850px;
-  }
-  
-  .chartContainer h2 {
-    text-align: center;
-    margin-bottom: 15px;
-    font-size: 20px;
-  } */
   
   .dashboardContainer {
     display: flex;
@@ -121,4 +72,69 @@
     padding: 20px;
     
   }
+  /* Responsive Styles */
+@media (max-width: 1024px) {
+  .rowContainer {
+    flex-direction: column; /* Stack chart and leaderboard */
+    gap: 40px;
+  }
+
+  .chartContainer {
+    min-width: 100%; /* Take full width */
+  }
+
+  .leaderboardCard {
+    order: 1; /* Move leaderboard below the chart */
+    width: 100%; /* Take full width */
+    display: flex;
+    flex-direction: row; /* Arrange leaderboard cards in a row */
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .leaderboardCard > div {
+    width: 100%; /* Each leaderboard card takes max width */
+  }
+}
+
+@media (max-width: 768px) {
+  .summaryContainer {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .card {
+    width: 90%;
+  }
+
+  .leaderboardCard {
+    justify-content: space-around;
+  }
+
+  .leaderboardCard > div {
+    width: 100%; /* Ensure full width in row */
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboardContainer {
+    padding: 10px;
+    gap: 30px;
+  }
+
+  .chartContainer {
+    padding: 15px;
+  }
+
+  .leaderboardCard {
+    flex-direction: column; /* Stack leaderboard cards on mobile */
+    align-items: center;
+  }
+
+  .leaderboardCard > div {
+    width: 100%; /* Make leaderboard cards full width */
+  }
+}
   

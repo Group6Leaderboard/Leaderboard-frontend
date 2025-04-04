@@ -74,7 +74,7 @@ const ProjectLeaderboard = () => {
             </tr>
           </thead>
           <tbody>
-            {ranking.map((user, index) => (
+            {currentItems.map((user, index) => (
               <tr key={index}>
                 <td>{user.rank}</td>
                 <td>{user.name} <br /><small>ID {user.id}</small></td>
@@ -84,6 +84,25 @@ const ProjectLeaderboard = () => {
             ))}
           </tbody>
         </table>
+
+        {/* Pagination Buttons */}
+        <div className={styles.pagination}>
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className={styles.pageButton}
+          >
+            <img src="/p.png" className={styles.pageIcon} />
+          </button>
+
+          <button
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className={styles.pageButton}
+          >
+            <img src="/next.png"  className={styles.pageIcon} />
+          </button>
+        </div>
       </div>
     </div>
   );

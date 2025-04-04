@@ -16,6 +16,15 @@ const StudentLeaderboard = () => {
     { rank: 3, name: "Jacob M", id: "1892245", proj: 146, college: "Christ", points: "92" },
   ];
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5; // Show 5 records per page
+
+  // Pagination logic
+  const lastIndex = currentPage * itemsPerPage;
+  const firstIndex = lastIndex - itemsPerPage;
+  const currentItems = ranking.slice(firstIndex, lastIndex);
+  const totalPages = Math.ceil(ranking.length / itemsPerPage);
+
   return (
     <div className={styles.container}>
       {/* Title and Login Button Wrapper */}
@@ -55,7 +64,6 @@ const StudentLeaderboard = () => {
               <div className={styles.statsRow}>
                 <span>Proj: {leader.wins}</span>
                 <span>Tasks: {leader.tasks}</span>
-                <span>Ach.: {leader.achievements}</span>
               </div>
             </div>
           </div>
@@ -68,17 +76,17 @@ const StudentLeaderboard = () => {
           <thead>
             <tr>
               <th>Rank</th>
-              <th>User Name</th>
+              <th>Student Name</th>
               <th>No Of Projects</th>
               <th>College</th>
               <th>Total Points</th>
             </tr>
           </thead>
           <tbody>
-            {ranking.map((user, index) => (
+            {currentItems.map((user, index) => (
               <tr key={index}>
                 <td>{user.rank}</td>
-                <td>{user.name} <br /><small>ID {user.id}</small></td>
+                <td>{user.name}</td>
                 <td>{user.proj}</td>
                 <td>{user.college}</td>
                 <td>{user.points}</td>
@@ -86,6 +94,25 @@ const StudentLeaderboard = () => {
             ))}
           </tbody>
         </table>
+
+        {/* Pagination Buttons */}
+        <div className={styles.pagination}>
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className={styles.pageButton}
+          >
+            <img src="/p.png"  className={styles.pageIcon} />
+          </button>
+
+          <button
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className={styles.pageButton}
+          >
+            <img src="/next.png"  className={styles.pageIcon} />
+          </button>
+        </div>
       </div>
     </div>
   );
