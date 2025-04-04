@@ -11,7 +11,6 @@ const MentorProjectCard = ({ project, onClick }) => {
         <h3 className={styles.projectName}>{project.name}</h3>
       </div>
 
-      {/* College Info and View More */}
       <div className={styles.footer}>
         <div className={styles.college}>
           <FaUniversity className={styles.universityIcon} />

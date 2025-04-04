@@ -41,7 +41,7 @@
     position: fixed;
     top: 15px;
     left: 15px;
-    background: none;
+    /* background: none; */
     border: none;
     font-size: 24px;
     cursor: pointer;
@@ -104,7 +104,7 @@ ul, ol {
     width: 100%;
     width: 100%;
 }
-
+ 
 .active {
     font-weight: bold;
     color: #5EB5AE !important;
@@ -122,6 +122,22 @@ ul, ol {
     transition: transform 0.3s ease-in-out;
     font-size: 14px;
     margin-left: auto;
+}
+ 
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .logo {
+        width: 120px;
+    }
+ 
+    .navLink {
+        font-size: 14px;
+        padding: 10px;
+    }
+ 
+    .navLink svg {
+        font-size: 18px;
+    }
 }
  
 /* Responsive Styles */
