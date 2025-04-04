@@ -1,0 +1,101 @@
+/* Container */
+.submittedTask {
+    padding: 30px;
+    margin-top: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 1200px;
+    margin: 20px auto;
+    text-align: center;
+   
+  }
+  
+  /* Table Wrapper for Scrolling */
+  .tableWrapper {
+    width: 100%;
+    /* overflow-x: auto;
+    -webkit-overflow-scrolling: touch; */
+    
+  }
+  
+  /* Table Styling */
+  .table {
+    width: 100%;
+    min-width: 1000px;
+    border-radius: 8px;
+    border-collapse: collapse;
+ 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+   
+   
+  }
+  
+  /* Header Row */
+  .theadDark th {
+    background-color: #5EB5AE !important;
+    color: white !important;
+    font-weight: 600;
+    text-align: center;
+    padding: 15px !important;  /* Reduced padding */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  
+  /* Table Cells */
+  td, th {
+    text-align: center;
+    padding: 15px !important;  /* Adjusted padding */
+  }
+
+
+  
+
+ 
+  /* Row Hover Effect */
+  .tableHover tbody tr:hover {
+    background-color: #5b5f5f;
+    cursor: pointer;
+  }
+  
+  /* Status Coloring */
+  .status {
+    font-style: italic;
+    padding: 6px 12px;
+  
+  }
+  
+  /* Document Link */
+  .docLink {
+    color: #000000;
+    text-decoration: none;
+    
+  }
+  
+  .docLink:hover {
+    text-decoration: none;
+    color: #5EB5AE;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .submittedTask {
+      padding: 15px;
+    }
+    
+    .table {
+      font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .table {
+      font-size: 12px;
+    }
+    
+    .tableWrapper {
+      overflow-x: auto;
+    }
+  }
+  

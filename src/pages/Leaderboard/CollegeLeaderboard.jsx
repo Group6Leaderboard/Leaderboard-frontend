@@ -12,6 +12,7 @@ const CollegeLeaderboard = () => {
   ];
 
   // Updated 10 records
+  // Updated 10 records
   const ranking = [
     { rank: 1, name: "ST Thomas", proj: 236, college: "ST Thomas", points: "98" },
     { rank: 2, name: "Rajadhani", proj: 167, college: "Rajadhani", points: "96" },
@@ -88,6 +89,7 @@ const CollegeLeaderboard = () => {
             </tr>
           </thead>
           <tbody>
+            {currentItems.map((user, index) => (
             {currentItems.map((user, index) => (
               <tr key={index}>
                 <td>{user.rank}</td>

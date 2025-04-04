@@ -1,0 +1,85 @@
+.container {
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .buttonGroup {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .tabButton {
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    background: #ffffff;
+    border-radius: 6px;
+    font-size: 16px;
+ margin: 0px ; 
+    transition: 0.3s;
+  }
+  
+  .tabButton.active {
+    background: #d5ebe9;
+    color: #009688;
+  }
+  
+  .tableContainer {
+    overflow-x: auto;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  .table th,
+  .table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+  
+  .table th {
+    background: #009688;
+    color: white;
+  }
+  
+  .fileLink {
+    color: #009688;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .viewButton {
+    background: #d5ebe9;
+    color: rgb(0, 0, 0);
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: 0.3s;
+  }
+  
+  .viewButton:hover {
+    background: #00796b;
+  }
+  
+  .noData {
+    text-align: center;
+    font-size: 16px;
+    color: #777;
+    margin-top: 10px;
+  }
+  

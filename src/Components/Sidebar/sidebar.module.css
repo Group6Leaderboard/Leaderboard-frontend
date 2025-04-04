@@ -59,9 +59,9 @@
  
 ul, ol {
   list-style: none !important;
-  padding: 30px;
-  gap: 20px;
-  font-size: 34px;
+  padding: 0 !important;
+  margin: 0 !important;
+  gap: 30px;
 }
  
 .logo {
@@ -102,12 +102,13 @@ ul, ol {
     background-color: #ebf0f3;
     padding-left: 18px;
     width: 100%;
+    width: 100%;
 }
  
 .active {
     font-weight: bold;
     color: #5EB5AE !important;
-    background: rgba(94, 181, 174, 0.1) !important;
+    background-color: rgba(94, 181, 174, 0.1);
     width: 100%;
 }
  

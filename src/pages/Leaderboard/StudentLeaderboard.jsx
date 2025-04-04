@@ -81,6 +81,7 @@ const StudentLeaderboard = () => {
             <tr>
               <th>Rank</th>
               <th>Student Name</th>
+              <th>Student Name</th>
               <th>No Of Projects</th>
               <th>College</th>
               <th>Total Points</th>
@@ -88,8 +89,10 @@ const StudentLeaderboard = () => {
           </thead>
           <tbody>
             {currentItems.map((user, index) => (
+            {currentItems.map((user, index) => (
               <tr key={index}>
                 <td>{user.rank}</td>
+                <td>{user.name}</td>
                 <td>{user.name}</td>
                 <td>{user.proj}</td>
                 <td>{user.college}</td>

@@ -87,6 +87,7 @@ const ProjectLeaderboard = () => {
           </thead>
           <tbody>
             {currentItems.map((user, index) => (
+            {currentItems.map((user, index) => (
               <tr key={index}>
                 <td>{user.rank}</td>
                 <td>{user.name}</td>
