@@ -82,7 +82,7 @@ const Sidebar = () => {
 
         <ul className="nav flex-column">
           {currentRole?.items.map((item, index) => (
-            <li key={index} className="nav-item">
+            <li key={index} className="navItem">
               <Link
                 to={item.path}
                 className={`nav-link d-flex align-items-center justify-content-between ${styles.navLink} ${

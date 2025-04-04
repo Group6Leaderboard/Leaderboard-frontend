@@ -7,6 +7,9 @@ import StudentDashboard from "../Pages/StudentDashboard";
 import CollegeDashboard from "../Pages/CollegeDashboard";
 import AssignForm from "../Components/AssignForm/AssignForm";
 import SubmittedTask from "../Components/SubmittedTask/SubmittedTask";
+import MentorDashboard from "../Pages/MentorDashboard";
+import NotFound from "../Components/NotFound/NotFound";
+
 
 const DashboardRoutes = () => {
   return (

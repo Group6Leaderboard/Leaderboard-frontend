@@ -27,7 +27,7 @@
 
 /* Style the heading */
 .headerAdminType h2 {
-    font-size: 0px;
+    font-size: 60px;
     color: #5EB5AE;
     font-weight: bold;
     text-transform: uppercase;
@@ -37,6 +37,7 @@
 .headerIcon {
     font-size: 50px;
     color: #5EB5AE;
+    margin-bottom: 13px;
 }
 
 /* Styling for the add button */

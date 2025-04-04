@@ -77,12 +77,25 @@ ul, ol {
   padding: 0;
   margin: 0;
 }
+.navItem {
+    list-style: none !important;
+    display: flex !important;
+    align-items: center;
+    font-size: 10px !important;
+    /* padding: 20px !important; */
+  }
+  
+ul.nav li.nav-item {
+    font-size: 15px;
+  }
+  
  
 .nav-item {
   list-style: none !important;
   display: flex;
   align-items: center;
   font-size: 24px;
+  padding: 20px;
 }
  
 .navLink {
@@ -108,8 +121,10 @@ ul, ol {
 .active {
     font-weight: bold;
     color: #5EB5AE !important;
-    background-color: rgba(94, 181, 174, 0.1);
+    background-color: rgba(94, 181, 174, 0.1) !important;
     width: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
  
 .navLink svg {

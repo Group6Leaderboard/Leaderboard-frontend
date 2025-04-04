@@ -86,13 +86,13 @@ const styles = {
     flexDirection: "column",
     width: "100%",
     gap: "10px",
-    margin:"0",
+    margin: "0",
     alignItems: "center",
   },
   infoItem: {
-     display: "flex",
-     alignItems: "center",
-     justifyContent: "center",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     gap: "8px",
   },
   infoText: {
@@ -156,7 +156,7 @@ const styles = {
     color: "#000",
     marginTop: "5px",
   },
-  
+
   // Modal styles
   modalOverlay: {
     position: "fixed",
@@ -345,7 +345,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [selectedItem, setSelectedItem] = useState(null);
-  
+
   const itemsPerPage = 6;
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -391,7 +391,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
 
   useEffect(() => {
     setFilteredData(
-      data.filter(item => 
+      data.filter(item =>
         item.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
     );
@@ -401,7 +401,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
     if (event) {
       event.stopPropagation();
     }
-    
+
     const confirmDelete = window.confirm("Are you sure you want to delete this user?");
     if (!confirmDelete) return;
 
@@ -431,7 +431,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
     if (event) {
       event.stopPropagation();
     }
-    
+
     setSelectedItem(item);
     if (onViewMore) {
       onViewMore(item);
@@ -476,15 +476,15 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
             <h1 style={styles.appTitle}>{getTypeTitle()}</h1>
             {/* <p style={styles.appSubtitle}>Showing {filteredData.length} of {data.length} profiles</p> */}
             <p style={styles.appSubtitle}>
-  Showing {Math.min(currentItems.length, data.length - (currentPage - 1) * itemsPerPage)} of {data.length} contacts
-</p>
+              Showing {Math.min(currentItems.length, data.length - (currentPage - 1) * itemsPerPage)} of {data.length} contacts
+            </p>
 
           </div>
           <div style={styles.searchBar}>
             <FaSearch color="#aaa" />
-            <input 
-              type="text" 
-              placeholder="Search here " 
+            <input
+              type="text"
+              placeholder="Search here "
               style={styles.searchInput}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -501,22 +501,22 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
               <div key={item.id} style={styles.userCard}>
                 <div style={styles.cardContent}>
                   <img
-                    src={item.image || fallbackImage}
+                    src={`data:image/jpeg;base64,${item.image}`}
                     onError={(e) => { e.target.onerror = null; e.target.src = fallbackImage; }}
                     alt={item.name}
                     style={styles.profileImage}
                   />
                   <h3 style={styles.userName}>{item.name}</h3>
                   <p style={styles.userRole}>
-                    {type === "student" ? (collegeNames[item.collegeId] || "Loading...") : getJobTitle(item)}
+                    {type === "student" ? (item.collegeName || "Loading...") : getJobTitle(item)}
                   </p>
-                  
+
                   <div style={styles.infoContainer}>
                     <div style={styles.infoItem}>
                       <FaEnvelope color="#000" />
                       <span style={styles.infoText}>{item.email || "No email available"}</span>
                     </div>
-                    
+
                     {type === "college" ? (
                       <div style={styles.infoItem}>
                         <FaMapMarkerAlt color="#000" />
@@ -531,13 +531,13 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
                   </div>
 
                   <div style={styles.buttonContainer}>
-                    <button 
+                    <button
                       style={styles.viewMoreButton}
                       onClick={(e) => handleViewMore(item, e)}
                     >
                       View More
                     </button>
-                    <button 
+                    <button
                       style={styles.deleteButton}
                       onClick={(e) => handleDelete(type, item.id, e)}
                     >
@@ -585,8 +585,8 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
                   />
                   <h2 style={styles.modalName}>{selectedItem.name}</h2>
                   <p style={styles.modalLocation}>
-                    {type === "student" 
-                      ? collegeNames[selectedItem.collegeId] || "Unknown College" 
+                    {type === "student"
+                      ? collegeNames[selectedItem.collegeId] || "Unknown College"
                       : (type === "college" ? selectedItem.location : getJobTitle(selectedItem))}
                   </p>
                 </div>
@@ -664,8 +664,8 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
                 >
                   <FaEdit style={{ marginRight: "8px" }} /> Edit
                 </button> */}
-                <button 
-                  style={{...styles.modalButton, ...styles.visitButton}}
+                <button
+                  style={{ ...styles.modalButton, ...styles.visitButton }}
                   onClick={() => handleDelete(type, selectedItem.id)}
                 >
                   <FaTrash style={{ marginRight: "8px" }} /> Delete
