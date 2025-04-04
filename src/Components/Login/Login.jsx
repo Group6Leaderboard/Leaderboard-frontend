@@ -84,17 +84,6 @@ const Login = () => {
               />
             </div>
 
-            {/* 🔹 Remember Me Checkbox */}
-            <div className={styles.rememberMe}>
-              <input
-                type="checkbox"
-                id="rememberMe"
-                checked={rememberMe}
-                onChange={() => setRememberMe(!rememberMe)}
-              />
-              <label htmlFor="rememberMe">Remember Me</label>
-            </div>
-
             <button type="submit" className={styles.loginBtn}>Login</button>
           </form>
         </div>

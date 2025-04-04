@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import DashboardLayout from "../Layouts/Dashboard/DashboardLayout";
 import AdminDashboard from "../Pages/AdminDashboard";
-import DashboardMentor from "../Components/MentorProject/DashboardMentor";
+import MentorDashboard from "../Pages/MentorDashboard"
 import StudentDashboard from "../Pages/StudentDashboard";
 import CollegeDashboard from "../Pages/CollegeDashboard";
 import AssignForm from "../Components/AssignForm/AssignForm";
@@ -21,6 +21,7 @@ const DashboardRoutes = () => {
         <Route path="/admin/mentors" element={<AdminDashboard />} />
         <Route path="/admin/colleges" element={<AdminDashboard />} />
         <Route path="/admin/assign-project" element={<AssignForm role="admin" />} />
+        
 
 
         {/* Mentor Routes */}

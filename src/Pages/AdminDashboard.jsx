@@ -5,7 +5,7 @@ import { FaPlus } from "react-icons/fa";
 import styles from "./adminDashboard.module.css";
 import List from "../Components/List/List";
 import AddUser from "../Components/AddUser/AddUser";
-import HeaderAdmin from "../Components/HeaderAdmin/HeaderAdmin"; // Import the HeaderAdmin component
+import HeaderAdmin from "../Components/HeaderAdmin/HeaderAdmin"; 
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);

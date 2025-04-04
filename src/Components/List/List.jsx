@@ -3,6 +3,7 @@ import { FaEdit, FaTrash, FaEllipsisH, FaSearch, FaEnvelope, FaPhone, FaMapMarke
 import { getCollegeById, deleteCollege } from "../../services/collegeService";
 import { deleteUser } from "../../services/userService";
 import fallbackImage from "../../assets/fallback.jpg";
+import AlertModal from "../AlertModal/AlertModal";
 
 
 // CSS styles
@@ -397,29 +398,54 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
     );
   }, [data, searchTerm]);
 
-  const handleDelete = async (type, userId, event) => {
-    if (event) {
-      event.stopPropagation();
-    }
+  // const handleDelete = async (type, userId, event) => {
+  //   if (event) {
+  //     event.stopPropagation();
+  //   }
+    
+  //   const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+  //   if (!confirmDelete) return;
 
-    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
-    if (!confirmDelete) return;
+  //   try {
+  //     if (type === "college") {
+  //       await deleteCollege(userId);
+  //       alert("User deleted successfully!");
+  //     } else {
+  //       await deleteUser(userId);
+  //       alert("User deleted successfully!");
+  //     }
+  //     if (onDeleteSuccess) onDeleteSuccess();
+  //   } catch (error) {
+  //     alert("Failed to delete user. Please try again.");
+  //     console.error("Error deleting user:", error);
+  //   }
+  // };
 
+  const handleDelete = (type, id, event) => {
+    event.stopPropagation(); // Optional, but test without this if modal still doesn't show
+  
+    AlertModal.confirmDelete(() => {
+      deleteItem(type, id).then(() => {
+        setSelectedItem(null); // Ensure modal closes after deletion
+      });
+    });
+  };
+  
+  const deleteItem = async (type, id) => {
     try {
-      if (type === "college") {
-        await deleteCollege(userId);
-        alert("User deleted successfully!");
-      } else {
-        await deleteUser(userId);
-        alert("User deleted successfully!");
-      }
+      await fetch(`/api/${type}/${id}`, { method: "DELETE" });
+  
+      setFilteredData((prevData) => prevData.filter((item) => item.id !== id));
+      
       if (onDeleteSuccess) onDeleteSuccess();
+  
+      AlertModal.success("Deleted!", "The item has been successfully deleted.");
     } catch (error) {
-      alert("Failed to delete user. Please try again.");
-      console.error("Error deleting user:", error);
+      AlertModal.error("Deletion Failed", "Something went wrong while deleting the item.");
     }
   };
-
+  
+  
   const getJobTitle = (item) => {
     if (type === "student") return "Student";
     if (type === "college") return "Institution";
@@ -509,6 +535,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
                   <h3 style={styles.userName}>{item.name}</h3>
                   <p style={styles.userRole}>
                     {type === "student" ? (item.collegeName || "Loading...") : getJobTitle(item)}
+                    
                   </p>
 
                   <div style={styles.infoContainer}>
@@ -568,7 +595,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
           </div>
         )}
 
-        {/* Modal for selected item */}
+
         {selectedItem && (
           <div style={styles.modalOverlay} onClick={handleCloseModal}>
             <div style={styles.modalContainer} onClick={(e) => e.stopPropagation()}>
@@ -585,8 +612,8 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
                   />
                   <h2 style={styles.modalName}>{selectedItem.name}</h2>
                   <p style={styles.modalLocation}>
-                    {type === "student"
-                      ? collegeNames[selectedItem.collegeId] || "Unknown College"
+                    {type === "student" 
+                      ? collegeNames[selectedItem.collegeName] || "Unknown College" 
                       : (type === "college" ? selectedItem.location : getJobTitle(selectedItem))}
                   </p>
                 </div>
@@ -636,7 +663,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
                         </div>
                         <div style={styles.modalInfoContent}>
                           <span style={styles.modalInfoLabel}>College</span>
-                          <span style={styles.modalInfoValue}>{collegeNames[selectedItem.collegeId] || "Unknown College"}</span>
+                          <span style={styles.modalInfoValue}>{collegeNames[selectedItem.collegeName] || "Unknown College"}</span>
                         </div>
                       </div>
                     )}
@@ -658,18 +685,19 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
               </div>
 
               <div style={styles.modalButtons}>
-                {/* <button 
-                  style={{...styles.modalButton, ...styles.editButton}}
-                  onClick={() => {}}
-                >
-                  <FaEdit style={{ marginRight: "8px" }} /> Edit
-                </button> */}
-                <button
-                  style={{ ...styles.modalButton, ...styles.visitButton }}
-                  onClick={() => handleDelete(type, selectedItem.id)}
-                >
-                  <FaTrash style={{ marginRight: "8px" }} /> Delete
-                </button>
+              <button 
+  style={{...styles.modalButton, ...styles.visitButton}}
+  onClick={(e) => {
+    e.stopPropagation(); // Prevent modal from closing immediately
+    AlertModal.confirmDelete(() => {
+      deleteItem(type, selectedItem.id);
+    });
+  }}
+>
+  <FaTrash style={{ marginRight: "8px" }} /> Delete
+</button>
+
+
               </div>
             </div>
           </div>
