@@ -114,7 +114,7 @@ const LeaderboardPages = ({ type = "college" }) => {
         </div>
         <div className="user-menu">
           <div className="user-icon" onClick={() => setShowLoginOption(!showLoginOption)}>
-            <img src="/v.png" alt="User" />
+            <img src="/settings.png" alt="User" />
             <img src="/da.png" className="arrow-icon" alt="Arrow" />
           </div>
           {showLoginOption && (
@@ -164,7 +164,7 @@ const LeaderboardPages = ({ type = "college" }) => {
 
 
       <div className="ranking-section">
-        <h2 className="section-heading">Global Ranking</h2>
+        {/* <h2 className="section-heading">Global Ranking</h2> */}
         <div className="table-container">
           <table className="ranking-table">
             <thead>

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/auth"; // Base URL for authentication API
+const API_URL = "http://localhost:8080/auth"; 
 
 
 export const signup = async (signupDto, token) => {
