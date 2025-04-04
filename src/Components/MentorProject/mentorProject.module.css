@@ -1,0 +1,104 @@
+.mentor-projects {
+    padding: 10px;
+    
+}
+
+/* Left Section - Project List */
+.project-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Project Card */
+.project-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+    color: #d3c9c9;
+    
+}
+
+.project-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(131, 230, 148, 0.15);
+}
+
+.project-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.project-card p {
+    font-size: 18px;
+    opacity: 0.9;
+   
+}
+
+/* View More Button */
+.view-more {
+    background-color: #5EB5AE;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.view-more:hover {
+    background-color: #007250;
+    transform: scale(1.05);
+}
+
+/* Right Section - Project Details */
+.project-details {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    margin-right: 100px;
+    margin-left: 100px;
+    margin-top: 100px;
+}
+
+.project-details h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+   
+}
+
+.project-details p {
+    font-size: 14px;
+    margin-bottom: 15px;
+   
+}
+
+.project-details h4 {
+    font-size: 1.3rem;
+    margin-top: 20px;
+    
+}
+
+.list-group-item {
+    background: rgb(255, 255, 255);
+    border: none;
+    padding: 10px;
+    font-size: 14px;
+}
+
+/* Buttons */
+.btn {
+    padding: 8px 12px;
+    border-radius: 5px;
+    transition: transform 0.2s ease;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+}

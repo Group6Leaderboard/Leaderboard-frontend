@@ -1,27 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import styles from "./leaderboard.module.css";
 
 const StudentLeaderboard = () => {
   const navigate = useNavigate();
-
   const leaders = [
-    { name: "Varun K", points: "98", wins: 43, tasks: 167, image: "v.png" },
-    { name: "Aparna KP", points: "96", wins: 37, tasks: 132, image: "aa.png" },
-    { name: "Jacob M", points: "92", wins: 32, tasks: 68, image: "j.png" },
+    { name: "Varun K", points: "98", wins: 43, tasks: 167, achievements: 476, image: "v.png" },
+    { name: "Aparna KP", points: "96", wins: 37, tasks: 132, achievements: 482, image: "aa.png" },
+    { name: "Jacob M", points: "92", wins: 32, tasks: 68, achievements: 268, image: "j.png" },
   ];
 
   const ranking = [
-    { rank: 1, name: "Varun K", proj: 236, college: "ST Thomas", points: "98" },
-    { rank: 2, name: "Aparna KP", proj: 167, college: "Rajadhani", points: "96" },
-    { rank: 3, name: "Jacob M", proj: 146, college: "Christ", points: "92" },
-    { rank: 4, name: "Aisha R", proj: 120, college: "Amity", points: "89" },
-    { rank: 5, name: "Rahul N", proj: 100, college: "IIT Bombay", points: "85" },
-    { rank: 6, name: "Meera S", proj: 95, college: "IIM Ahmedabad", points: "80" },
-    { rank: 7, name: "Siddharth L", proj: 90, college: "MIT", points: "78" },
-    { rank: 8, name: "Neha P", proj: 85, college: "NIT Trichy", points: "75" },
-    { rank: 9, name: "Vikram J", proj: 80, college: "BITS Pilani", points: "72" },
-    { rank: 10, name: "Ananya M", proj: 75, college: "Delhi University", points: "70" },
+    { rank: 1, name: "Varun K", id: "1591245", proj: 236, college: "ST Thomas", points: "98" },
+    { rank: 2, name: "Aparna KP", id: "1391245", proj: 167, college: "Rajadhani", points: "96" },
+    { rank: 3, name: "Jacob M", id: "1892245", proj: 146, college: "Christ", points: "92" },
   ];
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -35,13 +27,16 @@ const StudentLeaderboard = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <h1 className={styles.title}>Student Leaderboard</h1>
-        <button className={styles.loginButton} onClick={() => navigate("/login")}>
-          Login
-        </button>
-      </div>
+      {/* Title and Login Button Wrapper */}
+            <div className={styles.header}>
+              <h1 className={styles.title}>Student Leaderboard</h1>
+              <button className={styles.loginButton} onClick={() => navigate("/login")}>
+                Login
+              </button>
+            </div>
+      
 
+      {/* Navbar with NavLink */}
       <div className={styles.navbar}>
         <NavLink to="/leaderboard/projects" className={({ isActive }) => (isActive ? styles.active : "")}>
           Projects
@@ -54,6 +49,7 @@ const StudentLeaderboard = () => {
         </NavLink>
       </div>
 
+      {/* Content */}
       <h2 className={styles.sectionTitle}>Current Leaders</h2>
       <div className={styles.leaders}>
         {leaders.map((leader, index) => (

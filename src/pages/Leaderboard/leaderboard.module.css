@@ -1,4 +1,4 @@
-
+/* Container for the whole page */
 .container {
     text-align: center;
     padding: 20px;
@@ -9,7 +9,7 @@
     background-repeat: no-repeat;
     min-height: 100vh; 
   }
-
+  /* Header container for title and login button */
 .header {
   display: flex;
   justify-content: space-between;
@@ -17,7 +17,7 @@
   padding: 20px;
 }
 
-
+/* Login Button */
 .loginButton {
   background-color: #ffbb00;
   color: white;
@@ -42,13 +42,13 @@
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-left: 60px; 
+  margin-left: 60px; /* Moves title 30px to the right */
 }
-
+  /* Navbar Styling */
   .navbar {
     display: flex;
     justify-content: center;
-    gap: 25px; 
+    gap: 25px; /* Increased gap for better spacing */
     margin-top: 20px;
     margin-bottom: 30px;
     background-color: rgba(252, 252, 252, 0);
@@ -56,10 +56,10 @@
     border-radius: 5px;
   }
   .navbar a {
-    text-decoration: none;
-    font-size: 1.2rem; 
+    text-decoration: none; /* Remove underline */
+    font-size: 1.2rem; /* Restore text size */
     color: white;
-    padding: 10px 15px; 
+    padding: 10px 15px; /* Ensure proper spacing */
     border-radius: 10px;
     transition: background 0.3s ease, color 0.3s ease;
   }
@@ -72,7 +72,7 @@
     cursor: pointer;
     transition: 0.3s ease;
     text-transform: uppercase;
-    border-radius: 10px;  
+    border-radius: 10px;  /* Rounded edges */
   }
   
   .navbar button:hover {
@@ -90,21 +90,21 @@
     color: #ffffff;
     font-weight: bold;
   }
-
+  /* Hover effect */
 .navbar a:hover {
     background-color: #fcdc5d;
     color: #ffffff;
   }
   
   
- 
+  /* Section title styling */
   .sectionTitle {
     font-size: 1.5rem;
     color: #ffffff;
     margin: 20px 0;
   }
   
-
+  /* Leader Cards */
   .leaders {
     display: flex;
     justify-content: center;
@@ -124,15 +124,15 @@
     border: 2px solid #c5b53d;
   }
   .first {
-    background-image: url('/tg.png'); 
-   
+    background-image: url('/gold.png'); /* Change this to your actual image */
 }
 
-
+/* Second Leader (Silver) */
 .second {
-    background-image: url('/ts.png'); 
+    background-image: url('/silverr.png'); /* Change this to your actual image */
 }
 
+/* Third Leader (Bronze) */
 .third {
     background-image: url('/brons.png'); 
     
@@ -162,72 +162,47 @@
     color: #ffffff;
   }
   
-
+ /* Table Container */
 .tableContainer {
-    width: 90%;
+    width: 80%;
     margin: auto;
     overflow-x: auto;
 }
 
-
+/* Make the table semi-transparent */
 table {
     width: 100%;
     border-collapse: collapse;
-    background: rgba(255, 255, 255, 0.15); 
-    backdrop-filter: blur(2px); 
+    background: rgba(255, 255, 255, 0.15); /* Light transparent white */
+    backdrop-filter: blur(2px); /* Adds a slight blur effect */
 }
 
-
+/* Table Headers */
 th, td {
     padding: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Light transparent border */
     text-align: center;
-    color: white; 
+    color: white; /* Ensures text is readable */
 }
 
-
+/* Header row styling */
 th {
-    background: rgba(0, 0, 0, 0.8); 
+    background: rgba(0, 0, 0, 0.8); /* Darker semi-transparent background */
     color: white;
 }
 
-
+/* Alternate row styling */
 tr:nth-child(even) {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.1); /* Light transparent row */
 }
 
-
+/* Table Row Hover Effect */
 tr:hover {
-    border: 2px solid #c5b53d; 
-    background: rgba(255, 255, 255, 0.2); 
-}
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20px;
-  gap: 15px;
+    border: 2px solid #c5b53d; /* Gold border when hovered */
+    background: rgba(255, 255, 255, 0.2); /* Slight highlight */
 }
 
-.pageButton {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 5px;
-}
-
-.pageButton:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.pageIcon {
-  width: 30px; /* Adjust as needed */
-  height: 30px;
-}
-
-
-
+/* Adjust for Mobile Phones */
 @media (max-width: 480px) {
     .container {
         padding: 10px;
@@ -240,24 +215,23 @@ tr:hover {
     border-radius: 8px;
     padding: 5px;
   }
-  
     .navbar {
         flex-direction: column;
-        align-items: center; 
+        align-items: center; /* Ensures all options are centered */
         gap: 5px;
     }
 
     .navbar a, .navbar button {
         font-size: 0.9rem;
         padding: 8px;
-        width: fit-content;
-        display: inline-block;
+        width: fit-content; /* Only as wide as its content */
+        display: inline-block; /* Prevents flexbox from stretching */
         text-align: center;
     }
 
     .navbar .active {
-        width: fit-content;
-        display: inline-block; 
+        width: fit-content; /* Ensures it fits content */
+        display: inline-block; /* Keeps it from stretching */
         text-align: center;
     }
 

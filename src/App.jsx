@@ -16,8 +16,6 @@ import StudentTasks from "./Components/StudentTasks/StudentTask";
 import List from "./Components/List/List";
 import HeaderAdmin from "./Components/HeaderAdmin/HeaderAdmin";
 const App = () => {
-  
-
   return (
    
       <Routes>

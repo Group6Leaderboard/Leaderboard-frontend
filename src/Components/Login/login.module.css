@@ -24,25 +24,17 @@
   .loginBox {
     background-color: #e2e2d1;
     width: 90%; /* Adjusts to screen size */
-    max-width: 350px; /* Smaller width for compact look */
-    max-height: 450px; /* Prevents it from stretching */
+    max-width: 450px; /* Smaller width for compact look */
+    max-height: 500px; /* Prevents it from stretching */
     padding: 25px; /* Slightly reduced padding */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     text-align: center;
   }
-
-  .logoSection {
-    margin-bottom: 10px;
-  }
-  
-  .logo {
-    width: 120px;
-    height: auto;
-  }
   
   .welcomeBack h2 {
     font-size: 1.8rem;
+    text-align: left;
     color: #333;
     margin-bottom: 10px;
     font-weight: 300;
@@ -69,7 +61,7 @@
   }
   .loginBtn {
     margin-top: 10px;
-    width: 80%;
+    width: 100%;
     background-color: #5EB5AE;
     color: white;
     padding: 5px;
@@ -83,7 +75,22 @@
   .loginBtn:hover {
     background-color: #02414B;
   }
+  .rememberMe {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    font-size: 14px;
+  }
   
+  .rememberMe input {
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  
+  .rememberMe label {
+    cursor: pointer;
+    margin-top: 0px;
+  }
   
   @media (max-width: 1000px) {
     .loginContainer {

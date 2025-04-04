@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import styles from "./assignForm.module.css";
 import StatsCard from "../RectangleCards/Statscard";
 import { createProject, getAllProjects } from "../../services/projectService";
 import { getAllColleges } from "../../services/collegeService";
 import { getUsers } from "../../services/userService";
 import { assignProject } from "../../services/studentProjectService";
-import { getAllTasks } from "../../services/taskService";
+import { getAllTasks, createTask } from "../../services/taskService";
+import ListModal from "../ListModal/ListModal";
 
 const AssignForm = ({ role }) => {
   const [colleges, setColleges] = useState([]);
@@ -15,6 +15,7 @@ const AssignForm = ({ role }) => {
   const [selectedMentor, setSelectedMentor] = useState("");
   const [members, setMembers] = useState([""]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isListModal, setIsListModal] = useState(false);
   const [students, setStudents] = useState([]);
   const [currentMemberIndex, setCurrentMemberIndex] = useState(null);
   const [totalProjects, setTotalProjects] = useState(0);
@@ -23,6 +24,10 @@ const AssignForm = ({ role }) => {
   const [totalTasks, setTotalTasks] = useState(0);
   const [submittedTasks, setSubmittedTasks] = useState(0);
   const [toBeReviewedTasks, setToBeReviewedTasks] = useState(0);
+  const [projects, setProjects] = useState([]);
+  const [collegename, setCollegeName] = useState("");
+  const [filteredStudents, setFilteredStudents] = useState([]);
+
 
   const [formData, setFormData] = useState({
     name: "",
@@ -31,11 +36,26 @@ const AssignForm = ({ role }) => {
     mentorId: "",
     members: [],
     collegeName: "",
-    lastDate: ""
+    lastDate: "",
+    localDateTime: "",
+    projectId: "",
+    projectName: ""
   });
 
 
   useEffect(() => {
+    if (collegename) {
+      const collegeStudents = students.filter(student => student.collegeName === collegename);
+      console.log("Filtered Students:", collegeStudents);
+      setFilteredStudents(collegeStudents);
+    } else {
+      setFilteredStudents([]);
+    }
+  }, [collegename, students]);
+
+
+  useEffect(() => {
+
 
     const fetchStats = async () => {
       try {
@@ -54,11 +74,10 @@ const AssignForm = ({ role }) => {
       } catch (error) {
         console.error("Error fetching stats", error);
       }
-    }
+    };
 
     const fetchStatsAdmin = async () => {
       try {
-
         const projects = await getAllProjects();
         setTotalProjects(projects.response.length);
 
@@ -67,13 +86,22 @@ const AssignForm = ({ role }) => {
         setTotalStudents(studentsResponse.response.length);
 
 
-
-
       } catch (error) {
         console.error("Error fetching stats", error);
       }
     }
 
+    const fetchProjects = async () => {
+      try {
+
+        const projects = await getAllProjects();
+
+        setProjects(projects.response);
+
+      } catch (error) {
+        console.error("Error fetching stats", error);
+      }
+    }
     const fetchColleges = async () => {
       try {
         const response = await getAllColleges();
@@ -93,65 +121,85 @@ const AssignForm = ({ role }) => {
       }
     };
 
-
-
     if (role === "admin") {
       fetchColleges();
       fetchMentors();
       fetchStatsAdmin();
-    }
-    else {
+    } else {
       fetchStats();
+      fetchProjects();
     }
   }, [role]);
 
-  const fetchStudentsByCollege = async (collegeId) => {
-    if (!collegeId) {
-      alert("Please select a college first");
+  const fetchStudentsByCollege = async (collegename) => {
+    console.log("Fetching students forhghhghcgf:", collegename);
+
+    if (!collegename) {
+      setAlertTitle("Error");
+      setAlertMessage("Please select a college first");
+      setShowAlert(true);
       return [];
     }
 
     try {
-
-      const filteredStudents = students.filter(student => student.collegeId === String(collegeId));
-
+      const filteredStudents = students.filter(student => student.collegeName === collegename);
+      console.log("Filtered Students:", filteredStudents);
       return filteredStudents;
     } catch (error) {
       console.error("Error fetching students:", error);
+      setAlertTitle("Error");
+      setAlertMessage("Error fetching students");
+      setShowAlert(true);
       return [];
     }
   };
 
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevData => ({
-      ...prevData,
-      [name]: value,
-    }));
+
+    if (name === "lastDate") {
+      const localDateTime = `${value}T00:00:00`;
+
+      setFormData((prevData) => ({
+        ...prevData,
+        lastDate: value,
+        localDateTime: localDateTime,
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
   };
 
-  const handleMemberClick = async (index) => {
-    if (!selectedCollege || selectedCollege === "") {
-      alert("Please select a college first");
+
+  const handleMemberClick = (index) => {
+    if (!selectedCollege) {
+      setAlertTitle("Error");
+      setAlertMessage("Please select a college first");
+      setShowAlert(true);
       return;
     }
 
-
     setCurrentMemberIndex(index);
-
-    const collegeStudents = await fetchStudentsByCollege(selectedCollege);
-
-    setStudents(collegeStudents);
     setIsModalOpen(true);
   };
-
+  
   const handleStudentSelect = (student) => {
-    const updatedMembers = [...members];
-    updatedMembers[currentMemberIndex] = { id: student.id, name: student.name }; // Store both ID & name
-    setMembers(updatedMembers);
+    setMembers((prevMembers) => {
+      const newMembers = [...prevMembers];
+      newMembers[currentMemberIndex] = student;
+      return newMembers;
+    });
+  
+    setFilteredStudents((prevFiltered) =>
+      prevFiltered.filter((s) => s.id !== student.id)
+    );
+  
     setIsModalOpen(false);
   };
-
 
   const addMember = () => {
     if (members.length < 4) {
@@ -160,25 +208,51 @@ const AssignForm = ({ role }) => {
   };
 
   const removeMember = (index) => {
-    if (members.length > 1) {
-      const updatedMembers = members.filter((_, i) => i !== index);
-      setMembers(updatedMembers);
-    }
+    setMembers((prevMembers) => {
+      const removedMember = prevMembers[index];
+      const updatedMembers = prevMembers.filter((_, i) => i !== index);
+  
+      if (removedMember) {
+        setFilteredStudents((prevFiltered) => [...prevFiltered, removedMember]);
+      }
+  
+      return updatedMembers;
+    });
   };
+
 
   const handleCollegeChange = (e) => {
     const selectedCollegeId = e.target.value;
     const selectedCollegeObj = colleges.find(college => college.id === selectedCollegeId);
 
-    setSelectedCollege(selectedCollegeId);
-    setFormData(prevData => ({
-      ...prevData,
-      collegeId: selectedCollegeId,
-      collegeName: selectedCollegeObj ? selectedCollegeObj.name : ''
-    }));
+    if (selectedCollegeObj) {
+      setCollegeName(selectedCollegeObj.name);
+      setSelectedCollege(selectedCollegeId);
+
+      setFormData(prevData => ({
+        ...prevData,
+        collegeId: selectedCollegeId,
+        collegeName: selectedCollegeObj.name
+      }));
+
+      setMembers([{ name: "" }]);
+      setFilteredStudents([]);
+    } else {
+      setCollegeName('');
+      setSelectedCollege('');
+    }
 
     e.target.size = 1;
     e.target.blur();
+  };
+
+  const handleProjectSelect = (selectedProject) => {
+    setFormData(prevData => ({
+      ...prevData,
+      projectId: selectedProject.id,
+      projectName: selectedProject.name
+    }));
+    setIsListModal(false);
   };
 
   const handleMentorChange = (e) => {
@@ -192,6 +266,7 @@ const AssignForm = ({ role }) => {
       mentorName: selectedMentorObj ? `${selectedMentorObj.name} (${selectedMentorObj.email})` : ''
     }));
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -214,20 +289,32 @@ const AssignForm = ({ role }) => {
             })
           );
 
-          alert("Project Assigned Successfully");
+          setAlertTitle("Success");
+          setAlertMessage("Project Assigned Successfully");
+          setShowAlert(true);
           resetForm();
         } else {
           throw new Error("Project ID not found in response");
         }
-      } else {
-        console.log("No task assignment implemented");
+      } else if (role === "mentor") {
+
+        const taskData = {
+          name: formData.name,
+          description: formData.description,
+          dueDate: formData.localDateTime,
+          assignedTo: formData.projectId
+        };
+        const response = await createTask(taskData);
+        alert("Task Assigned Successfully");
+        resetForm();
       }
     } catch (error) {
       console.error("Error:", error);
-      alert(error.message || "Something went wrong");
+      setAlertTitle("Error");
+      setAlertMessage(error.message || "Something went wrong");
+      setShowAlert(true);
     }
   };
-
 
 
   const resetForm = () => {
@@ -240,15 +327,18 @@ const AssignForm = ({ role }) => {
       collegeName: "",
       mentorName: "",
       lastDate: "",
+      localDateTime: "",
+      projectId: "",
+      projectName: "",
     });
     setSelectedCollege("");
     setSelectedMentor("");
     setMembers([""]);
+    setProjects("");
   };
 
   return (
     <div className={styles.container}>
-
       <div className={styles.statsContainer}>
         {role === "admin" ? (
           <>
@@ -266,7 +356,7 @@ const AssignForm = ({ role }) => {
       </div>
 
       <div className={styles.formContainer}>
-        <h2>{role === "admin" ? "Assign Project" : "Assign Task"}</h2>
+        <h2>{role === "admin" ? "CREATE PROJECT" : "ASSIGN TASK"}</h2>
         <form onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
             <label>Name</label>
@@ -328,6 +418,8 @@ const AssignForm = ({ role }) => {
                     onChange={handleCollegeChange}
                     className={styles.selectBox}
                     required
+                    // onFocus={(e) => e.target.size = 4}
+                    onBlur={(e) => e.target.size = 1}
                   >
                     <option value="" disabled>Select College</option>
                     {colleges.map((college) => (
@@ -379,20 +471,40 @@ const AssignForm = ({ role }) => {
 
             </>
           ) : (
-            <div className={styles.formGroup}>
-              <label>Last Date</label>
-              <input
-                type="date"
-                name="lastDate"
-                value={formData.lastDate}
-                onChange={handleChange}
-                className={styles.inputBox}
-                required
-              />
-            </div>
+            <>
+              <div className={styles.dropdownContainer}>
+                <label className={styles.dropdownLabel}>Select Project</label>
+                <input
+                  type="text"
+                  className={styles.inputBox}
+                  readOnly
+                  value={formData.projectName || "Choose a project"}
+                  onClick={() => setIsListModal(true)}
+                />
+
+                <ListModal
+                  isOpen={isListModal}
+                  onClose={() => setIsListModal(false)}
+                  data={projects}
+                  onSelect={handleProjectSelect}
+                />
+              </div>
+
+              <div className={styles.dueDate}>
+                <label>Due Date</label>
+                <input
+                  type="date"
+                  name="lastDate"
+                  value={formData.lastDate}
+                  onChange={handleChange}
+                  className={styles.inputBox}
+                  required
+                />
+              </div>
+            </>
           )}
 
-          <button type="submit" className={styles.assignButton}>
+          <button type="submit" className={styles.submitButton}>
             {role === "admin" ? "Assign Project" : "Assign Task"}
           </button>
         </form>
@@ -401,12 +513,11 @@ const AssignForm = ({ role }) => {
         <div className={styles.modal}>
           <div className={styles.modalContent}>
             <h3>Select a Student</h3>
-            {students.length > 0 ? (
+            {filteredStudents.length > 0 ? (
               <ul>
-                {students.map((student) => (
-                  <li key={student.id}
-                    onClick={() => handleStudentSelect(student)}>
-                    {student.name}
+                {filteredStudents.map((student) => (
+                  <li key={student.id} onClick={() => handleStudentSelect(student)}>
+                    {student.name} {/* ✅ Corrected this line */}
                   </li>
                 ))}
               </ul>
@@ -417,12 +528,9 @@ const AssignForm = ({ role }) => {
           </div>
         </div>
       )}
+
     </div>
-
-
   );
-
 };
-
 
 export default AssignForm;

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React from "react";
 import styles from "./projectDescriptionCard.module.css";
 import { FaUser, FaTasks, FaEnvelope, FaPhone } from "react-icons/fa";
 import TaskModal from "../TaskModal/TaskModal"; // Import TaskModal component

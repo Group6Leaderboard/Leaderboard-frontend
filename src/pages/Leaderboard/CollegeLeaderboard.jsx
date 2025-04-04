@@ -1,42 +1,26 @@
-import React, { useState } from "react";
+import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import styles from "./leaderboard.module.css";
 
 const CollegeLeaderboard = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Hook for navigation
 
   const leaders = [
-    { name: "ST Thomas", points: "98", wins: 43, tasks: 167, image: "collegea.png" },
-    { name: "Rajadhani", points: "96", wins: 37, tasks: 132, image: "collegea.png" },
-    { name: "Christ", points: "92", wins: 32, tasks: 68, image: "collegea.png" },
+    { name: "ST Thomas", points: "98", wins: 43, tasks: 167, achievements: 476, image: "collegea.png" },
+    { name: "Rajadhani", points: "96", wins: 37, tasks: 132, achievements: 482, image: "collegea.png" },
+    { name: "Christ", points: "92", wins: 32, tasks: 68, achievements: 268, image: "collegea.png" },
   ];
 
   // Updated 10 records
   const ranking = [
-    { rank: 1, name: "ST Thomas", proj: 236, college: "ST Thomas", points: "98" },
-    { rank: 2, name: "Rajadhani", proj: 167, college: "Rajadhani", points: "96" },
-    { rank: 3, name: "Christ", proj: 146, college: "Christ", points: "92" },
-    { rank: 4, name: "Amity", proj: 120, college: "Amity", points: "89" },
-    { rank: 5, name: "IIT Bombay", proj: 100, college: "IIT Bombay", points: "85" },
-    { rank: 6, name: "IIM Ahmedabad", proj: 95, college: "IIM Ahmedabad", points: "80" },
-    { rank: 7, name: "MIT", proj: 90, college: "MIT", points: "78" },
-    { rank: 8, name: "NIT Trichy", proj: 85, college: "NIT Trichy", points: "75" },
-    { rank: 9, name: "BITS Pilani", proj: 80, college: "BITS Pilani", points: "72" },
-    { rank: 10, name: "Delhi University", proj: 75, college: "Delhi University", points: "70" },
+    { rank: 1, name: "ST Thomas", id: "1591245", proj: 236, college: "ST Thomas", points: "98" },
+    { rank: 2, name: "Rajadhani", id: "1391245", proj: 167, college: "Rajadhani", points: "96" },
+    { rank: 3, name: "Christ", id: "1892245", proj: 146, college: "Christ", points: "92" },
   ];
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // Show 5 records per page
-
-  // Pagination logic
-  const lastIndex = currentPage * itemsPerPage;
-  const firstIndex = lastIndex - itemsPerPage;
-  const currentItems = ranking.slice(firstIndex, lastIndex);
-
-  const totalPages = Math.ceil(ranking.length / itemsPerPage);
 
   return (
     <div className={styles.container}>
+      {/* Title and Login Button Wrapper */}
       <div className={styles.header}>
         <h1 className={styles.title}>College Leaderboard</h1>
         <button className={styles.loginButton} onClick={() => navigate("/login")}>
@@ -44,6 +28,7 @@ const CollegeLeaderboard = () => {
         </button>
       </div>
 
+      {/* Navbar */}
       <div className={styles.navbar}>
         <NavLink to="/leaderboard/projects" className={({ isActive }) => (isActive ? styles.active : "")}>
           Projects
@@ -56,6 +41,7 @@ const CollegeLeaderboard = () => {
         </NavLink>
       </div>
 
+      {/* Content */}
       <h2 className={styles.sectionTitle}>Current Leaders</h2>
       <div className={styles.leaders}>
         {leaders.map((leader, index) => (
@@ -91,7 +77,7 @@ const CollegeLeaderboard = () => {
             {currentItems.map((user, index) => (
               <tr key={index}>
                 <td>{user.rank}</td>
-                <td>{user.name}</td>
+                <td>{user.name} <br /><small>ID {user.id}</small></td>
                 <td>{user.proj}</td>
                 <td>{user.points}</td>
               </tr>
