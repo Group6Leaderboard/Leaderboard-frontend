@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { signup } from "../../services/authService";
 import { getAllColleges } from "../../services/collegeService"; 
 import styles from "./addUser.module.css";
+import AlertModal from "../AlertModal/AlertModal";
+
 
 const AddUser = ({ type, onClose }) => {
   const [formData, setFormData] = useState({
@@ -37,19 +39,28 @@ const AddUser = ({ type, onClose }) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-
+  
     try {
       let finalData = { ...formData, role: type.toUpperCase() };
       await signup(finalData);
-      alert(`${type.charAt(0).toUpperCase() + type.slice(1)} added successfully!`);
+  
+      // Show success alert
+      AlertModal.success(
+        `${type.charAt(0).toUpperCase() + type.slice(1)} Added`,
+        `${type.charAt(0).toUpperCase() + type.slice(1)} has been added successfully!`
+      );
+  
       onClose(); // Close the AddUser card after success
     } catch (err) {
       setError(err.message || "Failed to add user.");
+  
+      // Show error alert
+      AlertModal.error("Failed to Add User", err.message || "Something went wrong.");
     } finally {
       setLoading(false);
     }
   };
-
+  
   return (
     <div className={styles.addUserContainer}>
       <div className={styles.card}>

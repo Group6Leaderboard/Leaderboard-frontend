@@ -1,5 +1,5 @@
-import React from "react";
 import Swal from "sweetalert2";
+import "./alertModal.module.css";
 
 const AlertModal = {
   success: (title = "Success", message = "Operation completed successfully!") => {
@@ -29,7 +29,7 @@ const AlertModal = {
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
+      cancelButtonColor: "#5EB5AE",
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {

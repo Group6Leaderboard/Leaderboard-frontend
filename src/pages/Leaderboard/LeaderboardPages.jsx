@@ -9,7 +9,7 @@ const LeaderboardPages = ({ type = "college" }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   
-  // Data for each leaderboard type
+ 
   const leaderboardData = {
     college: {
       leaders: [
@@ -127,7 +127,7 @@ const LeaderboardPages = ({ type = "college" }) => {
 
       <div className="navigation-tabs">
         <NavLink to="/leaderboard/projects" className={({ isActive }) => isActive ? "tab active-tab" : "tab"}>
-          Projects
+          Projects 
         </NavLink>
         <NavLink to="/leaderboard/students" className={({ isActive }) => isActive ? "tab active-tab" : "tab"}>
           Students
