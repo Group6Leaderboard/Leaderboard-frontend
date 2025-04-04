@@ -26,6 +26,7 @@ const AssignForm = ({ role }) => {
   const [toBeReviewedTasks, setToBeReviewedTasks] = useState(0);
   const [projects, setProjects] = useState([]);
   const [collegename, setCollegeName] = useState("");
+  const [filteredStudents, setFilteredStudents] = useState([]);
 
 
   const [formData, setFormData] = useState({
@@ -42,8 +43,19 @@ const AssignForm = ({ role }) => {
   });
 
 
+  useEffect(() => {
+    if (collegename) {
+      const collegeStudents = students.filter(student => student.collegeName === collegename);
+      console.log("Filtered Students:", collegeStudents);
+      setFilteredStudents(collegeStudents);
+    } else {
+      setFilteredStudents([]);
+    }
+  }, [collegename, students]);
+
 
   useEffect(() => {
+
 
     const fetchStats = async () => {
       try {
@@ -119,10 +131,10 @@ const AssignForm = ({ role }) => {
     }
   }, [role]);
 
-  const fetchStudentsByCollege = async (selectedCollege) => {
+  const fetchStudentsByCollege = async (collegename) => {
+    console.log("Fetching students forhghhghcgf:", collegename);
 
-    if (!selectedCollege) {
-      console.log("No college selected. Showing alert.");
+    if (!collegename) {
       setAlertTitle("Error");
       setAlertMessage("Please select a college first");
       setShowAlert(true);
@@ -130,10 +142,8 @@ const AssignForm = ({ role }) => {
     }
 
     try {
-      const filteredStudents = students.filter(student => {
-        console.log(`Checking student: ${student.name}, College: ${student.collegeName}`);
-        return student.collegeName === String(selectedCollege);
-      });
+      const filteredStudents = students.filter(student => student.collegeName === collegename);
+      console.log("Filtered Students:", filteredStudents);
       return filteredStudents;
     } catch (error) {
       console.error("Error fetching students:", error);
@@ -165,8 +175,8 @@ const AssignForm = ({ role }) => {
   };
 
 
-  const handleMemberClick = async (index) => {
-    if (!selectedCollege || selectedCollege === "") {
+  const handleMemberClick = (index) => {
+    if (!selectedCollege) {
       setAlertTitle("Error");
       setAlertMessage("Please select a college first");
       setShowAlert(true);
@@ -174,15 +184,20 @@ const AssignForm = ({ role }) => {
     }
 
     setCurrentMemberIndex(index);
-    const collegeStudents = await fetchStudentsByCollege(selectedCollege);
-    setStudents(collegeStudents);
     setIsModalOpen(true);
   };
-
+  
   const handleStudentSelect = (student) => {
-    const updatedMembers = [...members];
-    updatedMembers[currentMemberIndex] = { id: student.id, name: student.name };
-    setMembers(updatedMembers);
+    setMembers((prevMembers) => {
+      const newMembers = [...prevMembers];
+      newMembers[currentMemberIndex] = student;
+      return newMembers;
+    });
+  
+    setFilteredStudents((prevFiltered) =>
+      prevFiltered.filter((s) => s.id !== student.id)
+    );
+  
     setIsModalOpen(false);
   };
 
@@ -193,24 +208,39 @@ const AssignForm = ({ role }) => {
   };
 
   const removeMember = (index) => {
-    if (members.length > 1) {
-      const updatedMembers = members.filter((_, i) => i !== index);
-      setMembers(updatedMembers);
-    }
+    setMembers((prevMembers) => {
+      const removedMember = prevMembers[index];
+      const updatedMembers = prevMembers.filter((_, i) => i !== index);
+  
+      if (removedMember) {
+        setFilteredStudents((prevFiltered) => [...prevFiltered, removedMember]);
+      }
+  
+      return updatedMembers;
+    });
   };
 
 
   const handleCollegeChange = (e) => {
     const selectedCollegeId = e.target.value;
-
     const selectedCollegeObj = colleges.find(college => college.id === selectedCollegeId);
 
-    setSelectedCollege(selectedCollegeObj ? selectedCollegeObj.name : '');
-    setFormData(prevData => ({
-      ...prevData,
-      collegeId: selectedCollegeId,
-      collegeName: selectedCollegeObj ? selectedCollegeObj.name : ''
-    }));
+    if (selectedCollegeObj) {
+      setCollegeName(selectedCollegeObj.name);
+      setSelectedCollege(selectedCollegeId);
+
+      setFormData(prevData => ({
+        ...prevData,
+        collegeId: selectedCollegeId,
+        collegeName: selectedCollegeObj.name
+      }));
+
+      setMembers([{ name: "" }]);
+      setFilteredStudents([]);
+    } else {
+      setCollegeName('');
+      setSelectedCollege('');
+    }
 
     e.target.size = 1;
     e.target.blur();
@@ -482,12 +512,11 @@ const AssignForm = ({ role }) => {
         <div className={styles.modal}>
           <div className={styles.modalContent}>
             <h3>Select a Student</h3>
-            {students.length > 0 ? (
+            {filteredStudents.length > 0 ? (
               <ul>
-                {students.map((student) => (
-                  <li key={student.id}
-                    onClick={() => handleStudentSelect(student)}>
-                    {student.name}
+                {filteredStudents.map((student) => (
+                  <li key={student.id} onClick={() => handleStudentSelect(student)}>
+                    {student.name} {/* ✅ Corrected this line */}
                   </li>
                 ))}
               </ul>
@@ -498,6 +527,7 @@ const AssignForm = ({ role }) => {
           </div>
         </div>
       )}
+
     </div>
   );
 };
