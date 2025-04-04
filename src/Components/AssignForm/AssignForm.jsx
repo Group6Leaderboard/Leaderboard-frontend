@@ -235,7 +235,8 @@ const AssignForm = ({ role }) => {
         collegeName: selectedCollegeObj.name
       }));
 
-      console.log("Selected College:", selectedCollegeObj.name);
+      setMembers([{ name: "" }]);
+      setFilteredStudents([]);
     } else {
       setCollegeName('');
       setSelectedCollege('');
