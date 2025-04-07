@@ -3,6 +3,7 @@ import { FaEdit, FaTrash, FaEllipsisH, FaSearch, FaEnvelope, FaPhone, FaMapMarke
 import { getCollegeById, deleteCollege } from "../../services/collegeService";
 import { deleteUser } from "../../services/userService";
 import fallbackImage from "../../assets/fallback.jpg";
+import AlertModal from "../AlertModal/AlertModal";
 
 
 // CSS styles
@@ -86,13 +87,13 @@ const styles = {
     flexDirection: "column",
     width: "100%",
     gap: "10px",
-    margin:"0",
+    margin: "0",
     alignItems: "center",
   },
   infoItem: {
-     display: "flex",
-     alignItems: "center",
-     justifyContent: "center",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     gap: "8px",
   },
   infoText: {
@@ -157,7 +158,7 @@ const styles = {
     color: "#000",
     marginTop: "5px",
   },
-  
+
   // Modal styles
   modalOverlay: {
     position: "fixed",
@@ -346,7 +347,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [selectedItem, setSelectedItem] = useState(null);
-  
+
   const itemsPerPage = 6;
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -392,35 +393,60 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
 
   useEffect(() => {
     setFilteredData(
-      data.filter(item => 
+      data.filter(item =>
         item.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
     );
   }, [data, searchTerm]);
 
-  const handleDelete = async (type, userId, event) => {
-    if (event) {
-      event.stopPropagation();
-    }
+  // const handleDelete = async (type, userId, event) => {
+  //   if (event) {
+  //     event.stopPropagation();
+  //   }
     
-    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
-    if (!confirmDelete) return;
+  //   const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+  //   if (!confirmDelete) return;
 
+  //   try {
+  //     if (type === "college") {
+  //       await deleteCollege(userId);
+  //       alert("User deleted successfully!");
+  //     } else {
+  //       await deleteUser(userId);
+  //       alert("User deleted successfully!");
+  //     }
+  //     if (onDeleteSuccess) onDeleteSuccess();
+  //   } catch (error) {
+  //     alert("Failed to delete user. Please try again.");
+  //     console.error("Error deleting user:", error);
+  //   }
+  // };
+
+  const handleDelete = (type, id, event) => {
+    event.stopPropagation(); // Optional, but test without this if modal still doesn't show
+  
+    AlertModal.confirmDelete(() => {
+      deleteItem(type, id).then(() => {
+        setSelectedItem(null); // Ensure modal closes after deletion
+      });
+    });
+  };
+  
+  const deleteItem = async (type, id) => {
     try {
-      if (type === "college") {
-        await deleteCollege(userId);
-        alert("User deleted successfully!");
-      } else {
-        await deleteUser(userId);
-        alert("User deleted successfully!");
-      }
+      await fetch(`/api/${type}/${id}`, { method: "DELETE" });
+  
+      setFilteredData((prevData) => prevData.filter((item) => item.id !== id));
+      
       if (onDeleteSuccess) onDeleteSuccess();
+  
+      AlertModal.success("Deleted!", "The item has been successfully deleted.");
     } catch (error) {
-      alert("Failed to delete user. Please try again.");
-      console.error("Error deleting user:", error);
+      AlertModal.error("Deletion Failed", "Something went wrong while deleting the item.");
     }
   };
-
+  
+  
   const getJobTitle = (item) => {
     if (type === "student") return "Student";
     if (type === "college") return "Institution";
@@ -432,7 +458,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
     if (event) {
       event.stopPropagation();
     }
-    
+
     setSelectedItem(item);
     if (onViewMore) {
       onViewMore(item);
@@ -477,15 +503,15 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
             <h1 style={styles.appTitle}>{getTypeTitle()}</h1>
             {/* <p style={styles.appSubtitle}>Showing {filteredData.length} of {data.length} profiles</p> */}
             <p style={styles.appSubtitle}>
-  Showing {Math.min(currentItems.length, data.length - (currentPage - 1) * itemsPerPage)} of {data.length} contacts
-</p>
+              Showing {Math.min(currentItems.length, data.length - (currentPage - 1) * itemsPerPage)} of {data.length} contacts
+            </p>
 
           </div>
           <div style={styles.searchBar}>
             <FaSearch color="#aaa" />
-            <input 
-              type="text" 
-              placeholder="Search here " 
+            <input
+              type="text"
+              placeholder="Search here "
               style={styles.searchInput}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -502,7 +528,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
               <div key={item.id} style={styles.userCard}>
                 <div style={styles.cardContent}>
                   <img
-                    src={item.image || fallbackImage}
+                    src={`data:image/jpeg;base64,${item.image}`}
                     onError={(e) => { e.target.onerror = null; e.target.src = fallbackImage; }}
                     alt={item.name}
                     style={styles.profileImage}
@@ -510,14 +536,15 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
                   <h3 style={styles.userName}>{item.name}</h3>
                   <p style={styles.userRole}>
                     {type === "student" ? (item.collegeName || "Loading...") : getJobTitle(item)}
+                    
                   </p>
-                  
+
                   <div style={styles.infoContainer}>
                     <div style={styles.infoItem}>
                       <FaEnvelope color="#000" />
                       <span style={styles.infoText}>{item.email || "No email available"}</span>
                     </div>
-                    
+
                     {type === "college" ? (
                       <div style={styles.infoItem}>
                         <FaMapMarkerAlt color="#000" />
@@ -532,13 +559,13 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
                   </div>
 
                   <div style={styles.buttonContainer}>
-                    <button 
+                    <button
                       style={styles.viewMoreButton}
                       onClick={(e) => handleViewMore(item, e)}
                     >
                       View More
                     </button>
-                    <button 
+                    <button
                       style={styles.deleteButton}
                       onClick={(e) => handleDelete(type, item.id, e)}
                     >
@@ -569,7 +596,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
           </div>
         )}
 
-        {/* Modal for selected item */}
+
         {selectedItem && (
           <div style={styles.modalOverlay} onClick={handleCloseModal}>
             <div style={styles.modalContainer} onClick={(e) => e.stopPropagation()}>
@@ -587,7 +614,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
                   <h2 style={styles.modalName}>{selectedItem.name}</h2>
                   <p style={styles.modalLocation}>
                     {type === "student" 
-                      ? collegeNames[selectedItem.collegeId] || "Unknown College" 
+                      ? collegeNames[selectedItem.collegeName] || "Unknown College" 
                       : (type === "college" ? selectedItem.location : getJobTitle(selectedItem))}
                   </p>
                 </div>
@@ -637,7 +664,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
                         </div>
                         <div style={styles.modalInfoContent}>
                           <span style={styles.modalInfoLabel}>College</span>
-                          <span style={styles.modalInfoValue}>{collegeNames[selectedItem.collegeId] || "Unknown College"}</span>
+                          <span style={styles.modalInfoValue}>{collegeNames[selectedItem.collegeName] || "Unknown College"}</span>
                         </div>
                       </div>
                     )}
@@ -659,18 +686,19 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
               </div>
 
               <div style={styles.modalButtons}>
-                {/* <button 
-                  style={{...styles.modalButton, ...styles.editButton}}
-                  onClick={() => {}}
-                >
-                  <FaEdit style={{ marginRight: "8px" }} /> Edit
-                </button> */}
-                <button 
-                  style={{...styles.modalButton, ...styles.visitButton}}
-                  onClick={() => handleDelete(type, selectedItem.id)}
-                >
-                  <FaTrash style={{ marginRight: "8px" }} /> Delete
-                </button>
+              <button 
+  style={{...styles.modalButton, ...styles.visitButton}}
+  onClick={(e) => {
+    e.stopPropagation(); // Prevent modal from closing immediately
+    AlertModal.confirmDelete(() => {
+      deleteItem(type, selectedItem.id);
+    });
+  }}
+>
+  <FaTrash style={{ marginRight: "8px" }} /> Delete
+</button>
+
+
               </div>
             </div>
           </div>

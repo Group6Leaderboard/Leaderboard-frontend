@@ -1,5 +1,5 @@
 import React from "react";
-import {   Routes, Route } from "react-router-dom"; // Import useLocation here
+import {   Routes, Route, Navigate } from "react-router-dom"; // Import useLocation here
 import DashboardRoutes from './routes/DashboardRoutes'
 import Login from "./Components/Login/Login"
 import StudentDash from "./Components/StudentDash/StudentDash";
@@ -15,6 +15,10 @@ import SubmittedTask from "./Components/SubmittedTask/SubmittedTask";
 import StudentTasks from "./Components/StudentTasks/StudentTask";
 import List from "./Components/List/List";
 import HeaderAdmin from "./Components/HeaderAdmin/HeaderAdmin";
+import NotFound from "./Components/NotFound/NotFound";
+import { CollegeLeaderboard } from "./pages/Leaderboard/LeaderboardPages";
+import { StudentLeaderboard } from "./pages/Leaderboard/LeaderboardPages";
+import { ProjectLeaderboard } from "./pages/Leaderboard/LeaderboardPages";
 const App = () => {
   return (
    
@@ -28,7 +32,13 @@ const App = () => {
    {/* <Route path="/" element={<TaskModal />} /> */}
    {/* <Route path="/" element={<MentorDash />} /> */}
    {/* <Route path="/" element={<SubmittedTask />} /> */}
-   <Route path="/" element={<HeaderAdmin/>} />
+   <Route path="/login/*" element={<NotFound />} />
+      {/* <Route path="/leaderboard/*" element={<AppRoutes />} /> */}
+      <Route path="/" element={<Navigate to="/leaderboard/colleges" />} />
+        <Route path="/leaderboard/colleges" element={<CollegeLeaderboard />} />
+        <Route path="/leaderboard/projects" element={<ProjectLeaderboard />} />
+        <Route path="/leaderboard/students" element={<StudentLeaderboard />} />
+   {/* <Route path="/" element={<HeaderAdmin/>} /> */}
 
 
       </Routes>
