@@ -336,7 +336,6 @@ const AssignForm = ({ role }) => {
       mentorName: selectedMentorObj ? `${selectedMentorObj.name} (${selectedMentorObj.email})` : ''
     }));
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
