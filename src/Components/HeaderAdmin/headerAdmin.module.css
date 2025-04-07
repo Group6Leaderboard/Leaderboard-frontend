@@ -27,10 +27,11 @@
 
 /* Style the heading */
 .headerAdminType h2 {
-    font-size: 0px;
+    font-size: 70px;
     color: #5EB5AE;
     font-weight: bold;
     text-transform: uppercase;
+    z-index: 1000;
 }
 
 /* Style the dynamic icons */

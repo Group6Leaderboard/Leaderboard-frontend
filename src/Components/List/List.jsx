@@ -147,6 +147,7 @@ const styles = {
     border: "none",
   },
   appTitle: {
+    Color: "#5EB5AE",
     fontSize: "24px",
     fontWeight: "bold",
     marginBottom: "0",
@@ -508,7 +509,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
                   />
                   <h3 style={styles.userName}>{item.name}</h3>
                   <p style={styles.userRole}>
-                    {type === "student" ? (collegeNames[item.collegeId] || "Loading...") : getJobTitle(item)}
+                    {type === "student" ? (item.collegeName || "Loading...") : getJobTitle(item)}
                   </p>
                   
                   <div style={styles.infoContainer}>

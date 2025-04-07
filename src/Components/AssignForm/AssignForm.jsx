@@ -7,6 +7,7 @@ import { getUsers } from "../../services/userService";
 import { assignProject } from "../../services/studentProjectService";
 import { getAllTasks, createTask } from "../../services/taskService";
 import ListModal from "../ListModal/ListModal";
+import AlertModal from "../AlertModal/AlertModal";
 
 const AssignForm = ({ role }) => {
   const [colleges, setColleges] = useState([]);
@@ -266,53 +267,46 @@ const AssignForm = ({ role }) => {
       mentorName: selectedMentorObj ? `${selectedMentorObj.name} (${selectedMentorObj.email})` : ''
     }));
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
     try {
       if (role === "admin") {
         const projectData = {
           name: formData.name,
           description: formData.description,
           collegeId: selectedCollege,
-          mentorId: selectedMentor
+          mentorId: selectedMentor,
         };
-
+  
         const response = await createProject(projectData);
         const projectId = response?.response?.id;
-
-        console.log("Extracted Project ID:", projectId);
+  
         if (projectId) {
           await Promise.all(
-            members.map(async (member) => {
-              await assignProject(member.id, projectId);
-            })
+            members.map((member) => assignProject(member.id, projectId))
           );
-
-          setAlertTitle("Success");
-          setAlertMessage("Project Assigned Successfully");
-          setShowAlert(true);
+  
+          AlertModal.success("Success", "Project Assigned Successfully!");
           resetForm();
         } else {
           throw new Error("Project ID not found in response");
         }
       } else if (role === "mentor") {
-
         const taskData = {
           name: formData.name,
           description: formData.description,
           dueDate: formData.localDateTime,
-          assignedTo: formData.projectId
+          assignedTo: formData.projectId,
         };
-        const response = await createTask(taskData);
-        alert("Task Assigned Successfully");
+  
+        await createTask(taskData);
+        AlertModal.success("Success", "Task Assigned Successfully!");
         resetForm();
       }
     } catch (error) {
       console.error("Error:", error);
-      setAlertTitle("Error");
-      setAlertMessage(error.message || "Something went wrong");
-      setShowAlert(true);
+      AlertModal.error("Error", error.message || "Something went wrong!");
     }
   };
 
