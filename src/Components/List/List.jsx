@@ -402,7 +402,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
   //   if (event) {
   //     event.stopPropagation();
   //   }
-    
+
   //   const confirmDelete = window.confirm("Are you sure you want to delete this user?");
   //   if (!confirmDelete) return;
 
@@ -423,29 +423,29 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
 
   const handleDelete = (type, id, event) => {
     event.stopPropagation(); // Optional, but test without this if modal still doesn't show
-  
+
     AlertModal.confirmDelete(() => {
       deleteItem(type, id).then(() => {
         setSelectedItem(null); // Ensure modal closes after deletion
       });
     });
   };
-  
+
   const deleteItem = async (type, id) => {
     try {
       await fetch(`/api/${type}/${id}`, { method: "DELETE" });
-  
+
       setFilteredData((prevData) => prevData.filter((item) => item.id !== id));
-      
+
       if (onDeleteSuccess) onDeleteSuccess();
-  
+
       AlertModal.success("Deleted!", "The item has been successfully deleted.");
     } catch (error) {
       AlertModal.error("Deletion Failed", "Something went wrong while deleting the item.");
     }
   };
-  
-  
+
+
   const getJobTitle = (item) => {
     if (type === "student") return "Student";
     if (type === "college") return "Institution";
@@ -527,7 +527,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
               <div key={item.id} style={styles.userCard}>
                 <div style={styles.cardContent}>
                   <img
-                    src={`data:image/jpeg;base64,${item.image}`}
+                    src={item.image ? `data:image/jpeg;base64,${item.image}` : fallbackImage}
                     onError={(e) => { e.target.onerror = null; e.target.src = fallbackImage; }}
                     alt={item.name}
                     style={styles.profileImage}
@@ -535,7 +535,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
                   <h3 style={styles.userName}>{item.name}</h3>
                   <p style={styles.userRole}>
                     {type === "student" ? (item.collegeName || "Loading...") : getJobTitle(item)}
-                    
+
                   </p>
 
                   <div style={styles.infoContainer}>
@@ -577,10 +577,9 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
           )}
         </div>
 
-        {/* Pagination */}
         {totalPages > 1 && (
           <div style={styles.pagination}>
-            {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1).map((page) => (
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
               <div
                 key={page}
                 style={{
@@ -612,8 +611,8 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
                   />
                   <h2 style={styles.modalName}>{selectedItem.name}</h2>
                   <p style={styles.modalLocation}>
-                    {type === "student" 
-                      ? collegeNames[selectedItem.collegeName] || "Unknown College" 
+                    {type === "student"
+                      ? collegeNames[selectedItem.collegeName] || "Unknown College"
                       : (type === "college" ? selectedItem.location : getJobTitle(selectedItem))}
                   </p>
                 </div>
@@ -685,17 +684,17 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
               </div>
 
               <div style={styles.modalButtons}>
-              <button 
-  style={{...styles.modalButton, ...styles.visitButton}}
-  onClick={(e) => {
-    e.stopPropagation(); // Prevent modal from closing immediately
-    AlertModal.confirmDelete(() => {
-      deleteItem(type, selectedItem.id);
-    });
-  }}
->
-  <FaTrash style={{ marginRight: "8px" }} /> Delete
-</button>
+                <button
+                  style={{ ...styles.modalButton, ...styles.visitButton }}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent modal from closing immediately
+                    AlertModal.confirmDelete(() => {
+                      deleteItem(type, selectedItem.id);
+                    });
+                  }}
+                >
+                  <FaTrash style={{ marginRight: "8px" }} /> Delete
+                </button>
 
 
               </div>
@@ -704,6 +703,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
         )}
       </div>
     </div>
+    
   );
 };
 

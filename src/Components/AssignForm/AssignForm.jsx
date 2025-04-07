@@ -17,7 +17,8 @@ const AssignForm = ({ role }) => {
   const [mentors, setMentors] = useState([]);
   const [selectedCollege, setSelectedCollege] = useState("");
   const [selectedMentor, setSelectedMentor] = useState("");
-  const [members, setMembers] = useState([""]);
+  const [members, setMembers] = useState([{ name: "" }]);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isListModal, setIsListModal] = useState(false);
   const [students, setStudents] = useState([]);
@@ -60,10 +61,11 @@ const AssignForm = ({ role }) => {
       lastDate: date ? date.toISOString().split("T")[0] : '',
     }));
   };
-  const projectOptions = projects.map((project) => ({
+  const projectOptions = (projects || []).map((project) => ({
     value: project.id,
     label: project.name,
   }));
+  
   const customSelectStyles = {
     control: (provided, state) => ({
       ...provided,
@@ -272,7 +274,7 @@ const AssignForm = ({ role }) => {
 
   const addMember = () => {
     if (members.length < 4) {
-      setMembers([...members, ""]);
+      setMembers([...members, { name: "" }]);
     }
   };
 
@@ -337,7 +339,7 @@ const AssignForm = ({ role }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
       if (role === "admin") {
         const projectData = {
@@ -346,15 +348,15 @@ const AssignForm = ({ role }) => {
           collegeId: selectedCollege,
           mentorId: selectedMentor,
         };
-  
+
         const response = await createProject(projectData);
         const projectId = response?.response?.id;
-  
+
         if (projectId) {
           await Promise.all(
             members.map((member) => assignProject(member.id, projectId))
           );
-  
+
           AlertModal.success("Success", "Project Assigned Successfully!");
           resetForm();
         } else {
@@ -367,7 +369,7 @@ const AssignForm = ({ role }) => {
           dueDate: formData.localDateTime,
           assignedTo: formData.projectId,
         };
-  
+
         await createTask(taskData);
         AlertModal.success("Success", "Task Assigned Successfully!");
         resetForm();
@@ -395,8 +397,7 @@ const AssignForm = ({ role }) => {
     });
     setSelectedCollege("");
     setSelectedMentor("");
-    setMembers([]);
-    setProjects("");
+    setMembers([{ name: "" }]);
   };
 
   return (
@@ -451,7 +452,13 @@ const AssignForm = ({ role }) => {
                 <div className={styles.selectWrapper}>
                   <Select
                     options={mentorOptions}
-                    onChange={(selected) => setSelectedMentor(selected.value)}
+                    onChange={(selected) => {
+                      setSelectedMentor(selected.value);
+                      setFormData(prevData => ({
+                        ...prevData,
+                        mentorId: selected.value
+                      }));
+                    }}
                     placeholder="Select Mentor"
                     styles={customSelectStyles}
                     className={styles.customDropdown}
