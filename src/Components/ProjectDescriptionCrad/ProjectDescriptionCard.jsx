@@ -1,13 +1,12 @@
-
-import React from "react";
+import React, { useState } from "react";
 import styles from "./projectDescriptionCard.module.css";
 import { FaUser, FaTasks, FaEnvelope, FaPhone } from "react-icons/fa";
 import TaskModal from "../TaskModal/TaskModal"; // Import TaskModal component
 
+
 const ProjectDescriptionCard = ({ project }) => {
   const [isModalOpen, setIsModalOpen] = useState(false); // State to manage modal visibility
 
-  // Function to open the modal
   const handleViewTasksClick = () => {
     setIsModalOpen(true);
   };

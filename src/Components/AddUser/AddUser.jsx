@@ -1,8 +1,68 @@
 import React, { useState, useEffect } from "react";
 import { signup } from "../../services/authService";
-import { getAllColleges } from "../../services/collegeService"; 
+import { getAllColleges } from "../../services/collegeService";
 import styles from "./addUser.module.css";
 import AlertModal from "../AlertModal/AlertModal";
+import Select from "react-select";
+
+const customSelectStyles = {
+  control: (provided, state) => ({
+    ...provided,
+    padding: "6px 10px",
+    marginBottom: "15px",
+    border: "1px solid",
+    borderColor: state.isFocused ? "#000" : "#ddd",
+    borderRadius: "5px",
+    fontSize: "14px",
+    width: "95%", 
+    backgroundColor: "#fff",
+    boxShadow: "none",
+    cursor: "pointer",
+    minHeight: "38px",
+  }),
+
+  option: (provided, state) => ({
+    ...provided,
+    backgroundColor: state.isSelected
+      ? "#5eb5ae"
+      : state.isFocused
+      ? "#e6f5f4"
+      : "#fff",
+    color: state.isSelected || state.isFocused ? "#000" : "#333",
+    fontSize: "14px",
+    padding: "10px 15px",
+    cursor: "pointer",
+  }),
+
+  placeholder: (provided) => ({
+    ...provided,
+    color: "#888",
+    fontSize: "14px",
+  }),
+
+  singleValue: (provided) => ({
+    ...provided,
+    color: "#333",
+    fontSize: "14px",
+  }),
+
+  menu: (provided) => ({
+    ...provided,
+    borderRadius: "5px",
+    boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+    zIndex: 20,
+  }),
+
+  dropdownIndicator: (provided) => ({
+    ...provided,
+    color: "#5eb5ae",
+    padding: "0 8px",
+  }),
+
+  indicatorSeparator: () => ({
+    display: "none",
+  }),
+};
 
 
 const AddUser = ({ type, onClose }) => {
@@ -10,7 +70,7 @@ const AddUser = ({ type, onClose }) => {
     name: "",
     email: "",
     phone: "",
-    collegeId: "", 
+    collegeId: "",
   });
   const [colleges, setColleges] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -37,30 +97,36 @@ const AddUser = ({ type, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if(type === "studnet") {
+      if (!formData.collegeId) {
+        AlertModal.error("College required...Failed to add user");
+        return;
+      }
+    }
     setLoading(true);
     setError("");
-  
+
     try {
       let finalData = { ...formData, role: type.toUpperCase() };
       await signup(finalData);
+
   
-      // Show success alert
       AlertModal.success(
         `${type.charAt(0).toUpperCase() + type.slice(1)} Added`,
         `${type.charAt(0).toUpperCase() + type.slice(1)} has been added successfully!`
       );
-  
-      onClose(); // Close the AddUser card after success
+
+      onClose(); 
     } catch (err) {
       setError(err.message || "Failed to add user.");
-  
-      // Show error alert
+
+   
       AlertModal.error("Failed to Add User", err.message || "Something went wrong.");
     } finally {
       setLoading(false);
     }
   };
-  
+
   return (
     <div className={styles.addUserContainer}>
       <div className={styles.card}>
@@ -86,14 +152,29 @@ const AddUser = ({ type, onClose }) => {
           {type === "student" && (
             <>
               <label className={styles.label}>College:</label>
-              <select name="collegeId" value={formData.collegeId} onChange={handleChange} required className={styles.input}>
-                <option value="">Select a college</option>
-                {colleges.map((college) => (
-                  <option key={college.id} value={college.id}>
-                    {college.name}
-                  </option>
-                ))}
-              </select>
+              <Select
+                name="collegeId"
+                options={colleges.map((college) => ({
+                  value: college.id,
+                  label: college.name,
+                }))}
+                value={colleges
+                  .map((college) => ({
+                    value: college.id,
+                    label: college.name,
+                  }))
+                  .find((option) => option.value === formData.collegeId)}
+                onChange={(selectedOption) =>
+                  handleChange({
+                    target: {
+                      name: "collegeId",
+                      value: selectedOption ? selectedOption.value : "",
+                    },
+                  })
+                }
+                styles={customSelectStyles}
+                placeholder="Select a college"
+              />
             </>
           )}
 
