@@ -1,13 +1,13 @@
 .container {
   max-width: 900px;
-  margin: 2rem;
+  margin: 2rem auto;
   padding: 2.5rem;
   font-family: 'Inter', sans-serif;
   color: #333;
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin-left: 150px;
+
 }
 
 .statsContainer {
@@ -16,6 +16,33 @@
   margin-bottom: 3rem;
   flex-wrap: wrap;
   justify-content: center;
+}
+.dateInput {
+  display: block;
+  width: 100%;
+  padding: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background-color: #fafafa;
+  box-sizing: border-box;
+}
+:global(.react-datepicker__current-month,
+.react-datepicker__navigation) {
+  font-size: 0.5rem; /* adjust as needed */
+}
+:global(.react-datepicker__day--outside-month) {
+  color: #ccc !important; /* faded grey */
+  opacity: 0.6;
+  pointer-events: none; /* optional: disable clicking if you want */
+}
+
+.dateInput:focus {
+  outline: none;
+  border-color: #5eb5ae;
+  box-shadow: 0 0 5px rgba(94, 181, 174, 0.3);
+  background: #ffffff;
 }
 
 .statsTitle {
@@ -85,7 +112,7 @@ textarea.inputBox {
 }
 
 .selectWrapper::after {
-  content: "▼";
+
   font-size: 0.8rem;
   color: #5eb5ae;
   position: absolute;
@@ -96,6 +123,11 @@ textarea.inputBox {
   border-radius: 5px;
 }
 
+.customDropdown {
+  font-size: 16px;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
 
 .selectBox {
   appearance: none;
@@ -198,6 +230,17 @@ select::-webkit-scrollbar-track {
 
 .dueDate {
   margin-bottom: 1.5rem;
+}
+.inputBox[type="date"] {
+  padding: 0.6rem 0.8rem;
+  font-size: 0.95rem;
+  height: 2.5rem;
+}
+
+/* Optional: style the calendar icon on Chrome */
+.inputBox[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(34%) sepia(43%) saturate(300%) hue-rotate(120deg); /* Matches your green-ish tone */
+  cursor: pointer;
 }
 
 .lastInputWrapper {
@@ -306,7 +349,6 @@ select::-webkit-scrollbar-track {
 @media (max-width: 600px) {
   .modalContent {
     width: 95%;
-    padding: 1rem;
   }
 }
 
