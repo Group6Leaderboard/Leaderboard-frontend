@@ -148,6 +148,7 @@ const styles = {
     border: "none",
   },
   appTitle: {
+    Color: "#5EB5AE",
     fontSize: "24px",
     fontWeight: "bold",
     marginBottom: "0",
