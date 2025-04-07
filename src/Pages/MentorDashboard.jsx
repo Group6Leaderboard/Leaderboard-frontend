@@ -3,9 +3,10 @@ import { useLocation } from "react-router-dom";
 import styles from "./mentorDashboard.module.css";
 import AssignForm from "../Components/AssignForm/AssignForm";
 import MentorProjectView from "../Components/MentorProjectView/MentorProjectView";
-import SubmittedTask from "../Components/MentorProject/SubmittedTask";
+
 import MentorDash from "../Components/MentorDash/MentorDash";
 import { getAllProjects } from "../services/projectService";
+import MentorTaskView from "../Components/MentorTaskView/MentorTaskView";
 
 const MentorDashboard = () => {
   const location = useLocation();
@@ -42,7 +43,7 @@ const MentorDashboard = () => {
     } else if (location.pathname === "/mentor/assign-task") {
       return <AssignForm role="mentor" />;
     } else if (location.pathname === "/mentor/task") {
-      return <SubmittedTask />;
+      return <MentorTaskView />;
     } else if (location.pathname === "/mentor/projects") {
       if (loading) {
         return <div className={styles.loadingState}>Loading projects...</div>;

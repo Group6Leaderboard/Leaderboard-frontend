@@ -399,28 +399,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
     );
   }, [data, searchTerm]);
 
-  // const handleDelete = async (type, userId, event) => {
-  //   if (event) {
-  //     event.stopPropagation();
-  //   }
-    
-  //   const confirmDelete = window.confirm("Are you sure you want to delete this user?");
-  //   if (!confirmDelete) return;
-
-  //   try {
-  //     if (type === "college") {
-  //       await deleteCollege(userId);
-  //       alert("User deleted successfully!");
-  //     } else {
-  //       await deleteUser(userId);
-  //       alert("User deleted successfully!");
-  //     }
-  //     if (onDeleteSuccess) onDeleteSuccess();
-  //   } catch (error) {
-  //     alert("Failed to delete user. Please try again.");
-  //     console.error("Error deleting user:", error);
-  //   }
-  // };
+ 
 
   const handleDelete = (type, id, event) => {
     event.stopPropagation(); // Optional, but test without this if modal still doesn't show
