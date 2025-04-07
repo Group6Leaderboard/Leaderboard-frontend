@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import styles from "./login.module.css"; 
+import styles from "./login.module.css";
 import bgImage from "../../assets/logog.webp";
 import { login } from "../../services/authService";
 
 const Login = () => {
-  const [email, setEmail] = useState(localStorage.getItem("rememberedEmail") || ""); // Load saved email
+  const [email, setEmail] = useState(localStorage.getItem("rememberedEmail") || "");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);  // State for toggling password visibility
   const [error, setError] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,13 +20,13 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(""); 
+    setError("");
 
     try {
       const data = await login(email, password);
 
       if (data.message === "Success") {
-        const { token, role } = data.response; 
+        const { token, role } = data.response;
         
         localStorage.setItem("role", role);
         localStorage.setItem("token", token);
@@ -38,7 +38,7 @@ const Login = () => {
         } else if (role === "STUDENT") {
           navigate("/student");
         } else {
-          navigate("/"); 
+          navigate("/");
         }
       } else {
         setError("Invalid credentials. Please try again.");
@@ -59,32 +59,57 @@ const Login = () => {
       <div className={styles.leftHalf} style={{ backgroundImage: `url(${bgImage})` }}></div>
 
       <div className={styles.rightHalf}>
-        <div className={styles.loginBox}>
-          <div className={styles.welcomeBack}>
-            <h2>Sign in to Continue</h2>
+        <div className={styles.loginCard}>
+          <div className={styles.iconContainer}>
+            <div className={styles.signInIcon}>
+            <img src="/password.png" alt="Sign In Icon" className={styles.icon} />
+            </div>
           </div>
+          
+          <h2 className={styles.signInTitle}>Sign in with email</h2>
+          <p className={styles.signInSubtitle}>Unlock your journey to innovation—track projects, compete, and lead the leaderboard!</p>
+          
           {error && <p className={styles.errorMessage}>{error}</p>}
+          
           <form onSubmit={handleLogin}>
-            <div className={styles.inputGroup}>
-              <label>Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+            <div className={styles.inputContainer}>
+              <div className={styles.inputField}>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email"
+                  required
+                />
+              </div>
+              
+              <div className={styles.inputField}>
+                <input
+                  type={showPassword ? "text" : "password"} // Dynamically toggle input type
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Password"
+                  required
+                />
+                <button 
+                  type="button" 
+                  className={styles.passwordToggle}
+                  onClick={() => setShowPassword(!showPassword)}  // Toggle password visibility
+                >
+                  <img 
+                    src={showPassword ? "/hide.png" : "/eye.png"} // Change icon based on state
+                    alt="Toggle Password Visibility" 
+                    className={styles.icon} 
+                  />
+                </button>
+              </div>
+              
+              <div className={styles.forgotPassword}>
+                <a href="#">Forgot password?</a>
+              </div>
             </div>
-            <div className={styles.inputGroup}>
-              <label>Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-
-            <button type="submit" className={styles.loginBtn}>Login</button>
+            
+            <button type="submit" className={styles.getStartedBtn}>Login </button>
           </form>
         </div>
       </div>
