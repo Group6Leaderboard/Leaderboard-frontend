@@ -14,6 +14,12 @@
   align-items: center;
   gap: 20px;
 }
+.profileImage {
+  width: 32px;         
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
 
 .searchBar {
   display: flex;

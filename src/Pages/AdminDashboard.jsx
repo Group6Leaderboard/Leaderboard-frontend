@@ -24,7 +24,6 @@ const AdminDashboard = () => {
     : "";
 
 
-    // Extract fetchUsers function to be reusable
     const fetchUsers = async () => {
       if (!type) return;
       setLoading(true);
@@ -44,11 +43,9 @@ const AdminDashboard = () => {
       if (!type) return;
       fetchUsers();
     }, [type]);
-    console.log(type);
+   
   
-    // Toggle AddUser card visibility and refresh users when closing the modal
     const handleToggleAddUser = () => {
-      // When closing the modal, re-fetch the users to update the list
       if (showAddUser) {
         fetchUsers();
       }

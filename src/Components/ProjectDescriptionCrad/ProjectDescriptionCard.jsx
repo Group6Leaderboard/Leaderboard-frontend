@@ -7,7 +7,6 @@ import TaskModal from "../TaskModal/TaskModal"; // Import TaskModal component
 const ProjectDescriptionCard = ({ project }) => {
   const [isModalOpen, setIsModalOpen] = useState(false); // State to manage modal visibility
 
-  // Function to open the modal
   const handleViewTasksClick = () => {
     setIsModalOpen(true);
   };

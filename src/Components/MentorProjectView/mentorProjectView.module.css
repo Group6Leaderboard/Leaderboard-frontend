@@ -9,12 +9,15 @@
     min-height: 100vh;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   }
-  
-  /* Header with search */
+
   .projectsHeader {
-   
-  
-    
+    .projectHeader {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap; /* optional for responsiveness */
+      padding: 10px 0;
+    }
     margin-bottom: 24px;
   }
   
@@ -66,6 +69,7 @@
   .searchBar {
     position: relative;
     width: 280px;
+    margin-left: auto;
   }
   
   .searchIcon {
@@ -117,11 +121,14 @@
   }
 
   .statCard {
+    margin-top: 0;
     background-color: white;
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     transition: transform 0.2s, box-shadow 0.2s;
+    width: 25%;
+    min-width: 200px;
   }
   
   .statCard:hover {
@@ -369,11 +376,13 @@
   }
   
   .backSection {
+
     margin-bottom: 16px;
   }
   
   .backSection h4 {
-    margin: 0 0 8px;
+    margin-top: 10px;
+    margin-bottom: 8px;
     font-size: 14px;
     font-weight: 600;
     color: #666;

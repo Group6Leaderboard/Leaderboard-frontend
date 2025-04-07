@@ -353,6 +353,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentItems = filteredData.slice(startIndex, endIndex);
+  
 
   // Add responsive behavior
   useEffect(() => {
@@ -392,35 +393,20 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
   }, [data, type]);
 
   useEffect(() => {
-    setFilteredData(
-      data.filter(item =>
-        item.name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    );
+    if (searchTerm.trim() === '') {
+      
+      setFilteredData(data);
+    } else {
+      
+      setFilteredData(
+        data.filter(item =>
+          item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (item.email && item.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (item.phone && item.phone.toLowerCase().includes(searchTerm.toLowerCase()))
+        )
+      );
+    }
   }, [data, searchTerm]);
-
-  // const handleDelete = async (type, userId, event) => {
-  //   if (event) {
-  //     event.stopPropagation();
-  //   }
-
-  //   const confirmDelete = window.confirm("Are you sure you want to delete this user?");
-  //   if (!confirmDelete) return;
-
-  //   try {
-  //     if (type === "college") {
-  //       await deleteCollege(userId);
-  //       alert("User deleted successfully!");
-  //     } else {
-  //       await deleteUser(userId);
-  //       alert("User deleted successfully!");
-  //     }
-  //     if (onDeleteSuccess) onDeleteSuccess();
-  //   } catch (error) {
-  //     alert("Failed to delete user. Please try again.");
-  //     console.error("Error deleting user:", error);
-  //   }
-  // };
 
   const handleDelete = (type, id, event) => {
     event.stopPropagation(); // Optional, but test without this if modal still doesn't show
