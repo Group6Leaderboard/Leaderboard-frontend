@@ -1,117 +1,176 @@
-
 .loginContainer {
-    display: flex;
-    height: 100vh;
-    width: 100vw;
-  }
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+.leftHalf {
+  flex: 1;
+  background-size: cover;
+  background-position: center;
+}
+
+.rightHalf {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f5eb;
+  padding: 20px;
+}
+
+.loginCard {
+  background-color: white;
+  width: 90%;
+  max-width: 420px;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.iconContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.signInIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background-color: #f0f0f0;
+  border-radius: 50%;
+}
+
+.signInIcon img {
+  width: 24px;
+  height: 24px;
+}
+
+.signInTitle {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.signInSubtitle {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 24px;
+}
+
+.inputContainer {
+  margin-bottom: 20px;
+}
+
+.inputField {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.inputField input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: #f9f9f9;
+}
+
+.inputField input:focus {
+  outline: none;
+  border-color: #4a90e2;
+}
+
+.passwordToggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
   
+}
+
+.passwordToggle img {
+  width: 18px;
+  height: 18px;
+}
+
+.forgotPassword {
+  text-align: right;
+}
+
+.forgotPassword a {
+  color: #333;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.getStartedBtn {
+  width: 100%;
+  background-color: #5eb5ae;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+
+.getStartedBtn:hover {
+  background-color: #02414B;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #ddd;
+}
+
+.divider span {
+  padding: 0 10px;
+  font-size: 14px;
+  color: #666;
+}
+
+.errorMessage {
+  color: #e53935;
+  margin-bottom: 16px;
+  text-align: center;
+  font-size: 14px;
+}
+
+@media (max-width: 1000px) {
+  .loginContainer {
+    flex-direction: column;
+  }
+
   .leftHalf {
+    display: none; 
+  }
+
+  .rightHalf {
     flex: 1;
+    background-image: url("../../assets/logog.webp");
     background-size: cover;
     background-position: center;
   }
-  
-  .rightHalf {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f5f5eb;
-    padding: 10px;
-    transition: background-image 0.3s ease-in-out;
+
+  .loginCard {
+    background-color: rgba(255, 255, 255, 0.95);
   }
-  
-  .loginBox {
-    background-color: #e2e2d1;
-    width: 90%; /* Adjusts to screen size */
-    max-width: 450px; /* Smaller width for compact look */
-    max-height: 500px; /* Prevents it from stretching */
-    padding: 25px; /* Slightly reduced padding */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    text-align: center;
-  }
-  
-  .welcomeBack h2 {
-    font-size: 1.8rem;
-    text-align: left;
-    color: #333;
-    margin-bottom: 10px;
-    font-weight: 300;
-  }
-  
-  .inputGroup {
-    margin-bottom: 8px;
-    text-align: left;
-  }
-  
-  .inputGroup label {
-    display: block;
-    font-weight: 300;
-    margin-bottom: 2px;
-  }
-  
-  .inputGroup input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1rem;
-    box-sizing: border-box;
-  }
-  .loginBtn {
-    margin-top: 10px;
-    width: 100%;
-    background-color: #5EB5AE;
-    color: white;
-    padding: 5px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    box-sizing: border-box;
-  }
-  
-  .loginBtn:hover {
-    background-color: #02414B;
-  }
-  .rememberMe {
-    display: flex;
-    align-items: center;
-    margin-bottom: 5px;
-    font-size: 14px;
-  }
-  
-  .rememberMe input {
-    margin-right: 10px;
-    cursor: pointer;
-  }
-  
-  .rememberMe label {
-    cursor: pointer;
-    margin-top: 0px;
-  }
-  
-  @media (max-width: 1000px) {
-    .loginContainer {
-      flex-direction: column; 
-    }
-  
-    .leftHalf {
-      display: none; 
-    }
-  
-    .rightHalf {
-      flex: 1;
-      background-image: url("../../assets/logog.webp"); 
-      background-size: cover;
-      background-position: center;
-    }
-  
-    .loginBox {
-      background-color: rgba(255, 255, 255, 0.85); 
-      padding: 40px;
-      border-radius: 10px;
-    }
-  }
-  
+}

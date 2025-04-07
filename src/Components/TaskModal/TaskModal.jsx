@@ -7,7 +7,7 @@ import Calender from "../Calender/Calender";
 const TaskModal = ({
   taskName = "Design Login Page",
   taskDescription = "Create a responsive login page using React and Tailwind.",
-  dueDate = "2025-01-28",
+  dueDate = "2025-05-28",
   mentorName = "John Doe",
   mentorEmail = "john@example.com",
   mentorPhone = "+91 98765 43210",
