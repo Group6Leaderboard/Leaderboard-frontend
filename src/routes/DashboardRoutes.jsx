@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import DashboardLayout from "../Layouts/Dashboard/DashboardLayout";
 import AdminDashboard from "../Pages/AdminDashboard";
-import MentorDashboard from "../Pages/MentorDashboard"
+import MentorDashboard from "../Pages/MentorDashboard";
 import StudentDashboard from "../Pages/StudentDashboard";
 import CollegeDashboard from "../Pages/CollegeDashboard";
 import AssignForm from "../Components/AssignForm/AssignForm";
@@ -11,40 +11,72 @@ import NotFound from "../Components/NotFound/NotFound";
 
 const DashboardRoutes = () => {
   return (
-    <DashboardLayout>
-      <Routes>
-        {/* Admin Routes */}
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/students" element={<AdminDashboard />} />
-        <Route path="/admin/mentors" element={<AdminDashboard />} />
-        <Route path="/admin/colleges" element={<AdminDashboard />} />
-        <Route path="/admin/assign-project" element={<AssignForm role="admin" />} />
-        
+    <Routes>
+      {/* Routes that should have the Sidebar & Navbar */}
+      <Route
+        path="/admin/*"
+        element={
+          <DashboardLayout>
+            <Routes>
+              <Route path="" element={<AdminDashboard />} />
+              <Route path="students" element={<AdminDashboard />} />
+              <Route path="mentors" element={<AdminDashboard />} />
+              <Route path="colleges" element={<AdminDashboard />} />
+              <Route path="assign-project" element={<AssignForm role="admin" />} />
+              {/* Catch-all for invalid routes inside /admin */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </DashboardLayout>
+        }
+      />
 
+      <Route
+        path="/mentor/*"
+        element={
+          <DashboardLayout>
+            <Routes>
+              <Route path="" element={<MentorDashboard />} />
+              <Route path="assign-task" element={<MentorDashboard />} />
+              <Route path="projects" element={<MentorDashboard />} />
+              <Route path="task" element={<SubmittedTask />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </DashboardLayout>
+        }
+      />
 
-        {/* Mentor Routes */}
-        <Route path="/mentor" element={<MentorDashboard />} />
-        <Route path="/mentor/assign-task" element={<MentorDashboard />} />
-        <Route path="/mentor/projects" element={<MentorDashboard />} />
- 
-        <Route path="/mentor/assign-task" element={<AssignForm role="mentor" />} />
-        <Route path="/mentor/task" element={<SubmittedTask />} />
+      <Route
+        path="/student/*"
+        element={
+          <DashboardLayout>
+            <Routes>
+              <Route path="" element={<StudentDashboard />} />
+              <Route path="projects" element={<StudentDashboard />} />
+              <Route path="tasks" element={<StudentDashboard />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </DashboardLayout>
+        }
+      />
 
-        {/* Student Routes */}
-        <Route path="/student" element={<StudentDashboard />} />
-        <Route path="/student/projects" element={<StudentDashboard />} />
-        <Route path="/student/tasks" element={<StudentDashboard />} />
+      <Route
+        path="/college/*"
+        element={
+          <DashboardLayout>
+            <Routes>
+              <Route path="" element={<CollegeDashboard />} />
+              <Route path="projects" element={<CollegeDashboard />} />
+              <Route path="students" element={<CollegeDashboard />} />
+              <Route path="leaderboard" element={<CollegeDashboard />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </DashboardLayout>
+        }
+      />
 
-        {/* College Routes */}
-        <Route path="/college" element={<CollegeDashboard />} />
-        <Route path="/college/projects" element={<CollegeDashboard />} />
-        <Route path="/college/students" element={<CollegeDashboard />} />
-        <Route path="/college/leaderboard" element={<CollegeDashboard />} />
-
-        {/* Catch-All for Any Invalid Route */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </DashboardLayout>
+      {/* 🚀 Catch-all route for completely invalid URLs */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 };
 

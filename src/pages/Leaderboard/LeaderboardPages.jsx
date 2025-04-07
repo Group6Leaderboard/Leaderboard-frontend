@@ -181,15 +181,21 @@ const LeaderboardPages = ({ type = "college" }) => {
                     <span className="rank-number">{item.rank}</span>
                     {item.rank <= 3 && (
                       <img 
-                        src={`/${item.rank === 1 ? 'tg' : item.rank === 2 ? 'ts' : 'brons'}.png`} 
+                        src={`/${item.rank === 1 ? 'gm' : item.rank === 2 ? 'sm' : 'bm'}.png`} 
                         alt={`Rank ${item.rank}`} 
                         className="small-trophy" 
                       />
                     )}
                   </td>
                   <td>{item.name}</td>
+                 {type=== "college" && <td>{item.proj}</td>}
+                 {type=== "project" && <td>{item.college}</td>}
+                  {type === "student" &&  (
+                  <>
                   <td>{item.proj}</td>
-                  {type === "student" && <td>{item.college}</td>}
+                  <td>{item.college}</td>
+                  </>
+                  )}
                   <td className="points-cell">{item.points}</td>
                 </tr>
               ))}
