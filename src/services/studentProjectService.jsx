@@ -36,22 +36,27 @@ export const deleteStudentProject = async (studentProjectId) => {
   }
 };
 
-export const getStudentProjects = async (studentId = null, projectId = null) => {
+export const getProjectsForStudent = async (studentId) => {
   try {
-    const token = localStorage.getItem("token");
-    const params = {};
-    if (studentId) params.studentId = studentId;
-    if (projectId) params.projectId = projectId;
-
-    const response = await axios.get(API_URL, {
-      params,
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
+    const response = await axios.get(`http://localhost:8080/api/student-projects/projects`, {
+      params: { studentId }
     });
     return response.data;
   } catch (error) {
-    throw error.response ? error.response.data : { message: "Network Error" };
+    console.error("Error fetching student projects:", error);
+    throw error;
   }
 };
+
+export const getMembersForProject = async (projectId) => {
+  try {
+    const response = await axios.get(`http://localhost:8080/api/student-projects/members`, {
+      params: { projectId }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching members for project:", error);
+    throw error;
+  }
+};
+

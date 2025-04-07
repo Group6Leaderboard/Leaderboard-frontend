@@ -19,8 +19,13 @@ const Navbar = ({ userType, userData }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await getUsers(); // Call API
-        setUserD(response.response); // Store data in state
+        const res = await getUsers(); // Assuming getUsers returns the whole object
+        if (res?.status === 200 && res?.response) {
+          setUserD(res.response);
+          console.log(userD);
+        } else {
+          console.error("Invalid user data", res);
+        }
       } catch (error) {
         console.error("Failed to fetch user data", error);
       }
@@ -61,10 +66,14 @@ const Navbar = ({ userType, userData }) => {
         <div className={styles.logo}></div>
 
         <div className={styles.desktopRightSection}>
-      
+
           <div className={styles.userSection}>
-            <FaUserCircle className={styles.profileIcon} />
-            <span className={styles.username}>Abhishek</span>
+            {userD?.image ? (
+              <img src= {`data:image/jpeg;base64,${userD.image}`} alt="Profile" className={styles.profileImage} />
+            ) : (
+              <FaUserCircle className={styles.profileIcon} />
+            )}
+            <span className={styles.username}>{userD?.name || "Loading..."}</span>
             <div
               className={styles.dropdown}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
