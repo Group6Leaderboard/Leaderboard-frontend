@@ -25,21 +25,13 @@ const App = () => {
       <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/*" element={<DashboardRoutes />} />
-      {/* <Route path="/" element={<StudentDash />} /> */}
-       {/* <Route path="/" element={<LeaderBoardCard title="Student Leaderboard" type="project" />} />  */}
-  {/* <Route path="/" element={<ProjectCard />} />  */}
-   {/* <Route path="/" element={<ProjectDescriptionCard />} />   */}
-   {/* <Route path="/" element={<TaskModal />} /> */}
-   {/* <Route path="/" element={<MentorDash />} /> */}
-   {/* <Route path="/" element={<SubmittedTask />} /> */}
+
       <Route path="/login/*" element={<NotFound />} />
-      {/* <Route path="/leaderboard/*" element={<AppRoutes />} /> */}
       <Route path="/" element={<Navigate to="/leaderboard/colleges" />} />
         <Route path="/leaderboard/colleges" element={<CollegeLeaderboard />} />
         <Route path="/leaderboard/projects" element={<ProjectLeaderboard />} />
         <Route path="/leaderboard/students" element={<StudentLeaderboard />} />
         <Route path="/leaderboard/*" element={<NotFound />} />
-      {/* <Route path="/" element={<HeaderAdmin/>} /> */}
 
 
 

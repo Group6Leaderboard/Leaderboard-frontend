@@ -377,7 +377,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
       const fetchCollegeNames = async () => {
         const newCollegeNames = {};
         for (const student of data) {
-          if (student.collegeId && !collegeNames[student.collegeId]) {
+          if (student.collegeName && !collegeNames[student.collegeName]) {
             try {
               const response = await getCollegeById(student.collegeId);
               newCollegeNames[student.collegeId] = response.name || "Unknown College";
@@ -409,25 +409,30 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
   }, [data, searchTerm]);
 
   const handleDelete = (type, id, event) => {
-    event.stopPropagation(); // Optional, but test without this if modal still doesn't show
+    event.stopPropagation(); 
 
     AlertModal.confirmDelete(() => {
       deleteItem(type, id).then(() => {
-        setSelectedItem(null); // Ensure modal closes after deletion
+        setSelectedItem(null); 
       });
     });
   };
 
   const deleteItem = async (type, id) => {
     try {
-      await fetch(`/api/${type}/${id}`, { method: "DELETE" });
-
+      if (type === "student" || type === "mentor") {
+        await deleteUser(id);
+      }
+      else if (type === "college") {
+        await deleteCollege(id);
+      }
       setFilteredData((prevData) => prevData.filter((item) => item.id !== id));
-
+  
       if (onDeleteSuccess) onDeleteSuccess();
-
+  
       AlertModal.success("Deleted!", "The item has been successfully deleted.");
     } catch (error) {
+      console.error("Delete failed:", error);
       AlertModal.error("Deletion Failed", "Something went wrong while deleting the item.");
     }
   };
@@ -599,7 +604,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
                   <h2 style={styles.modalName}>{selectedItem.name}</h2>
                   <p style={styles.modalLocation}>
                     {type === "student"
-                      ? collegeNames[selectedItem.collegeName] || "Unknown College"
+                      ? selectedItem.collegeName || "Unknown College"
                       : (type === "college" ? selectedItem.location : getJobTitle(selectedItem))}
                   </p>
                 </div>
@@ -649,7 +654,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
                         </div>
                         <div style={styles.modalInfoContent}>
                           <span style={styles.modalInfoLabel}>College</span>
-                          <span style={styles.modalInfoValue}>{collegeNames[selectedItem.collegeName] || "Unknown College"}</span>
+                          <span style={styles.modalInfoValue}>{selectedItem.collegeName || "Unknown College"}</span>
                         </div>
                       </div>
                     )}

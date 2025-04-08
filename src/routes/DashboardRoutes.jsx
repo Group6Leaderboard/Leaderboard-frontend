@@ -8,42 +8,79 @@ import CollegeDashboard from "../Pages/CollegeDashboard";
 import AssignForm from "../Components/AssignForm/AssignForm";
 import SubmittedTask from "../Components/SubmittedTask/SubmittedTask";
 import NotFound from "../Components/NotFound/NotFound";
+import ProtectedRoute from "../Components/ProtectedRoute";
 
 const DashboardRoutes = () => {
   return (
-    <DashboardLayout>
+
       <Routes>
         {/* Admin Routes */}
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/students" element={<AdminDashboard />} />
-        <Route path="/admin/mentors" element={<AdminDashboard />} />
-        <Route path="/admin/colleges" element={<AdminDashboard />} />
-        <Route path="/admin/assign-project" element={<AssignForm role="admin" />} />
-
+        <Route
+          path="/admin/*"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <Routes>
+                <Route path="" element={<AdminDashboard />} />
+                <Route path="students" element={<AdminDashboard />} />
+                <Route path="mentors" element={<AdminDashboard />} />
+                <Route path="colleges" element={<AdminDashboard />} />
+                <Route path="assign-project" element={<AssignForm role="admin" />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </ProtectedRoute>
+          }
+        />
 
         {/* Mentor Routes */}
-        <Route path="/mentor" element={<MentorDashboard />} />
-        <Route path="/mentor/assign-task" element={<MentorDashboard />} />
-        <Route path="/mentor/projects" element={<MentorDashboard />} />
- 
-        <Route path="/mentor/assign-task" element={<AssignForm role="mentor" />} />
-        <Route path="/mentor/task" element={<SubmittedTask />} />
+        <Route
+          path="/mentor/*"
+          element={
+            <ProtectedRoute allowedRoles={["mentor"]}>
+              <Routes>
+                <Route path="" element={<MentorDashboard />} />
+                <Route path="assign-task" element={<AssignForm role="mentor" />} />
+                <Route path="projects" element={<MentorDashboard />} />
+                <Route path="task" element={<SubmittedTask />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </ProtectedRoute>
+          }
+        />
 
         {/* Student Routes */}
-        <Route path="/student" element={<StudentDashboard />} />
-        <Route path="/student/projects" element={<StudentDashboard />} />
-        <Route path="/student/tasks" element={<StudentDashboard />} />
+        <Route
+          path="/student/*"
+          element={
+            <ProtectedRoute allowedRoles={["student"]}>
+              <Routes>
+                <Route path="" element={<StudentDashboard />} />
+                <Route path="projects" element={<StudentDashboard />} />
+                <Route path="tasks" element={<StudentDashboard />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </ProtectedRoute>
+          }
+        />
 
-        {/* College Routes */}
-        <Route path="/college" element={<CollegeDashboard />} />
-        <Route path="/college/projects" element={<CollegeDashboard />} />
-        <Route path="/college/students" element={<CollegeDashboard />} />
-        <Route path="/college/leaderboard" element={<CollegeDashboard />} />
+        {/* College Routes (optional role check) */}
+        <Route
+          path="/college/*"
+          element={
+            <ProtectedRoute allowedRoles={["college"]}>
+              <Routes>
+                <Route path="" element={<CollegeDashboard />} />
+                <Route path="projects" element={<CollegeDashboard />} />
+                <Route path="students" element={<CollegeDashboard />} />
+                <Route path="leaderboard" element={<CollegeDashboard />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </ProtectedRoute>
+          }
+        />
 
-        {/* Catch-All for Any Invalid Route */}
+        {/* Fallback Route */}
         <Route path="*" element={<NotFound />} />
       </Routes>
-    </DashboardLayout>
   );
 };
 

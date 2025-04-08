@@ -1,7 +1,8 @@
 import React from "react";
 import styles from "./mentorDash.module.css";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import LeaderboardCard from "../LeaderBoardCard/LeaderBoardCard"; 
+import LeaderboardCard from "../LeaderBoardCard/LeaderBoardCard";
+import DashboardLayout from "../../Layouts/Dashboard/DashboardLayout";
 
 const MentorDash = () => {
   // Mock data (Replace with backend data later)
@@ -19,48 +20,50 @@ const MentorDash = () => {
   ];
 
   return (
-    <div className={styles.dashboardContainer}>
-      {/* First Row: 3 Summary Cards */}
-      <div className={styles.summaryContainer}>
-        <div className={styles.card}>
-          <h3>Total Projects</h3>
-          <p>{totalProjects}</p>
-        </div>
-        <div className={styles.card}>
-          <h3>Total Students</h3>
-          <p>{totalStudents}</p>
-        </div>
-        <div className={styles.card}>
-          <h3>Total Colleges</h3>
-          <p>{totalColleges}</p>
-        </div>
-      </div>
-
-      {/* Second Row: Graph & Leaderboard Card */}
-      <div className={styles.rowContainer}>
-        {/* Chart Section */}
-        <div className={styles.chartContainer}>
-          <h2>Project Performance</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="projects" stroke="#007bff" strokeWidth={2} />
-              <Line type="monotone" dataKey="marks" stroke="#28a745" strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
+    <DashboardLayout>
+      <div className={styles.dashboardContainer}>
+        {/* First Row: 3 Summary Cards */}
+        <div className={styles.summaryContainer}>
+          <div className={styles.card}>
+            <h3>Total Projects</h3>
+            <p>{totalProjects}</p>
+          </div>
+          <div className={styles.card}>
+            <h3>Total Students</h3>
+            <p>{totalStudents}</p>
+          </div>
+          <div className={styles.card}>
+            <h3>Total Colleges</h3>
+            <p>{totalColleges}</p>
+          </div>
         </div>
 
-        {/* Leaderboard Card */}
-        <div className={styles.leaderboardCard}>
-          <LeaderboardCard title="Mentor Leaderboard" />
-          <LeaderboardCard title="Project Leaderboard" />
+        {/* Second Row: Graph & Leaderboard Card */}
+        <div className={styles.rowContainer}>
+          {/* Chart Section */}
+          <div className={styles.chartContainer}>
+            <h2>Project Performance</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Line type="monotone" dataKey="projects" stroke="#007bff" strokeWidth={2} />
+                <Line type="monotone" dataKey="marks" stroke="#28a745" strokeWidth={2} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Leaderboard Card */}
+          <div className={styles.leaderboardCard}>
+            <LeaderboardCard title="Mentor Leaderboard" />
+            <LeaderboardCard title="Project Leaderboard" />
+          </div>
         </div>
       </div>
-    </div>
-  );
+      </DashboardLayout>
+      );
 };
 
-export default MentorDash;
+      export default MentorDash;
