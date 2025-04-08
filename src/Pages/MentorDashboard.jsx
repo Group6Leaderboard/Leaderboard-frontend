@@ -56,8 +56,9 @@ const MentorDashboard = () => {
       return <MentorProjectView projects={projects} />;
     }
     
-    // Default view
-    return <MentorDash />;
+ 
+    return( 
+    <MentorDash />);
   };
 
   return (

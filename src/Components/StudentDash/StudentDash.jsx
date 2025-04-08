@@ -1,19 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts';
 import './studentDash.css';
 import profilePic from '/yy.png';
-import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts';
+import { getUsers } from '../../services/userService';
+import Cookies from 'js-cookie';
 
-const StudentDashboard = () => {
+const StudentDash = ({ projects }) => {
+  const navigate = useNavigate();
+
   const handleRedirect = (path) => {
-    window.location.href = path;
+    navigate(path);
   };
 
-  const studentProgressData = [
-    { name: 'Project 1', score: 85, tasksAssigned: 12, tasksCompleted: 10 },
-    { name: 'Project 2', score: 92, tasksAssigned: 8, tasksCompleted: 8 },
-    { name: 'Project 3', score: 78, tasksAssigned: 15, tasksCompleted: 11 },
-    { name: 'Project 4', score: 90, tasksAssigned: 10, tasksCompleted: 7 }
-  ];
+
+  const studentProgressData = projects && projects.length > 0
+    ? projects.map((project, index) => ({
+      name: project.name || `Project ${index + 1}`,
+      score: project.score || 0,
+      tasksAssigned: project.tasksAssigned || 0,
+      tasksCompleted: project.tasksCompleted || 0
+    }))
+    : [
+      { name: 'Project 1', score: 85, tasksAssigned: 12, tasksCompleted: 10 },
+      { name: 'Project 2', score: 92, tasksAssigned: 8, tasksCompleted: 8 },
+      { name: 'Project 3', score: 78, tasksAssigned: 15, tasksCompleted: 11 },
+      { name: 'Project 4', score: 90, tasksAssigned: 10, tasksCompleted: 7 }
+    ];
 
   const COLORS = ['#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
@@ -22,7 +35,36 @@ const StudentDashboard = () => {
   const [eventName, setEventName] = useState('');
   const [showInput, setShowInput] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [userD, setUserD] = useState(null);
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await getUsers();
+        if (res?.status === 200 && res?.response) {
+          setUserD(res.response);
+          console.log(userD);
+        } else {
+          console.error("Invalid user data", res);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user data", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  useEffect(() => {
+    if (!userD?.id) return;
+
+    const cookieKey = `events_${userD.id}`;
+    const storedEvents = Cookies.get(cookieKey);
+
+    if (storedEvents) {
+      setImportantDates(JSON.parse(storedEvents));
+    }
+  }, [userD?.id]);
   const formatDateForDisplay = (date) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return date.toLocaleDateString('en-US', options);
@@ -38,20 +80,28 @@ const StudentDashboard = () => {
   };
 
   const addImportantDate = () => {
-    if (eventName.trim() && selectedDate) {
-      const newEvent = { date: selectedDate, name: eventName };
-      setImportantDates([...importantDates, newEvent]);
-      setEventName('');
-      setShowInput(false);
-    }
+    if (!eventName.trim()) return;
+
+    const newEvent = { date: selectedDate, name: eventName };
+    const updatedEvents = [...importantDates, newEvent];
+
+    setImportantDates(updatedEvents);
+    setShowInput(false);
+    setEventName("");
+
+    const cookieKey = `events_${userD.id}`;
+    Cookies.set(cookieKey, JSON.stringify(updatedEvents), { expires: 30 });
+
+
   };
+
 
   const isImportantDate = (day) => {
     return importantDates.some(event => {
       const eventDate = new Date(event.date);
       return eventDate.getDate() === day &&
-             eventDate.getMonth() === currentDate.getMonth() &&
-             eventDate.getFullYear() === currentDate.getFullYear();
+        eventDate.getMonth() === currentDate.getMonth() &&
+        eventDate.getFullYear() === currentDate.getFullYear();
     });
   };
 
@@ -59,8 +109,8 @@ const StudentDashboard = () => {
     const event = importantDates.find(event => {
       const eventDate = new Date(event.date);
       return eventDate.getDate() === day &&
-             eventDate.getMonth() === currentDate.getMonth() &&
-             eventDate.getFullYear() === currentDate.getFullYear();
+        eventDate.getMonth() === currentDate.getMonth() &&
+        eventDate.getFullYear() === currentDate.getFullYear();
     });
     return event ? event.name : '';
   };
@@ -78,8 +128,8 @@ const StudentDashboard = () => {
 
   for (let i = 1; i <= daysInMonth; i++) {
     const isToday = i === new Date().getDate() &&
-                    currentDate.getMonth() === new Date().getMonth() &&
-                    currentDate.getFullYear() === new Date().getFullYear();
+      currentDate.getMonth() === new Date().getMonth() &&
+      currentDate.getFullYear() === new Date().getFullYear();
     const isImportant = isImportantDate(i);
     const eventTitle = isImportant ? getEventName(i) : '';
 
@@ -96,13 +146,17 @@ const StudentDashboard = () => {
     );
   }
 
+  const studentName = userD && userD.name
+    ? userD.name.split(" ")[0]
+    : "John";
+
   return (
     <div className="dashboard-container">
       {/* Header */}
       <div className="header-banner">
         <div className="header-content">
           <div className="date">{formatDateForDisplay(new Date())}</div>
-          <h1>Welcome back, John!</h1>
+          <h1>Welcome back, {studentName}!</h1>
           <p>Always stay updated in your student portal</p>
         </div>
         <div className="header-graphics">
@@ -168,34 +222,42 @@ const StudentDashboard = () => {
         </div>
 
         {/* Graph */}
-        <div className="graph-container">
-          <h3 className="sub-heading">Projects & Tasks Overview</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={studentProgressData.map(project => ({
-                  name: project.name,
-                  value: project.tasksAssigned === 0 ? 0 : (project.tasksCompleted / project.tasksAssigned) * 100,
-                }))}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={100}
-                label={({  value }) => ` ${Math.round(value)}%`}
-              >
-                {studentProgressData.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip formatter={(value) => `${Math.round(value)}%`} />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
+        {userD && (
+          <div className="graph-container">
+            <h3 className="sub-heading">Projects & Score Overview</h3>
+
+            <div className="total-score-box">
+              Total Score: {userD.score}
+            </div>
+
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={studentProgressData.map(project => ({
+                    name: project.name,
+                    value: userD.score > 0 ? (project.score / userD.score) * 100 : 0,
+                  }))}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  label={({ value }) => `${Math.round(value)}%`}
+                >
+                  {studentProgressData.map((_, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(value) => `${Math.round(value)}%`} />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+
       </div>
     </div>
   );
 };
 
-export default StudentDashboard;
+export default StudentDash;

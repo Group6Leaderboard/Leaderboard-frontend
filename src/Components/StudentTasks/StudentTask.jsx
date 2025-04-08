@@ -1,44 +1,11 @@
 import React, { useState } from "react";
 import styles from "./studentTask.module.css";
 
-const StudentTasks = () => {
+const StudentTasks = ({ projectTasks, projectList }) => {
   const [activeTab, setActiveTab] = useState("submitted");
   const [selectedTask, setSelectedTask] = useState(null); // For modal
 
-  const projectTasks = [
-    {
-      taskName: "UX Improvements",
-      projectName: "Update user flows with UX feedback from Session #245",
-      dueDate: "2025-12-12",
-      submittedDate: "2025-12-11",
-      fileUrl: "https://example.com/ux-feedback.pdf",
-      status: "To Be Reviewed",
-      score: null,
-    },
-    {
-      taskName: "Wireframe Design",
-      projectName: "Wireframe splash page for new sales funnel",
-      dueDate: "2025-12-12",
-      submittedDate: "2025-12-12",
-      fileUrl: "https://example.com/wireframe.pdf",
-      status: "Completed",
-      score: 88,
-    },
-    {
-      taskName: "Q1 Budget Report",
-      projectName: "Budget planning for Q1 campaigns",
-      dueDate: "2025-02-10",
-      assignedDate: "2025-01-05",
-      status: "Pending",
-    },
-    {
-      taskName: "Mobile UI Revamp",
-      projectName: "Redesign mobile app dashboard",
-      dueDate: "2025-04-01",
-      assignedDate: "2025-03-01",
-      status: "Pending",
-    },
-  ];
+
 
   const submittedTasks = projectTasks.filter(
     (task) => task.status === "To Be Reviewed" || task.status === "Completed"
@@ -85,7 +52,7 @@ const StudentTasks = () => {
                   <th>Task Name</th>
                   <th>Project Name</th>
                   <th>Due Date</th>
-                  <th>Submitted Date</th>
+                  {/* <th>Submitted Date</th> */}
                   <th>File</th>
                   <th>Status</th>
                   <th>Score</th>
@@ -95,13 +62,21 @@ const StudentTasks = () => {
                 {submittedTasks.map((task, index) => (
                   <tr key={index}>
                     <td>{index + 1}</td>
-                    <td>{task.taskName}</td>
-                    <td>{task.projectName}</td>
-                    <td>{task.dueDate}</td>
-                    <td>{task.submittedDate || "—"}</td>
+                    <td>{task.name}</td>
+                    <td>{projectList?.[task.assignedTo] || "N/A"}</td>
+                    <td>{task.dueDate?.slice(0, 10)}</td>
+                    {/* <td>{task.submittedDate || "—"}</td> */}
                     <td>
-                      {task.fileUrl ? (
-                        <a href={task.fileUrl} download className={styles.fileLink}>
+                      {task.file ? (
+                        <a
+                          href={URL.createObjectURL(
+                            new Blob([Uint8Array.from(atob(task.file), c => c.charCodeAt(0))], {
+                              type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                            })
+                          )}
+                          download={`${task.taskName || "task"}.xlsx`}
+                          className={styles.fileLink}
+                        >
                           Download
                         </a>
                       ) : (
