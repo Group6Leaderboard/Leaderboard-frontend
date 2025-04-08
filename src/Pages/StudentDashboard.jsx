@@ -25,7 +25,8 @@ const StudentDashboard = () => {
   const [tasks, setTasks] = useState([]);
   const [activeProjectTasks, setActiveProjectTasks] = useState([]);
   const [activeTaskIndex, setActiveTaskIndex] = useState(0);
-  const [activeProject, setActiveProject] = useState(null); // Added to track active project
+  const [activeProject, setActiveProject] = useState(null); 
+  const [projectList, setProjectList] = useState({});
 
 
 
@@ -35,6 +36,11 @@ const StudentDashboard = () => {
       try {
         const data = await getAllProjects();
         setProjects(data.response);
+        const projectMap = {};
+        data.response.forEach((proj) => {
+          projectMap[proj.id] = proj.name;
+        });
+        setProjectList(projectMap);
 
         const membersPromises = data.response.map(project =>
           getMembersForProject(project.id).then(members => ({
@@ -60,7 +66,7 @@ const StudentDashboard = () => {
     fetchProjects();
   }, []);
 
-
+console.log(projectList);
   useEffect(() => {
     const fetchTasks = async () => {
       setIsLoading(true);
@@ -157,7 +163,7 @@ const StudentDashboard = () => {
     if (location.pathname === "/student/projects") {
       return renderProjectsView();
     } else if (location.pathname === "/student/tasks") {
-      return <StudentTasks />;
+      return <StudentTasks projectTasks={tasks} projectList={projectList}/>;
     } else {
       return <StudentDash projects={projectsWithMembers} />;
     }
