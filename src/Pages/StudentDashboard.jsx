@@ -157,7 +157,7 @@ const StudentDashboard = () => {
     if (location.pathname === "/student/projects") {
       return renderProjectsView();
     } else if (location.pathname === "/student/tasks") {
-      return <StudentTasks />;
+      return <StudentTasks projectTasks={tasks}/>;
     } else {
       return <StudentDash projects={projectsWithMembers} />;
     }

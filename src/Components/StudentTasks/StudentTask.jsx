@@ -1,44 +1,11 @@
 import React, { useState } from "react";
 import styles from "./studentTask.module.css";
 
-const StudentTasks = () => {
+const StudentTasks = ({ projectTasks }) =>{
   const [activeTab, setActiveTab] = useState("submitted");
   const [selectedTask, setSelectedTask] = useState(null); // For modal
 
-  const projectTasks = [
-    {
-      taskName: "UX Improvements",
-      projectName: "Update user flows with UX feedback from Session #245",
-      dueDate: "2025-12-12",
-      submittedDate: "2025-12-11",
-      fileUrl: "https://example.com/ux-feedback.pdf",
-      status: "To Be Reviewed",
-      score: null,
-    },
-    {
-      taskName: "Wireframe Design",
-      projectName: "Wireframe splash page for new sales funnel",
-      dueDate: "2025-12-12",
-      submittedDate: "2025-12-12",
-      fileUrl: "https://example.com/wireframe.pdf",
-      status: "Completed",
-      score: 88,
-    },
-    {
-      taskName: "Q1 Budget Report",
-      projectName: "Budget planning for Q1 campaigns",
-      dueDate: "2025-02-10",
-      assignedDate: "2025-01-05",
-      status: "Pending",
-    },
-    {
-      taskName: "Mobile UI Revamp",
-      projectName: "Redesign mobile app dashboard",
-      dueDate: "2025-04-01",
-      assignedDate: "2025-03-01",
-      status: "Pending",
-    },
-  ];
+  
 
   const submittedTasks = projectTasks.filter(
     (task) => task.status === "To Be Reviewed" || task.status === "Completed"
@@ -95,8 +62,8 @@ const StudentTasks = () => {
                 {submittedTasks.map((task, index) => (
                   <tr key={index}>
                     <td>{index + 1}</td>
-                    <td>{task.taskName}</td>
-                    <td>{task.projectName}</td>
+                    <td>{task.name}</td>
+                    <td>{task.assignedTo}</td>
                     <td>{task.dueDate}</td>
                     <td>{task.submittedDate || "—"}</td>
                     <td>
