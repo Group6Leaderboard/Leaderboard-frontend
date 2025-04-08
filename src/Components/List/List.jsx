@@ -409,25 +409,30 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
   }, [data, searchTerm]);
 
   const handleDelete = (type, id, event) => {
-    event.stopPropagation(); // Optional, but test without this if modal still doesn't show
+    event.stopPropagation(); 
 
     AlertModal.confirmDelete(() => {
       deleteItem(type, id).then(() => {
-        setSelectedItem(null); // Ensure modal closes after deletion
+        setSelectedItem(null); 
       });
     });
   };
 
   const deleteItem = async (type, id) => {
     try {
-      await fetch(`/api/${type}/${id}`, { method: "DELETE" });
-
+      if (type === "student" || type === "mentor") {
+        await deleteUser(id);
+      }
+      else if (type === "college") {
+        await deleteCollege(id);
+      }
       setFilteredData((prevData) => prevData.filter((item) => item.id !== id));
-
+  
       if (onDeleteSuccess) onDeleteSuccess();
-
+  
       AlertModal.success("Deleted!", "The item has been successfully deleted.");
     } catch (error) {
+      console.error("Delete failed:", error);
       AlertModal.error("Deletion Failed", "Something went wrong while deleting the item.");
     }
   };

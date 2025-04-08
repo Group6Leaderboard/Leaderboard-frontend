@@ -1,19 +1,30 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts';
 import './studentDash.css';
 import profilePic from '/yy.png';
-import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts';
 
-const StudentDashboard = () => {
+const StudentDash = ({ projects }) => {
+  const navigate = useNavigate();
+  
   const handleRedirect = (path) => {
-    window.location.href = path;
+    navigate(path);
   };
 
-  const studentProgressData = [
-    { name: 'Project 1', score: 85, tasksAssigned: 12, tasksCompleted: 10 },
-    { name: 'Project 2', score: 92, tasksAssigned: 8, tasksCompleted: 8 },
-    { name: 'Project 3', score: 78, tasksAssigned: 15, tasksCompleted: 11 },
-    { name: 'Project 4', score: 90, tasksAssigned: 10, tasksCompleted: 7 }
-  ];
+ 
+  const studentProgressData = projects && projects.length > 0 
+    ? projects.map((project, index) => ({
+        name: project.name || `Project ${index + 1}`,
+        score: project.score || 0,
+        tasksAssigned: project.tasksAssigned || 0,
+        tasksCompleted: project.tasksCompleted || 0
+      }))
+    : [
+        { name: 'Project 1', score: 85, tasksAssigned: 12, tasksCompleted: 10 },
+        { name: 'Project 2', score: 92, tasksAssigned: 8, tasksCompleted: 8 },
+        { name: 'Project 3', score: 78, tasksAssigned: 15, tasksCompleted: 11 },
+        { name: 'Project 4', score: 90, tasksAssigned: 10, tasksCompleted: 7 }
+      ];
 
   const COLORS = ['#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
@@ -96,13 +107,18 @@ const StudentDashboard = () => {
     );
   }
 
+  // Get student name from first project or use default
+  const studentName = projects && projects.length > 0 && projects[0].members && projects[0].members.length > 0
+    ? projects[0].members[0].name
+    : "John";
+
   return (
     <div className="dashboard-container">
       {/* Header */}
       <div className="header-banner">
         <div className="header-content">
           <div className="date">{formatDateForDisplay(new Date())}</div>
-          <h1>Welcome back, John!</h1>
+          <h1>Welcome back, {studentName}!</h1>
           <p>Always stay updated in your student portal</p>
         </div>
         <div className="header-graphics">
@@ -198,4 +214,4 @@ const StudentDashboard = () => {
   );
 };
 
-export default StudentDashboard;
+export default StudentDash;

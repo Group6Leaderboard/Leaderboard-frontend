@@ -10,6 +10,7 @@ import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import AlertModal from "../AlertModal/AlertModal";
+import DashboardLayout from "../../Layouts/Dashboard/DashboardLayout";
 
 
 const AssignForm = ({ role }) => {
@@ -65,7 +66,7 @@ const AssignForm = ({ role }) => {
     value: project.id,
     label: project.name,
   }));
-  
+
   const customSelectStyles = {
     control: (provided, state) => ({
       ...provided,
@@ -400,185 +401,187 @@ const AssignForm = ({ role }) => {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.statsContainer}>
-        {role === "admin" ? (
-          <>
-            <StatsCard title="Total Projects" value={totalProjects} titleClass={styles.statsTitle} valueClass={styles.statsValue} />
-            <StatsCard title="Total Students" value={totalStudents} titleClass={styles.statsTitle} valueClass={styles.statsValue} />
-            <StatsCard title="Total Mentors" value={totalMentors} titleClass={styles.statsTitle} valueClass={styles.statsValue} />
-          </>
-        ) : (
-          <>
-            <StatsCard title="Total Tasks" value={totalTasks} titleClass={styles.statsTitle} valueClass={styles.statsValue} />
-            <StatsCard title="Not Submitted" value={submittedTasks} titleClass={styles.statsTitle} valueClass={styles.statsValue} />
-            <StatsCard title="To Be Reviewed" value={toBeReviewedTasks} titleClass={styles.statsTitle} valueClass={styles.statsValue} />
-          </>
-        )}
-      </div>
-
-      <div className={styles.formContainer}>
-        <h2>{role === "admin" ? "ASSIGN NEW PROJECT" : "ASSIGN TASK"}</h2>
-        <form onSubmit={handleSubmit}>
-          <div className={styles.formGroup}>
-            <label>Name</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className={styles.inputBox}
-              required
-            />
-          </div>
-
-          <div className={styles.formGroup}>
-            <label>Description</label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              className={styles.inputBox}
-              rows="3"
-              required
-            />
-          </div>
-
+    <DashboardLayout>
+      <div className={styles.container}>
+        <div className={styles.statsContainer}>
           {role === "admin" ? (
             <>
-              <div className={styles.formGroup}>
-                <label>Mentor</label>
-                <div className={styles.selectWrapper}>
-                  <Select
-                    options={mentorOptions}
-                    onChange={(selected) => {
-                      setSelectedMentor(selected.value);
-                      setFormData(prevData => ({
-                        ...prevData,
-                        mentorId: selected.value
-                      }));
-                    }}
-                    placeholder="Select Mentor"
-                    styles={customSelectStyles}
-                    className={styles.customDropdown}
-                  />
-                </div>
-              </div>
-
-              <div className={styles.formGroup}>
-
-                <label>College</label>
-                <div className={styles.selectWrapper}>
-                  <Select
-                    options={collegeOptions}
-                    onChange={(selected) => handleCollegeChange(selected?.value)}
-                    placeholder="Select College"
-                    styles={customSelectStyles}
-                    className={styles.customDropdown}
-                  />
-
-                </div>
-              </div>
-
-
-              <div className={styles.formGroup}>
-                <label>Members</label>
-                <div className={styles.memberContainer}>
-                  {members.map((member, index) => (
-                    <div key={index} className={styles.memberInputWrapper}>
-                      <input
-                        type="text"
-                        value={member.name}
-                        onClick={() => handleMemberClick(index)}
-                        readOnly
-                        className={styles.inputBox}
-                        placeholder="Click to select a student"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeMember(index)}
-                        className={styles.removeButton}
-                        style={{ display: members.length > 1 ? "flex" : "none" }}
-                      >
-                        ❌
-                      </button>
-                    </div>
-                  ))}
-
-                  {members.length < 4 && (
-                    <div className={styles.lastInputWrapper}>
-                      <button type="button" onClick={addMember} className={styles.addButton}
-                        style={{ flex: "0 0 auto" }}
-                      >
-                        ➕
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-
+              <StatsCard title="Total Projects" value={totalProjects} titleClass={styles.statsTitle} valueClass={styles.statsValue} />
+              <StatsCard title="Total Students" value={totalStudents} titleClass={styles.statsTitle} valueClass={styles.statsValue} />
+              <StatsCard title="Total Mentors" value={totalMentors} titleClass={styles.statsTitle} valueClass={styles.statsValue} />
             </>
           ) : (
             <>
-              <div className={styles.dropdownContainer}>
-                <label className={styles.dropdownLabel}>Select Project</label>
-                <Select
-                  options={projectOptions}
-                  onChange={handleProjectSelect}
-                  value={
-                    formData.projectId
-                      ? { value: formData.projectId, label: formData.projectName }
-                      : null
-                  }
-                  placeholder="Choose a project"
-                  styles={customSelectStyles}
-                  className={styles.customDropdown}
-                />
-
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>Due Date</label>
-                <DatePicker
-                  selected={formData.lastDate ? new Date(formData.lastDate) : null}
-                  onChange={handleDateChange}
-                  dateFormat="yyyy-MM-dd"
-                  placeholderText="Select a due date"
-                  className={styles.dateInput}
-                  required
-                />
-              </div>
+              <StatsCard title="Total Tasks" value={totalTasks} titleClass={styles.statsTitle} valueClass={styles.statsValue} />
+              <StatsCard title="Not Submitted" value={submittedTasks} titleClass={styles.statsTitle} valueClass={styles.statsValue} />
+              <StatsCard title="To Be Reviewed" value={toBeReviewedTasks} titleClass={styles.statsTitle} valueClass={styles.statsValue} />
             </>
           )}
-
-          <button type="submit" className={styles.submitButton}>
-            {role === "admin" ? "Assign Project" : "Assign Task"}
-          </button>
-        </form>
-      </div>
-      {isModalOpen && (
-        <div className={styles.modal}>
-          <div className={styles.modalContent}>
-            <h3>Select a Student</h3>
-            {filteredStudents.length > 0 ? (
-              <ul>
-                {filteredStudents.map((student) => (
-                  <li key={student.id} onClick={() => handleStudentSelect(student)}>
-                    {student.name} {/* ✅ Corrected this line */}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No students found for this college.</p>
-            )}
-            <button onClick={() => setIsModalOpen(false)}>Close</button>
-          </div>
         </div>
-      )}
+
+        <div className={styles.formContainer}>
+          <h2>{role === "admin" ? "ASSIGN NEW PROJECT" : "ASSIGN TASK"}</h2>
+          <form onSubmit={handleSubmit}>
+            <div className={styles.formGroup}>
+              <label>Name</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className={styles.inputBox}
+                required
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label>Description</label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                className={styles.inputBox}
+                rows="3"
+                required
+              />
+            </div>
+
+            {role === "admin" ? (
+              <>
+                <div className={styles.formGroup}>
+                  <label>Mentor</label>
+                  <div className={styles.selectWrapper}>
+                    <Select
+                      options={mentorOptions}
+                      onChange={(selected) => {
+                        setSelectedMentor(selected.value);
+                        setFormData(prevData => ({
+                          ...prevData,
+                          mentorId: selected.value
+                        }));
+                      }}
+                      placeholder="Select Mentor"
+                      styles={customSelectStyles}
+                      className={styles.customDropdown}
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.formGroup}>
+
+                  <label>College</label>
+                  <div className={styles.selectWrapper}>
+                    <Select
+                      options={collegeOptions}
+                      onChange={(selected) => handleCollegeChange(selected?.value)}
+                      placeholder="Select College"
+                      styles={customSelectStyles}
+                      className={styles.customDropdown}
+                    />
+
+                  </div>
+                </div>
+
+
+                <div className={styles.formGroup}>
+                  <label>Members</label>
+                  <div className={styles.memberContainer}>
+                    {members.map((member, index) => (
+                      <div key={index} className={styles.memberInputWrapper}>
+                        <input
+                          type="text"
+                          value={member.name}
+                          onClick={() => handleMemberClick(index)}
+                          readOnly
+                          className={styles.inputBox}
+                          placeholder="Click to select a student"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeMember(index)}
+                          className={styles.removeButton}
+                          style={{ display: members.length > 1 ? "flex" : "none" }}
+                        >
+                          ❌
+                        </button>
+                      </div>
+                    ))}
+
+                    {members.length < 4 && (
+                      <div className={styles.lastInputWrapper}>
+                        <button type="button" onClick={addMember} className={styles.addButton}
+                          style={{ flex: "0 0 auto" }}
+                        >
+                          ➕
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+              </>
+            ) : (
+              <>
+                <div className={styles.dropdownContainer}>
+                  <label className={styles.dropdownLabel}>Select Project</label>
+                  <Select
+                    options={projectOptions}
+                    onChange={handleProjectSelect}
+                    value={
+                      formData.projectId
+                        ? { value: formData.projectId, label: formData.projectName }
+                        : null
+                    }
+                    placeholder="Choose a project"
+                    styles={customSelectStyles}
+                    className={styles.customDropdown}
+                  />
+
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>Due Date</label>
+                  <DatePicker
+                    selected={formData.lastDate ? new Date(formData.lastDate) : null}
+                    onChange={handleDateChange}
+                    dateFormat="yyyy-MM-dd"
+                    placeholderText="Select a due date"
+                    className={styles.dateInput}
+                    required
+                  />
+                </div>
+              </>
+            )}
+
+            <button type="submit" className={styles.submitButton}>
+              {role === "admin" ? "Assign Project" : "Assign Task"}
+            </button>
+          </form>
+        </div>
+        {isModalOpen && (
+          <div className={styles.modal}>
+            <div className={styles.modalContent}>
+              <h3>Select a Student</h3>
+              {filteredStudents.length > 0 ? (
+                <ul>
+                  {filteredStudents.map((student) => (
+                    <li key={student.id} onClick={() => handleStudentSelect(student)}>
+                      {student.name} {/* ✅ Corrected this line */}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No students found for this college.</p>
+              )}
+              <button onClick={() => setIsModalOpen(false)}>Close</button>
+            </div>
+          </div>
+        )}
 
 
 
-    </div>
+      </div>
+    </DashboardLayout>
   );
 };
 
