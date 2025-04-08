@@ -329,22 +329,21 @@ const styles = {
     marginTop: "5px",
   },
 };
-
-// Responsive styles for different screen sizes
 const responsiveStyles = {
   userGridTablet: {
-    gridTemplateColumns: "repeat(2, 1fr)",
+    gridTemplateColumns: 'repeat(2, 1fr)',
   },
   userGridMobile: {
-    gridTemplateColumns: "repeat(1, 1fr)",
-  }
+    gridTemplateColumns: 'repeat(1, 1fr)',
+  },
 };
 
-const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
+const List = ({ type = 'student', data = [], onDeleteSuccess, onViewMore }) => {
   const [collegeNames, setCollegeNames] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
+  const [originalData, setOriginalData] = useState(data);
   const [filteredData, setFilteredData] = useState(data);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -353,16 +352,18 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentItems = filteredData.slice(startIndex, endIndex);
-  
 
-  // Add responsive behavior
+  useEffect(() => {
+    setOriginalData(data);
+    setFilteredData(data);
+  }, [data]);
+
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Get grid style based on window width
   const getGridStyle = () => {
     if (windowWidth < 768) {
       return { ...styles.userGrid, ...responsiveStyles.userGridMobile };
@@ -373,16 +374,16 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
   };
 
   useEffect(() => {
-    if (type === "student") {
+    if (type === 'student') {
       const fetchCollegeNames = async () => {
         const newCollegeNames = {};
-        for (const student of data) {
-          if (student.collegeName && !collegeNames[student.collegeName]) {
+        for (const student of originalData) {
+          if (student.collegeId && !collegeNames[student.collegeId]) {
             try {
               const response = await getCollegeById(student.collegeId);
-              newCollegeNames[student.collegeId] = response.name || "Unknown College";
+              newCollegeNames[student.collegeId] = response.name || 'Unknown College';
             } catch (error) {
-              newCollegeNames[student.collegeId] = "Error Fetching College";
+              newCollegeNames[student.collegeId] = 'Error Fetching College';
             }
           }
         }
@@ -390,96 +391,82 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
       };
       fetchCollegeNames();
     }
-  }, [data, type]);
+  }, [originalData, type]);
 
   useEffect(() => {
     if (searchTerm.trim() === '') {
-      
-      setFilteredData(data);
+      setFilteredData(originalData);
     } else {
-      
       setFilteredData(
-        data.filter(item =>
+        originalData.filter((item) =>
           item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           (item.email && item.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (item.phone && item.phone.toLowerCase().includes(searchTerm.toLowerCase()))
         )
       );
     }
-  }, [data, searchTerm]);
+    setCurrentPage(1);
+  }, [searchTerm, originalData]);
 
   const handleDelete = (type, id, event) => {
-    event.stopPropagation(); 
-
+    event.stopPropagation();
     AlertModal.confirmDelete(() => {
-      deleteItem(type, id).then(() => {
-        setSelectedItem(null); 
-      });
+      deleteItem(type, id);
     });
   };
 
   const deleteItem = async (type, id) => {
     try {
-      if (type === "student" || type === "mentor") {
+      if (type === 'student' || type === 'mentor') {
         await deleteUser(id);
-      }
-      else if (type === "college") {
+      } else if (type === 'college') {
         await deleteCollege(id);
       }
-      setFilteredData((prevData) => prevData.filter((item) => item.id !== id));
-  
+
+      const updatedData = originalData.filter((item) => item.id !== id);
+      setOriginalData(updatedData);
+      setFilteredData(updatedData);
+
       if (onDeleteSuccess) onDeleteSuccess();
-  
-      AlertModal.success("Deleted!", "The item has been successfully deleted.");
+
+      AlertModal.success('Deleted!', 'The item has been successfully deleted.');
+      setSelectedItem(null);
     } catch (error) {
-      console.error("Delete failed:", error);
-      AlertModal.error("Deletion Failed", "Something went wrong while deleting the item.");
+      console.error('Delete failed:', error);
+      AlertModal.error('Deletion Failed', 'Something went wrong while deleting the item.');
     }
   };
 
-
   const getJobTitle = (item) => {
-    if (type === "student") return "Student";
-    if (type === "college") return "Institution";
-    if (type === "mentor") return "Mentor";
-    return "User"; // Default
+    if (type === 'student') return 'Student';
+    if (type === 'college') return 'Institution';
+    if (type === 'mentor') return 'Mentor';
+    return 'User';
   };
 
   const handleViewMore = (item, event) => {
-    if (event) {
-      event.stopPropagation();
-    }
-
+    if (event) event.stopPropagation();
     setSelectedItem(item);
-    if (onViewMore) {
-      onViewMore(item);
-    }
+    if (onViewMore) onViewMore(item);
   };
 
-  const handleCloseModal = () => {
-    setSelectedItem(null);
-  };
+  const handleCloseModal = () => setSelectedItem(null);
 
   const getTypeTitle = () => {
     switch (type) {
-      case "student":
-        return "My Students";
-      case "mentor":
-        return "My Mentors";
-      case "college":
-        return "My Colleges";
+      case 'student':
+        return 'My Students';
+      case 'mentor':
+        return 'My Mentors';
+      case 'college':
+        return 'My Colleges';
       default:
-        return "My Users";
+        return 'My Users';
     }
   };
 
-  // Prevent scroll when modal is open
   useEffect(() => {
-    if (selectedItem) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
-    }
+    document.body.style.overflow = selectedItem ? 'hidden' : 'auto';
     return () => {
       document.body.style.overflow = 'auto';
     };
@@ -488,21 +475,18 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
   return (
     <div style={styles.container}>
       <div style={styles.content}>
-        {/* Header */}
         <div style={styles.header}>
           <div>
             <h1 style={styles.appTitle}>{getTypeTitle()}</h1>
-            {/* <p style={styles.appSubtitle}>Showing {filteredData.length} of {data.length} profiles</p> */}
             <p style={styles.appSubtitle}>
-              Showing {Math.min(currentItems.length, data.length - (currentPage - 1) * itemsPerPage)} of {data.length} contacts
+              Showing {Math.min(currentItems.length, filteredData.length)} of {originalData.length} contacts
             </p>
-
           </div>
           <div style={styles.searchBar}>
             <FaSearch color="#aaa" />
             <input
               type="text"
-              placeholder="Search here "
+              placeholder="Search here"
               style={styles.searchInput}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -510,7 +494,6 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
           </div>
         </div>
 
-        {/* User Grid */}
         <div style={getGridStyle()}>
           {currentItems.length === 0 ? (
             <p>No contacts found</p>
@@ -520,46 +503,41 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
                 <div style={styles.cardContent}>
                   <img
                     src={item.image ? `data:image/jpeg;base64,${item.image}` : fallbackImage}
-                    onError={(e) => { e.target.onerror = null; e.target.src = fallbackImage; }}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = fallbackImage;
+                    }}
                     alt={item.name}
                     style={styles.profileImage}
                   />
                   <h3 style={styles.userName}>{item.name}</h3>
                   <p style={styles.userRole}>
-                    {type === "student" ? (item.collegeName || "Loading...") : getJobTitle(item)}
-
+                    {type === 'student' ? item.collegeName || 'Loading...' : getJobTitle(item)}
                   </p>
 
                   <div style={styles.infoContainer}>
                     <div style={styles.infoItem}>
                       <FaEnvelope color="#000" />
-                      <span style={styles.infoText}>{item.email || "No email available"}</span>
+                      <span style={styles.infoText}>{item.email || 'No email available'}</span>
                     </div>
-
-                    {type === "college" ? (
+                    {type === 'college' ? (
                       <div style={styles.infoItem}>
                         <FaMapMarkerAlt color="#000" />
-                        <span style={styles.infoText}>{item.location || "No location available"}</span>
+                        <span style={styles.infoText}>{item.location || 'No location available'}</span>
                       </div>
                     ) : (
                       <div style={styles.infoItem}>
                         <FaPhone color="#000" />
-                        <span style={styles.infoText}>{item.phone || "No phone available"}</span>
+                        <span style={styles.infoText}>{item.phone || 'No phone available'}</span>
                       </div>
                     )}
                   </div>
 
                   <div style={styles.buttonContainer}>
-                    <button
-                      style={styles.viewMoreButton}
-                      onClick={(e) => handleViewMore(item, e)}
-                    >
+                    <button style={styles.viewMoreButton} onClick={(e) => handleViewMore(item, e)}>
                       View More
                     </button>
-                    <button
-                      style={styles.deleteButton}
-                      onClick={(e) => handleDelete(type, item.id, e)}
-                    >
+                    <button style={styles.deleteButton} onClick={(e) => handleDelete(type, item.id, e)}>
                       Delete
                     </button>
                   </div>
@@ -576,7 +554,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
                 key={page}
                 style={{
                   ...styles.pageButton,
-                  ...(page === currentPage ? styles.activePage : {})
+                  ...(page === currentPage ? styles.activePage : {}),
                 }}
                 onClick={() => setCurrentPage(page)}
               >
@@ -585,7 +563,6 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
             ))}
           </div>
         )}
-
 
         {selectedItem && (
           <div style={styles.modalOverlay} onClick={handleCloseModal}>
@@ -596,23 +573,28 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
                 </button>
                 <div style={styles.modalProfile}>
                   <img
-                    src={selectedItem.image || fallbackImage}
-                    onError={(e) => { e.target.onerror = null; e.target.src = fallbackImage; }}
+                    src={selectedItem.image ? `data:image/jpeg;base64,${selectedItem.image}` : fallbackImage}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = fallbackImage;
+                    }}
                     alt={selectedItem.name}
-                    style={styles.modalProfileImage}
+                    style={styles.profileImage}
                   />
                   <h2 style={styles.modalName}>{selectedItem.name}</h2>
                   <p style={styles.modalLocation}>
-                    {type === "student"
-                      ? selectedItem.collegeName || "Unknown College"
-                      : (type === "college" ? selectedItem.location : getJobTitle(selectedItem))}
+                    {type === 'student'
+                      ? selectedItem.collegeName || 'Unknown College'
+                      : type === 'college'
+                        ? selectedItem.location
+                        : getJobTitle(selectedItem)}
                   </p>
                 </div>
 
-                {(type === "student" || type === "college") && (
+                {(type === 'student' || type === 'college') && (
                   <div style={styles.scoreDisplay}>
                     <div style={styles.scoreItem}>
-                      <div style={styles.scoreValue}>{selectedItem.score || "N/A"}</div>
+                      <div style={styles.scoreValue}>{selectedItem.score || 'N/A'}</div>
                       <div style={styles.scoreLabel}>Score</div>
                     </div>
                   </div>
@@ -622,52 +604,50 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
               <div style={styles.modalContent}>
                 <div style={styles.modalInfoSection}>
                   <div style={styles.modalInfoGrid}>
-                    {/* Common: Email */}
                     <div style={styles.modalInfoItem}>
                       <div style={styles.modalInfoIcon}>
                         <FaEnvelope />
                       </div>
                       <div style={styles.modalInfoContent}>
                         <span style={styles.modalInfoLabel}>Email</span>
-                        <span style={styles.modalInfoValue}>{selectedItem.email || "No email available"}</span>
+                        <span style={styles.modalInfoValue}>{selectedItem.email || 'No email available'}</span>
                       </div>
                     </div>
 
-                    {/* Student and Mentor: Phone */}
-                    {(type === "student" || type === "mentor") && (
+                    {(type === 'student' || type === 'mentor') && (
                       <div style={styles.modalInfoItem}>
                         <div style={styles.modalInfoIcon}>
                           <FaPhone />
                         </div>
                         <div style={styles.modalInfoContent}>
                           <span style={styles.modalInfoLabel}>Phone</span>
-                          <span style={styles.modalInfoValue}>{selectedItem.phone || "No phone available"}</span>
+                          <span style={styles.modalInfoValue}>{selectedItem.phone || 'No phone available'}</span>
                         </div>
                       </div>
                     )}
 
-                    {/* Student: College */}
-                    {type === "student" && (
+                    {type === 'student' && (
                       <div style={styles.modalInfoItem}>
                         <div style={styles.modalInfoIcon}>
                           <FaEdit />
                         </div>
                         <div style={styles.modalInfoContent}>
                           <span style={styles.modalInfoLabel}>College</span>
-                          <span style={styles.modalInfoValue}>{selectedItem.collegeName || "Unknown College"}</span>
+                          <span style={styles.modalInfoValue}>
+                            {selectedItem.collegeName || 'Unknown College'}
+                          </span>
                         </div>
                       </div>
                     )}
 
-                    {/* College: Location */}
-                    {type === "college" && (
+                    {type === 'college' && (
                       <div style={styles.modalInfoItem}>
                         <div style={styles.modalInfoIcon}>
                           <FaMapMarkerAlt />
                         </div>
                         <div style={styles.modalInfoContent}>
                           <span style={styles.modalInfoLabel}>Location</span>
-                          <span style={styles.modalInfoValue}>{selectedItem.location || "No location available"}</span>
+                          <span style={styles.modalInfoValue}>{selectedItem.location || 'No location available'}</span>
                         </div>
                       </div>
                     )}
@@ -679,23 +659,20 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
                 <button
                   style={{ ...styles.modalButton, ...styles.visitButton }}
                   onClick={(e) => {
-                    e.stopPropagation(); // Prevent modal from closing immediately
+                    e.stopPropagation();
                     AlertModal.confirmDelete(() => {
                       deleteItem(type, selectedItem.id);
                     });
                   }}
                 >
-                  <FaTrash style={{ marginRight: "8px" }} /> Delete
+                  <FaTrash style={{ marginRight: '8px' }} /> Delete
                 </button>
-
-
               </div>
             </div>
           </div>
         )}
       </div>
     </div>
-    
   );
 };
 
