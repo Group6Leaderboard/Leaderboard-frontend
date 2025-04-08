@@ -9,6 +9,9 @@ import styles from "./studentDashboard.module.css";
 import { getAllProjects } from "../services/projectService";
 import { getMembersForProject } from "../services/studentProjectService";
 import DashboardLayout from "../Layouts/Dashboard/DashboardLayout";
+import { getUsers } from "../services/userService";
+import { getAllTasks } from "../services/taskService";
+import AlertModal from "../Components/AlertModal/AlertModal";
 
 const StudentDashboard = () => {
   const location = useLocation();
@@ -18,6 +21,13 @@ const StudentDashboard = () => {
   const [projects, setProjects] = useState([]);
   const [projectMembers, setProjectMembers] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const [mentorDetails, setMentorDetails] = useState(null);
+  const [tasks, setTasks] = useState([]);
+  const [activeProjectTasks, setActiveProjectTasks] = useState([]);
+  const [activeTaskIndex, setActiveTaskIndex] = useState(0);
+  const [activeProject, setActiveProject] = useState(null); // Added to track active project
+
+
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -25,21 +35,20 @@ const StudentDashboard = () => {
       try {
         const data = await getAllProjects();
         setProjects(data.response);
-        
-        
-        const membersPromises = data.response.map(project => 
+
+        const membersPromises = data.response.map(project =>
           getMembersForProject(project.id).then(members => ({
             projectId: project.id,
-            members: response.response
+            members: members.response
           }))
         );
-        
+
         const membersResults = await Promise.all(membersPromises);
         const membersMap = {};
         membersResults.forEach(result => {
           membersMap[result.projectId] = result.members;
         });
-        
+
         setProjectMembers(membersMap);
       } catch (err) {
         console.error("Failed to load projects:", err);
@@ -50,6 +59,56 @@ const StudentDashboard = () => {
 
     fetchProjects();
   }, []);
+
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      setIsLoading(true);
+      try {
+        const data = await getAllTasks();
+        setTasks(data.response);
+
+
+      } catch (err) {
+        console.error("Failed to load tasks:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTasks();
+  }, []);
+
+  useEffect(() => {
+    const fetchMentorDetails = async () => {
+      if (!projects || !projects.length) return;
+
+      try {
+        const mentorIds = [...new Set(
+          projects
+            .map(p => p.mentorId)
+            .filter(Boolean)
+        )];
+
+        const mentorPromises = mentorIds.map(id =>
+          getUsers(null, null, id).then(res => ({ id, data: res.response }))
+        );
+
+        const mentorResults = await Promise.all(mentorPromises);
+
+        const mentorMap = {};
+        mentorResults.forEach(({ id, data }) => {
+          mentorMap[id] = data;
+        });
+
+        setMentorDetails(mentorMap);
+      } catch (err) {
+        console.error("Error fetching mentor details", err);
+      }
+    };
+
+    fetchMentorDetails();
+  }, [projects]);
 
   const getCategoryIcon = (category) => {
     switch (category) {
@@ -69,7 +128,7 @@ const StudentDashboard = () => {
     return (
       <div className={styles.progressContainer}>
         <div className={styles.progressBar}>
-          <div 
+          <div
             className={styles.progressFill}
             style={{ width: `${progressPercent}%` }}
           />
@@ -111,23 +170,14 @@ const StudentDashboard = () => {
           <h2 className={styles.dashboardTitle}>MY PROJECTS</h2>
           <div className={styles.headerActions}>
             <div className={styles.searchBar}>
-              <input 
-                type="text" 
-                placeholder="Search projects..." 
+              <input
+                type="text"
+                placeholder="Search projects..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <select 
-              className={styles.filterButton} 
-              value={filteredCategory} 
-              onChange={(e) => setFilteredCategory(e.target.value)}
-            >
-              <option value="All">All</option>
-              <option value="design">Design</option>
-              <option value="marketing">Marketing</option>
-              <option value="finance">Finance</option>
-            </select>
+
           </div>
         </header>
 
@@ -136,8 +186,8 @@ const StudentDashboard = () => {
         ) : (
           <div className={styles.taskCards}>
             {filteredProjects.map((project) => (
-              <div 
-                key={project.id} 
+              <div
+                key={project.id}
                 className={`${styles.taskCard} ${project.completed ? styles.completed : ""}`}
               >
                 <div className={styles.cardHeader}>
@@ -146,19 +196,18 @@ const StudentDashboard = () => {
                     {project.category?.charAt(0).toUpperCase() + project.category?.slice(1) || "Project"}
                   </span>
                 </div>
-                
+
                 <h3 className={styles.taskTitle}>{project.name}</h3>
                 <p className={styles.description}>{project.description}</p>
-                
-                {getProgressBar(project)}
-            
+
+
                 <div className={styles.scoreSection}>
                   <div className={styles.scoreCircle}>
                     <span className={styles.scoreNumber}>{project.score || 0}</span>
                   </div>
                   <span className={styles.scoreLabel}>Current Score</span>
                 </div>
-                
+
                 <div className={styles.teamSection}>
                   <h4 className={styles.sectionTitle}>Team Members</h4>
                   <div className={styles.teamMembers}>
@@ -173,67 +222,88 @@ const StudentDashboard = () => {
                     )}
                   </div>
                 </div>
-                
+
                 <div className={styles.mentorSection}>
                   <h4 className={styles.sectionTitle}>Mentor</h4>
                   <div className={styles.mentorInfo}>
                     <div className={styles.mentorDetail}>
                       <FaUser className={styles.icon} />
-                      <span>{project.mentorName || "Not assigned"}</span>
+                      <span>{mentorDetails?.[project.mentorId]?.name || "Not assigned"}</span>
                     </div>
                     <div className={styles.mentorDetail}>
                       <FaEnvelope className={styles.icon} />
-                      <span>{project.mentor?.email || "Not available"}</span>
+                      <span>{mentorDetails?.[project.mentorId]?.email || "Not available"}</span>
                     </div>
                     <div className={styles.mentorDetail}>
                       <FaPhone className={styles.icon} />
-                      <span>{project.mentor?.phone || "Not available"}</span>
+                      <span>{mentorDetails?.[project.mentorId]?.phone || "Not available"}</span>
                     </div>
                   </div>
                 </div>
-                
+
                 <div className={styles.cardFooter}>
-                  <button 
-                    className={styles.viewTasksButton} 
-                    onClick={() => setSelectedTask(project)}
+                  <button
+                    className={styles.viewTasksButton}
+                    onClick={() => {
+                      const matchingTasks = tasks.filter(
+                        (t) => t.assignedTo === project.id && t.status === "Not Submitted"
+                        
+                      );
+                      console.log(matchingTasks);
+                      if (matchingTasks.length > 0) {
+                        setActiveProjectTasks(matchingTasks);
+                        setActiveTaskIndex(0);
+                        setActiveProject(project); // Save reference to current project
+                      } else {
+                        AlertModal.success("No Pending Tasks", "All tasks are submitted!");
+                      }
+                    }}
                   >
                     <FaTasks className={styles.buttonIcon} /> View Tasks
                   </button>
-                  
-                  {project.completed && (
-                    <div className={styles.completedBadge}>
-                      <FaCheckCircle className={styles.checkIcon} /> Completed
-                    </div>
-                  )}
+                    
+ 
+
                 </div>
               </div>
             ))}
           </div>
         )}
       </div>
+      
     );
+    
   };
 
   return (
     <DashboardLayout>
-    <div className={styles.dashboardContainer}>
-      {selectedTask && (
-        <TaskModal
-          taskName={selectedTask.name}
-          taskDescription={selectedTask.description}
-          dueDate={new Date(selectedTask.createdAt).toLocaleDateString()}
-          mentorName={selectedTask.mentorName}
-          mentorEmail={selectedTask.mentor?.email || "Not available"}
-          mentorPhone={selectedTask.mentor?.phone || "Not available"}
-          onClose={() => setSelectedTask(null)}
-        />
-      )}
+      <div className={styles.dashboardContainer}>
+        {activeProjectTasks.length > 0 && (
+          <TaskModal
+            taskName={activeProjectTasks[activeTaskIndex].name}
+            taskDescription={activeProjectTasks[activeTaskIndex].description}
+            dueDate={activeProjectTasks[activeTaskIndex].dueDate}
+            mentorName={activeProject && mentorDetails?.[activeProject.mentorId]?.name || "Not assigned"}
+            mentorEmail={activeProject && mentorDetails?.[activeProject.mentorId]?.email || "Not available"}
+            mentorPhone={activeProject && mentorDetails?.[activeProject.mentorId]?.phone || "Not available"}
+            onClose={() => {
+              setActiveProjectTasks([]);
+              setActiveTaskIndex(0);
+              setActiveProject(null); // Clear active project
+            }}
+            onNext={() => setActiveTaskIndex((prev) => (prev + 1) % activeProjectTasks.length)}
+            onPrev={() => setActiveTaskIndex((prev) => (prev - 1 + activeProjectTasks.length) % activeProjectTasks.length)}
+            showArrows={activeProjectTasks.length > 1}
+            taskId={activeProjectTasks[activeTaskIndex].id}
+          />
+        )}
 
-      {renderView()}
-    </div>
-  
+
+        {renderView()}
+      </div>
+
     </DashboardLayout>
-    );
+  );
 };
 
 export default StudentDashboard;

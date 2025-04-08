@@ -56,12 +56,27 @@ const AssignForm = ({ role }) => {
     value: college.id,
     label: college.name,
   }));
+
+  
   const handleDateChange = (date) => {
+    if (!date) {
+      setFormData((prev) => ({ ...prev, lastDate: '' }));
+      return;
+    }
+  
+    // Set time to 23:59:59
+    const updatedDate = new Date(date);
+    updatedDate.setHours(23, 59, 59);
+  
+    const isoString = updatedDate.toISOString().split('.')[0]; // "YYYY-MM-DDTHH:mm:ss"
+  
     setFormData((prev) => ({
       ...prev,
-      lastDate: date ? date.toISOString().split("T")[0] : '',
+      lastDate: isoString,
     }));
   };
+  
+
   const projectOptions = (projects || []).map((project) => ({
     value: project.id,
     label: project.name,
@@ -366,7 +381,7 @@ const AssignForm = ({ role }) => {
         const taskData = {
           name: formData.name,
           description: formData.description,
-          dueDate: formData.localDateTime,
+          dueDate: formData.lastDate,
           assignedTo: formData.projectId,
         };
 

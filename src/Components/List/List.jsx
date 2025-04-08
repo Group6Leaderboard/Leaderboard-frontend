@@ -377,7 +377,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
       const fetchCollegeNames = async () => {
         const newCollegeNames = {};
         for (const student of data) {
-          if (student.collegeId && !collegeNames[student.collegeId]) {
+          if (student.collegeName && !collegeNames[student.collegeName]) {
             try {
               const response = await getCollegeById(student.collegeId);
               newCollegeNames[student.collegeId] = response.name || "Unknown College";
@@ -604,7 +604,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
                   <h2 style={styles.modalName}>{selectedItem.name}</h2>
                   <p style={styles.modalLocation}>
                     {type === "student"
-                      ? collegeNames[selectedItem.collegeName] || "Unknown College"
+                      ? selectedItem.collegeName || "Unknown College"
                       : (type === "college" ? selectedItem.location : getJobTitle(selectedItem))}
                   </p>
                 </div>
@@ -654,7 +654,7 @@ const List = ({ type = "student", data = [], onDeleteSuccess, onViewMore }) => {
                         </div>
                         <div style={styles.modalInfoContent}>
                           <span style={styles.modalInfoLabel}>College</span>
-                          <span style={styles.modalInfoValue}>{collegeNames[selectedItem.collegeName] || "Unknown College"}</span>
+                          <span style={styles.modalInfoValue}>{selectedItem.collegeName || "Unknown College"}</span>
                         </div>
                       </div>
                     )}
