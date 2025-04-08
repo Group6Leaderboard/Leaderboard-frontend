@@ -147,6 +147,7 @@ const MentorTaskView = () => {
                   <h3 className={styles.taskName}>{task.name}</h3>
                   {getStatusIcon(task.status)}
                 </div>
+              
                 
                 {task.description && (
                   <div className={styles.taskDescription}>
@@ -189,10 +190,11 @@ const MentorTaskView = () => {
                   </div>
                   
                   {task.dueDate && (
-                    <div className={styles.daysLeft}>
-                      2 Weeks Left, 7pm
-                    </div>
-                  )}
+  <div className={styles.daysLeft}>
+    {calculateDaysLeft(task.dueDate)}
+  </div>
+)}
+ 
                 </div>
                 
                 <div className={styles.taskActions} ><FaEdit  className={`${styles.editIcon}`}/>

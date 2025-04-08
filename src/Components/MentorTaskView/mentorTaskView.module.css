@@ -431,6 +431,12 @@
   .errorState {
     color: #e74c3c;
   }
+  .projectName {
+    font-size: 0.9rem;
+    color: #555;
+    margin: 4px 0;
+  }
+  
   
   @media (max-width: 768px) {
     .header {

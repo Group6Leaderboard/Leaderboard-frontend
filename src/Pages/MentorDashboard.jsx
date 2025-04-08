@@ -39,7 +39,7 @@ const MentorDashboard = () => {
   // Render the appropriate component based on the current path
   const renderContent = () => {
     if (location.pathname === "/mentor") {
-      return <MentorDash />;
+      return <MentorDash projects={projects} loading={loading} error={error} />;
     } else if (location.pathname === "/mentor/assign-task") {
       return <AssignForm role="mentor" />;
     } else if (location.pathname === "/mentor/task") {
