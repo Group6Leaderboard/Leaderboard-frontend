@@ -126,9 +126,10 @@ const LeaderboardPages = ({ type = "college" }) => {
                 <h3 className="leader-name">{leader.name}</h3>
                 <p className="leader-points">{leader.points} points</p>
                 <div className="leader-stats">
-                  <span>Projects: {leader.wins}</span>
+                  {type !== "project" && <span>Projects: {leader.wins}</span>}
                   <span>Tasks: {leader.tasks}</span>
                 </div>
+
               </div>
             </div>
           ))}
