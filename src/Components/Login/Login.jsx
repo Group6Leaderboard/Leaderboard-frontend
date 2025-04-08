@@ -12,11 +12,25 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const remembered = localStorage.getItem("rememberedEmail");
-    if (remembered) {
-      setRememberMe(true);
+    const role = localStorage.getItem("role");
+
+    if (role) {
+      switch (role.toUpperCase()) {
+        case "ADMIN":
+          navigate("/admin", { replace: true });
+          break;
+        case "MENTOR":
+          navigate("/mentor", { replace: true });
+          break;
+        case "STUDENT":
+          navigate("/student", { replace: true });
+          break;
+        default:
+          navigate("/leaderboard/colleges", { replace: true });
+      }
     }
   }, []);
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -27,7 +41,7 @@ const Login = () => {
 
       if (data.message === "Success") {
         const { token, role } = data.response;
-        
+
         localStorage.setItem("role", role);
         localStorage.setItem("token", token);
 
@@ -62,15 +76,15 @@ const Login = () => {
         <div className={styles.loginCard}>
           <div className={styles.iconContainer}>
             <div className={styles.signInIcon}>
-            <img src="/password.png" alt="Sign In Icon" className={styles.icon} />
+              <img src="/password.png" alt="Sign In Icon" className={styles.icon} />
             </div>
           </div>
-          
+
           <h2 className={styles.signInTitle}>Sign in with email</h2>
           <p className={styles.signInSubtitle}>Unlock your journey to innovation—track projects, compete, and lead the leaderboard!</p>
-          
+
           {error && <p className={styles.errorMessage}>{error}</p>}
-          
+
           <form onSubmit={handleLogin}>
             <div className={styles.inputContainer}>
               <div className={styles.inputField}>
@@ -82,7 +96,7 @@ const Login = () => {
                   required
                 />
               </div>
-              
+
               <div className={styles.inputField}>
                 <input
                   type={showPassword ? "text" : "password"} // Dynamically toggle input type
@@ -91,20 +105,24 @@ const Login = () => {
                   placeholder="Password"
                   required
                 />
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className={styles.passwordToggle}
                   onClick={() => setShowPassword(!showPassword)}  // Toggle password visibility
                 >
-                  <img 
+                  <img
                     src={showPassword ? "/hide.png" : "/eye.png"} // Change icon based on state
-                    alt="Toggle Password Visibility" 
-                    className={styles.icon} 
+                    alt="Toggle Password Visibility"
+                    className={styles.icon}
                   />
                 </button>
               </div>
+
+              <div className={styles.forgotPassword}>
+                <a href="#">Forgot password?</a>
+              </div>
             </div>
-            
+
             <button type="submit" className={styles.getStartedBtn}>Login </button>
           </form>
         </div>

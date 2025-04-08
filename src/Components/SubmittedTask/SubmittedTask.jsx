@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import styles from "./submittedTask.module.css";
+import DashboardLayout from "../../Layouts/Dashboard/DashboardLayout";
 
 const submissions = [
   { id: 1, projectName: "AI Chatbot", assignedDate: "2024-02-15", submittedDate: "2024-03-01", document: "chatbot_report.pdf", score: 0, status: "Not Submitted" },
@@ -26,6 +27,7 @@ const SubmittedTask = () => {
   const navigate = useNavigate();
 
   return (
+    <DashboardLayout>
     <div className={`container ${styles.submittedTask}`}>
       <h2 className="my-4 text-center">Tasks</h2>
 
@@ -68,6 +70,7 @@ const SubmittedTask = () => {
         </table>
       </div>
     </div>
+    </DashboardLayout>
   );
 };
 

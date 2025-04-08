@@ -6,6 +6,7 @@ import styles from "./adminDashboard.module.css";
 import List from "../Components/List/List";
 import AddUser from "../Components/AddUser/AddUser";
 import HeaderAdmin from "../Components/HeaderAdmin/HeaderAdmin"; 
+import DashboardLayout from "../Layouts/Dashboard/DashboardLayout";
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
@@ -54,6 +55,7 @@ const AdminDashboard = () => {
     };
 
   return (
+<DashboardLayout>
     <div className={styles.dashboardContainer}>
       <div className={styles.header}>
         {/* <h2 className={styles.title}>Welcome to Admin Dashboard</h2> */}
@@ -96,6 +98,7 @@ const AdminDashboard = () => {
         )}
       </div>
     </div>
+    </DashboardLayout>
   );
 };
 

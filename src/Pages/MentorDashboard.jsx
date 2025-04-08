@@ -6,6 +6,7 @@ import MentorProjectView from "../Components/MentorProjectView/MentorProjectView
 import SubmittedTask from "../Components/MentorProject/SubmittedTask";
 import MentorDash from "../Components/MentorDash/MentorDash";
 import { getAllProjects } from "../services/projectService";
+import DashboardLayout from "../Layouts/Dashboard/DashboardLayout";
 
 const MentorDashboard = () => {
   const location = useLocation();
@@ -55,8 +56,9 @@ const MentorDashboard = () => {
       return <MentorProjectView projects={projects} />;
     }
     
-    // Default view
-    return <MentorDash />;
+ 
+    return( 
+    <MentorDash />);
   };
 
   return (
