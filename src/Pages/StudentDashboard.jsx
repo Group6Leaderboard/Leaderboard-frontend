@@ -15,8 +15,8 @@ const StudentDashboard = () => {
   const projects = [
     {
       id: 1,
-      name: "Update user flows with UX feedback from Session #245",
-      description: "Implement changes based on user testing feedback from session #245. Focus on improving navigation and form submissions.",
+      name: "Update user flows with UX feedback ",
+      description: "Implement changes based on user testing feedback from session #245. ",
       score: 95,
       members: ["Alice", "Bob", "Charlie"],
       mentor: { name: "Dr. Smith", email: "smith@example.com", phone: "123-456-7890" },
@@ -30,8 +30,8 @@ const StudentDashboard = () => {
     },
     {
       id: 2,
-      name: "Wireframe splash page for new sales funnel",
-      description: "Create wireframes for the updated sales funnel landing page with improved conversion elements.",
+      name: "Wireframe splash page for sales",
+      description: "Create wireframes for the updated sales funnel landing page .",
       score: 88,
       members: ["David", "Eve", "Frank"],
       mentor: { name: "Dr. Johnson", email: "johnson@example.com", phone: "987-654-3210" },
