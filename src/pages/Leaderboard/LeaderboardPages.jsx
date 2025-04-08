@@ -54,7 +54,6 @@ const LeaderboardPages = ({ type = "college" }) => {
     (item.college && item.college.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
-  // Pagination logic
   const lastIndex = currentPage * itemsPerPage;
   const firstIndex = lastIndex - itemsPerPage;
   const currentItems = filteredRanking.slice(firstIndex, lastIndex);
@@ -105,14 +104,25 @@ const LeaderboardPages = ({ type = "college" }) => {
       <div className="champions-section">
         <h2 className="section-heading">Champions</h2>
         <div className="leaders-container">
-          {currentData.leaders.map((leader, index) => (
+          {(currentData.leaders || []).map((leader, index) => (
             <div key={index} className={`leader-card position-${index + 1}`}>
-              <div className="trophy-indicator">
-                {/* Trophy indicators were empty in original code */}
-              </div>
+              <div className="trophy-indicator"></div>
               <div className="position-badge">{index + 1}</div>
               <div className="leader-content">
-                <img src={leader.image} alt={leader.name} className="leader-avatar" />
+                <img
+                  src={leader.image}
+                  alt={leader.name}
+                  className="leader-avatar"
+                  onError={(e) => {
+                    if (type === "project") {
+                      e.target.src = "/project.png";
+                    } else if (type === "college") {
+                      e.target.src = "/fallback.webp";
+                    } else {
+                      e.target.src = "/tudent.png";
+                    }
+                  }}
+                />
                 <h3 className="leader-name">{leader.name}</h3>
                 <p className="leader-points">{leader.points} points</p>
                 <div className="leader-stats">
@@ -147,6 +157,7 @@ const LeaderboardPages = ({ type = "college" }) => {
                         src={`/${item.rank === 1 ? 'tg' : item.rank === 2 ? 'ts' : 'brons'}.png`}
                         alt={`Rank ${item.rank}`}
                         className="small-trophy"
+                        onError={(e) => (e.target.src = "/fallback_medal.png")}
                       />
                     )}
                   </td>
