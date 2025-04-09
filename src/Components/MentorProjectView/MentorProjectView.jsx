@@ -3,7 +3,7 @@ import styles from "./mentorProjectView.module.css";
 import fallbackImage from "../../assets/fallback.jpg";
 import { BsFolder2Open } from "react-icons/bs";
 import { getMembersForProject } from "../../services/studentProjectService";
-import DashboardLayout from "../../Layouts/Dashboard/DashboardLayout";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -40,6 +40,7 @@ const MentorProjectView = ({ projects }) => {
 
   // Project statistics
   const totalProjects = filteredProjects.length;
+  const navigate = useNavigate();
 
 
   // Function to handle card flip
@@ -70,14 +71,15 @@ const MentorProjectView = ({ projects }) => {
   }, [projects]);
 
   // Handle assign task button click
-  const handleAssignTask = (projectId, e) => {
-    e.stopPropagation();
+//   const handleAssignTask = (projectId, e) => {
+//     e.stopPropagation();
 
-  };
+//   };
 
   // Handle view tasks button click
   const handleViewTasks = (projectId, e) => {
     e.stopPropagation();
+    navigate("/mentor/task", { state: { projectId } });
     console.log(`View tasks for project: ${projectId}`);
     // Implement your view tasks functionality here
   };
@@ -98,6 +100,11 @@ const MentorProjectView = ({ projects }) => {
   const goToPage = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
+  const handleAssignTask = (projectId, e) => {
+    e.stopPropagation();
+    navigate("/mentor/assign-task", { state: { projectId } });
+  };
+  
 
   return (
 

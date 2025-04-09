@@ -149,8 +149,8 @@
   /* This ensures the close button is positioned inside the modal */
   background: white;
   padding: 20px;
-  width: 400px;
-  max-width: 90%;
+  width: 800px;
+  max-width: 100%;
   border-radius: 8px;
   box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
 }
