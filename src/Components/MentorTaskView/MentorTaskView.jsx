@@ -218,17 +218,14 @@ const MentorTaskView = () => {
                   )}
 
                   <div className={styles.taskActions}>
-                    <FaEdit className={`${styles.editIcon}`} />
+                    
                     <button
                       className={styles.viewMoreButton}
                       onClick={() => handleViewMore(task)}
                     >
                       <FaEllipsisH />
                     </button>
-                    <div
-                      className={styles.statusIndicator}
-                      style={{ backgroundColor: getStatusColor(task.status) }}
-                    ></div>
+                    
                   </div>
                 </div>
               ))}
