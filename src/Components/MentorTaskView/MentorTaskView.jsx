@@ -13,7 +13,8 @@ import { getAllTasks, updateTask } from "../../services/taskService";
 import DashboardLayout from "../../Layouts/Dashboard/DashboardLayout";
 import AlertModal from "../AlertModal/AlertModal";
 
-const MentorTaskView = () => {
+const MentorTaskView = ({ projects }) => {
+
   const [tasks, setTasks] = useState([]);
   const [activeTab, setActiveTab] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
@@ -126,6 +127,17 @@ const MentorTaskView = () => {
   if (loading) return <div className={styles.loadingState}>Loading tasks...</div>;
   if (error) return <div className={styles.errorState}>{error}</div>;
 
+  const getAssignedProjectName = () => {
+    if (!selectedTask || !selectedTask.assignedTo || !projects) {
+      return "Unknown Project";
+    }
+    
+    const assignedProject = projects.find(
+      (proj) => proj.id === selectedTask.assignedTo
+    );
+    
+    return assignedProject ? assignedProject.name : "Unknown Project";
+  };
   return (
     <DashboardLayout>
       <div className={styles.container}>
@@ -218,14 +230,12 @@ const MentorTaskView = () => {
                   )}
 
                   <div className={styles.taskActions}>
-                    
                     <button
                       className={styles.viewMoreButton}
                       onClick={() => handleViewMore(task)}
                     >
                       <FaEllipsisH />
                     </button>
-                    
                   </div>
                 </div>
               ))}
@@ -247,13 +257,9 @@ const MentorTaskView = () => {
 
               <div className={styles.detailSection}>
                 <h3 className={styles.detailTitle}>Assigned To</h3>
-                <ul className={styles.memberList}>
-                  {selectedTask.assignedTo?.members?.map((member) => (
-                    <li key={member.id} className={styles.memberItem}>
-                      {member.name}
-                    </li>
-                  ))}
-                </ul>
+                <p className={styles.assignedProject}>
+                  {getAssignedProjectName()}
+                </p>
               </div>
 
               <div className={styles.detailSection}>

@@ -93,7 +93,15 @@ const MentorDashboard = () => {
     } else if (location.pathname === "/mentor/assign-task") {
       return <AssignForm role="mentor" />;
     } else if (location.pathname === "/mentor/task") {
-      return <MentorTaskView />;
+      if (loading) {
+        return <div className={styles.loadingState}>Loading projects...</div>;
+      }
+
+      if (error) {
+        return <div className={styles.errorState}>{error}</div>;
+      }
+
+      return <MentorTaskView projects={projects} />;
     } else if (location.pathname === "/mentor/projects") {
       if (loading) {
         return <div className={styles.loadingState}>Loading projects...</div>;
