@@ -1,0 +1,73 @@
+
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Modal Content */
+  .modalContent {
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+    width: 320px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Modal Header */
+  .modalTitle {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+  
+  /* Scrollable List */
+  .modalList {
+    max-height: 240px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 8px;
+  }
+  
+  /* List Items */
+  .modalItem {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  
+  .modalItem:last-child {
+    border-bottom: none;
+  }
+  
+  .modalItem:hover {
+    background: #f7f7f7;
+  }
+  
+
+  .modalClose {
+    margin-top: 12px;
+    width: 100%;
+    background: #5eb5ae;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  
+  .modalClose:hover {
+    background: #4a958f;
+  }
+  

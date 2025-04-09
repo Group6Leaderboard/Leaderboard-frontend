@@ -1,0 +1,102 @@
+/* Container */
+.submittedTask {
+  padding: 20px;
+  margin-top: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+  margin: 20px auto;
+  text-align: center;
+}
+
+/* Table Wrapper for Scrolling */
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Table Styling */
+.table {
+  width: 100%;
+  min-width: 1000px;
+  border-radius: 8px;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Header Row */
+.theadDark th {
+  background-color: #ffffff;
+  color: #000000;
+  font-weight: 600;
+  text-align: center;
+  padding: 12px 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+
+
+/* Table Cells */
+td, th {
+  text-align: center;
+  padding: 12px 15px;
+}
+
+/* Row Stripes */
+.tableStriped tbody tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+.tableStriped tbody tr:nth-child(even) {
+  background-color: #ffffff;
+}
+
+/* Row Hover Effect */
+.tableHover tbody tr:hover {
+  background-color: #ffffff;
+  cursor: pointer;
+}
+
+/* Status Coloring */
+.status {
+  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 5px;
+}
+
+/* Document Link */
+.docLink {
+  color: #000000;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.docLink:hover {
+  text-decoration: none;
+  color: #000000;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .submittedTask {
+    padding: 15px;
+  }
+  
+  .table {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .table {
+    font-size: 12px;
+  }
+  
+  .tableWrapper {
+    overflow-x: auto;
+  }
+}

@@ -1,0 +1,89 @@
+.dashboardContainer {
+  padding: 20px;
+}
+
+.projectLayout {
+  display: flex;
+  flex-wrap: wrap; 
+  justify-content: space-between;
+  height: 100vh;
+  overflow: hidden;
+  width: 100%;
+  align-items: center;
+}
+
+.projectList {
+  flex: 0 0 40%; 
+  min-width: 60%;
+  max-width: 50%;
+  overflow-y: auto;
+  padding-right: 16px;
+  max-height: calc(100vh - 32px);
+}
+
+.projectList::-webkit-scrollbar {
+  display: none;
+}
+.projectList {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.projectCardContainer {
+  margin: 10px;
+  border-radius: 10px;
+  border-right: none;
+  background: none;
+  display: flex;
+  width:100%;
+  justify-content: center;
+  transition: transform 0.2s ease-in-out;
+  margin-bottom: 25px;
+}
+
+.projectCardContainer:hover {
+  transform: scale(1.02);
+}
+.projectDetails {
+  flex: 1;
+  padding-left: 30px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  max-width: 40%;
+  height: 100%;
+  margin-right: 28px; 
+  margin-top: 100px;
+}
+
+@media screen and (max-width: 768px) {
+  .projectLayout {
+    flex-direction: column; 
+    height: auto;
+  }
+
+  .projectList {
+    flex: 1;
+    max-width: 100%;
+    border-right: none; 
+    padding-right: 0;
+  }
+
+  .projectDetails {
+    flex: 1;
+    max-width: 100%;
+    padding-left: 0;
+    margin-top: 20px;
+  }
+}
+
+/* For Mobile Devices */
+@media screen and (max-width: 480px) {
+  .projectCardContainer {
+    margin: 5px; /* Reduce margin for smaller screens */
+  }
+
+  .projectDetails {
+    padding: 10px; /* Reduce padding */
+  }
+}
