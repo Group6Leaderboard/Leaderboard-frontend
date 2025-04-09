@@ -8,7 +8,7 @@ const StudentTasks = ({ projectTasks, projectList }) => {
  
  
   const submittedTasks = projectTasks.filter(
-    (task) => task.status === "To Be Reviewed" || task.status === "Completed"
+    (task) => task.status === "To be reviewed" || task.status === "Completed"
   );
  
   const toBeSubmittedTasks = projectTasks.filter(
@@ -84,7 +84,7 @@ const StudentTasks = ({ projectTasks, projectList }) => {
                       )}
                     </td>
                     <td className={styles.status}>{task.status}</td>
-                    <td>{task.status === "To Be Reviewed" ? "N/A" : task.score ?? "—"}</td>
+                    <td>{task.status === "To be reviewed" ? "N/A" : task.score ?? "—"}</td>
                   </tr>
                 ))}
               </tbody>

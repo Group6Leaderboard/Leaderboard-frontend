@@ -12,7 +12,6 @@ import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useLocation } from "react-router-dom";
-import DashboardLayout from "../../Layouts/Dashboard/DashboardLayout";
 import {
   FaTachometerAlt,
   FaCalendarAlt,
@@ -28,6 +27,7 @@ import {
   FaTimes,
   FaEye
 } from 'react-icons/fa';
+import DashboardLayout from "../../Layouts/Dashboard/DashboardLayout";
 
 const AssignForm = ({ role }) => {
   // State management
@@ -342,7 +342,7 @@ const AssignForm = ({ role }) => {
     setIsLoading(true);
     setSuccessMessage(null);
     setErrorMessage(null);
-
+  
     try {
       if (role === "mentor") {
         // Task submission
@@ -364,64 +364,29 @@ const AssignForm = ({ role }) => {
           collegeId: selectedCollege,
           mentorId: formData.mentorId
         };
-
+  
         const response = await createProject(projectData);
         const projectId = response?.response?.id;
-
+  
         if (projectId) {
-          // Assign students to project
-          const memberIds = members
-            .filter(member => member.id) // Filter out empty slots
-            .map(member => member.id);
-
-          await Promise.all(
-            memberIds.map(memberId => assignProject(memberId, projectId))
-          );
-
+          if (formData.members && formData.members.length > 0) {
+            await Promise.all(
+              formData.members.map(memberId => assignProject(memberId, projectId))
+            );
+          } else {
+            console.warn("No members selected for project assignment");
+          }
+  
           setSuccessMessage("Project assigned successfully!");
         } else {
           throw new Error("Project ID not found in response");
         }
       }
-
+  
       // Reset form
       resetForm();
-
-      // Refresh data
-      const refreshData = async () => {
-        if (role === "mentor") {
-          const tasksRes = await getAllTasks();
-          const sortedTasks = [...tasksRes.response]
-            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-          setRecentItems(sortedTasks);
-          setDisplayedItems(viewAll ? sortedTasks : sortedTasks.slice(0, 4));
-
-          setStats(prev => ({
-            ...prev,
-            totalTasks: tasksRes.response.length,
-            submittedTasks: tasksRes.response.filter(t => t.status === "Not Submitted").length,
-            toBeReviewedTasks: tasksRes.response.filter(t => t.status === "To be Reviewed").length
-          }));
-        } else {
-          const projectsRes = await getAllProjects();
-          const sortedProjects = [...projectsRes.response]
-            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-          setRecentItems(sortedProjects);
-          setDisplayedItems(viewAll ? sortedProjects : sortedProjects.slice(0, 4));
-
-          setStats(prev => ({
-            ...prev,
-            totalProjects: projectsRes.response.length,
-            activeProjects: projectsRes.response.filter(p => !p.isCompleted).length
-          }));
-        }
-      };
-      await refreshData();
-
-      // Scroll to top to show success message
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+ 
+  
     } catch (error) {
       console.error("Submission error:", error);
       setErrorMessage(error.message || "Submission failed. Please try again.");
@@ -490,7 +455,6 @@ const AssignForm = ({ role }) => {
           </h1>
         </div>
 
-        {/* Stats Cards Section */}
 
 
         <div className="content-layout">
@@ -585,40 +549,7 @@ const AssignForm = ({ role }) => {
                     </div>
                   </div>
 
-                  <div className="form-row">
-                    <div className="form-group half">
-                      <label>Priority</label>
-                      <div className="select-container">
-                        <select
-                          name="priority"
-                          value={formData.priority}
-                          onChange={handleChange}
-                          required
-                          className="form-control"
-                        >
-                          <option value="low">Low</option>
-                          <option value="medium">Medium</option>
-                          <option value="high">High</option>
-                        </select>
-                        <FaFlag className="select-icon" />
-                      </div>
-                    </div>
-                    <div className="form-group half">
-                      <label>Estimated Hours</label>
-                      <div className="input-with-icon">
-                        <input
-                          type="number"
-                          name="estimatedHours"
-                          value={formData.estimatedHours}
-                          onChange={handleChange}
-                          min="1"
-                          required
-                          className="form-control"
-                        />
-                        <FaClock className="input-icon" />
-                      </div>
-                    </div>
-                  </div>
+
                 </>
               ) : (
                 <>

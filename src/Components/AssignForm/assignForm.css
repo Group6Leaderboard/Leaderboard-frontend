@@ -52,6 +52,12 @@
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
 }
+
+.history-header{
+  display: flex;
+  justify-content: flex-end;
+}
+
 @media (max-width: 1024px) {
   .content-layout {
     grid-template-columns: 1fr;

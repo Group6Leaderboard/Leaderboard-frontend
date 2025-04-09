@@ -14,6 +14,58 @@
     flex-wrap: wrap;
     gap: 20px;
   }
+
+  .taskMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: left;
+  }
+  
+  .dueDate {
+    font-size: 0.85rem;
+    color: #666;
+    display: flex;
+    align-content: flex-start;
+  }
+  
+  .downloadLink {
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    color: white !important;
+    text-decoration: none !important;
+    gap: 6px;
+  }
+  
+  .downloadLink:hover {
+    color: white !important;
+    text-decoration: none !important;
+  }
+  
+  
+
+  
+  .inlineScoreSection {
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  
+  .scoreInput {
+    width: 60px;
+    padding: 4px;
+  }
+  
+  .submitScoreButton {
+    padding: 4px 8px;
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+  }
   
   .title {
     display: flex;
@@ -99,6 +151,7 @@
   
   .taskCard {
     background-color: white;
+    gap: 20px;
     border-radius: 8px;
     padding: 20px;
     position: relative;
@@ -106,8 +159,11 @@
     border-left: 4px solid rgb(235, 232, 232);
     display: flex;
     flex-direction: column;
+    align-items: flex-start; /* Aligns child items to the left */
+    text-align: left;         /* Ensures text is left-aligned */
     transition: transform 0.3s, box-shadow 0.3s;
   }
+  
   
   .taskCard:hover {
     transform: translateY(-5px);
@@ -149,6 +205,7 @@
   }
   
   .statusIcon {
+    margin-left: 5px;
     font-size: 18px;
   }
   
@@ -341,7 +398,7 @@
     border-bottom: none;
   }
   
-  .downloadButton {
+  /* .downloadButton {
     background-color: #5EB5AE;
     color: white;
     border: none;
@@ -358,7 +415,7 @@
   .downloadButton:hover {
     background-color: #4a9c96;
   }
-  
+   */
   .scoreSection {
     display: flex;
     align-items: center;
