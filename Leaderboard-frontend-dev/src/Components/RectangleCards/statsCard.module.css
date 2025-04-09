@@ -1,0 +1,41 @@
+/* statsCard.css */
+.stats-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+.stats-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 100%;
+  background-color: #5eb5ae;
+}
+
+.stats-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.stats-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+  color: #333;
+}
+
+.stats-title {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 0.5rem;
+}

@@ -1,0 +1,27 @@
+.card {
+    width: 350px;
+    padding: 0px;
+    text-align: center;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+    margin-bottom: 30px;
+  }
+  
+  .card:hover {
+    transform: scale(1.05);
+  }
+  
+  .title {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .image {
+    width: 30%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
