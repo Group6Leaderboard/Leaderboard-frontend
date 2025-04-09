@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaSearch, FaFileAlt, FaClock, FaCheckCircle, FaExclamationCircle, FaEllipsisH, FaPlus, FaEdit } from "react-icons/fa";
 import styles from "./mentorTaskView.module.css";
 import { getAllTasks } from "../../services/taskService"; // Adjust the path as needed
-
+import DashboardLayout from "../../Layouts/Dashboard/DashboardLayout";
 const MentorTaskView = () => {
   const [tasks, setTasks] = useState([]);
   const [activeTab, setActiveTab] = useState("All");
@@ -48,7 +48,6 @@ const MentorTaskView = () => {
       }
     });
   };
-
   const calculateDaysLeft = (dueDate) => {
     const due = new Date(dueDate);
     const today = new Date();
@@ -56,7 +55,6 @@ const MentorTaskView = () => {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays > 0 ? `${diffDays} days left` : `Overdue by ${Math.abs(diffDays)} days`;
   };
-
   const getStatusIcon = (status) => {
     switch (status) {
       case "Not Submitted":
@@ -71,7 +69,6 @@ const MentorTaskView = () => {
         return null;
     }
   };
-
   const getStatusColor = (status) => {
     switch (status) {
       case "Not Submitted":
@@ -106,6 +103,7 @@ const MentorTaskView = () => {
   const filteredTasks = getFilteredTasks();
 
   return (
+    <DashboardLayout>
     <div className={styles.container}>
       <div className={styles.header}>
         <h1 className={styles.title}>
@@ -121,7 +119,6 @@ const MentorTaskView = () => {
           />
         </div>
       </div>
-
       <div className={styles.tabContainer}>
         {tabs.map((tab) => (
           <button
@@ -133,7 +130,6 @@ const MentorTaskView = () => {
           </button>
         ))}
       </div>
-
       <div className={styles.taskListContainer}>
         {filteredTasks.length > 0 ? (
           <div className={styles.taskList}>
@@ -218,7 +214,6 @@ const MentorTaskView = () => {
           <div className={styles.noTasks}>No tasks found in {activeTab}</div>
         )}
       </div>
-
       {selectedTask && (
         <div className={styles.taskDetailsModal}>
           <div className={styles.modalContent}>
@@ -278,6 +273,7 @@ const MentorTaskView = () => {
         </div>
       )}
     </div>
+    </DashboardLayout>
   );
 };
 

@@ -41,7 +41,7 @@ const DashboardRoutes = () => {
                 <Route path="" element={<MentorDashboard />} />
                 <Route path="assign-task" element={<AssignForm role="mentor" />} />
                 <Route path="projects" element={<MentorDashboard />} />
-                <Route path="task" element={<SubmittedTask />} />
+                <Route path="task" element={<MentorTaskView />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </ProtectedRoute>

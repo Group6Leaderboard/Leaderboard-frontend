@@ -12,11 +12,12 @@ import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useLocation } from "react-router-dom";
-import { 
-  FaTachometerAlt, 
-  FaCalendarAlt, 
-  FaClipboardList, 
-  FaExclamationTriangle, 
+import DashboardLayout from "../../Layouts/Dashboard/DashboardLayout";
+import {
+  FaTachometerAlt,
+  FaCalendarAlt,
+  FaClipboardList,
+  FaExclamationTriangle,
   FaCheckCircle,
   FaUsers,
   FaProjectDiagram,
@@ -49,7 +50,7 @@ const AssignForm = ({ role }) => {
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [viewAll, setViewAll] = useState(false);
-  
+
   // Student selection
   const [selectedCollege, setSelectedCollege] = useState("");
   const [collegeName, setCollegeName] = useState("");
@@ -79,7 +80,7 @@ const AssignForm = ({ role }) => {
     const fetchInitialData = async () => {
       try {
         setIsLoading(true);
-        
+
         if (role === "mentor") {
           const [tasksRes, projectsRes] = await Promise.all([
             getAllTasks(),
@@ -97,10 +98,10 @@ const AssignForm = ({ role }) => {
 
           const sortedTasks = [...tasksRes.response]
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-          
+
           setRecentItems(sortedTasks);
           setDisplayedItems(sortedTasks.slice(0, 4)); // Initially show only 4 items
-        } 
+        }
         else if (role === "admin") {
           const [mentorsRes, studentsRes, projectsRes, collegesRes] = await Promise.all([
             getUsers("MENTOR"),
@@ -113,7 +114,7 @@ const AssignForm = ({ role }) => {
           setStudents(studentsRes.response);
           setProjects(projectsRes.response);
           setColleges(collegesRes.response || []);
-          
+
           setStats({
             totalProjects: projectsRes.response.length,
             activeProjects: projectsRes.response.filter(p => !p.isCompleted).length,
@@ -123,7 +124,7 @@ const AssignForm = ({ role }) => {
 
           const sortedProjects = [...projectsRes.response]
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-          
+
           setRecentItems(sortedProjects);
           setDisplayedItems(sortedProjects.slice(0, 4)); // Initially show only 4 items
         }
@@ -179,7 +180,7 @@ const AssignForm = ({ role }) => {
       const timer = setTimeout(() => {
         setSuccessMessage(null);
       }, 5000);
-      
+
       return () => clearTimeout(timer);
     }
   }, [successMessage]);
@@ -229,16 +230,16 @@ const AssignForm = ({ role }) => {
 
     const selectedCollegeId = selectedOption.value;
     const selectedCollegeObj = colleges.find(college => college.id === selectedCollegeId);
-    
+
     if (selectedCollegeObj) {
       setSelectedCollege(selectedCollegeId);
       setCollegeName(selectedCollegeObj.name);
-      
+
       setFormData(prev => ({
         ...prev,
         collegeId: selectedCollegeId
       }));
-      
+
       // Reset member selection
       setMembers([{ name: "" }]);
     }
@@ -250,7 +251,7 @@ const AssignForm = ({ role }) => {
       setErrorMessage("Please select a college first");
       return;
     }
-    
+
     setCurrentMemberIndex(index);
     setIsModalOpen(true);
   };
@@ -262,7 +263,7 @@ const AssignForm = ({ role }) => {
       newMembers[currentMemberIndex] = student;
       return newMembers;
     });
-    
+
     // Update form data
     setFormData(prev => {
       const currentMembers = [...prev.members];
@@ -275,12 +276,12 @@ const AssignForm = ({ role }) => {
         members: currentMembers
       };
     });
-    
+
     // Remove selected student from filtered list
-    setFilteredStudents(prevFiltered => 
+    setFilteredStudents(prevFiltered =>
       prevFiltered.filter(s => s.id !== student.id)
     );
-    
+
     setIsModalOpen(false);
   };
 
@@ -294,11 +295,11 @@ const AssignForm = ({ role }) => {
     setMembers(prevMembers => {
       const removedMember = prevMembers[index];
       const updatedMembers = prevMembers.filter((_, i) => i !== index);
-      
+
       // Add removed student back to filtered list
       if (removedMember?.id) {
         setFilteredStudents(prevFiltered => [...prevFiltered, removedMember]);
-        
+
         // Also remove from form data
         setFormData(prev => {
           const updatedFormMembers = prev.members.filter((_, i) => i !== index);
@@ -308,7 +309,7 @@ const AssignForm = ({ role }) => {
           };
         });
       }
-      
+
       return updatedMembers;
     });
   };
@@ -326,10 +327,10 @@ const AssignForm = ({ role }) => {
       estimatedHours: 2,
       members: []
     });
-    
+
     setSelectedCollege("");
     setCollegeName("");
-  
+
     setFilteredStudents([]);
     setSuccessMessage(null);
     setErrorMessage(null);
@@ -354,7 +355,7 @@ const AssignForm = ({ role }) => {
           estimatedHours: formData.estimatedHours
         });
         setSuccessMessage("Task assigned successfully!");
-      } 
+      }
       else if (role === "admin") {
         // Project submission
         const projectData = {
@@ -363,20 +364,20 @@ const AssignForm = ({ role }) => {
           collegeId: selectedCollege,
           mentorId: formData.mentorId
         };
-        
+
         const response = await createProject(projectData);
         const projectId = response?.response?.id;
-        
+
         if (projectId) {
           // Assign students to project
           const memberIds = members
             .filter(member => member.id) // Filter out empty slots
             .map(member => member.id);
-            
+
           await Promise.all(
             memberIds.map(memberId => assignProject(memberId, projectId))
           );
-          
+
           setSuccessMessage("Project assigned successfully!");
         } else {
           throw new Error("Project ID not found in response");
@@ -392,10 +393,10 @@ const AssignForm = ({ role }) => {
           const tasksRes = await getAllTasks();
           const sortedTasks = [...tasksRes.response]
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-          
+
           setRecentItems(sortedTasks);
           setDisplayedItems(viewAll ? sortedTasks : sortedTasks.slice(0, 4));
-            
+
           setStats(prev => ({
             ...prev,
             totalTasks: tasksRes.response.length,
@@ -406,10 +407,10 @@ const AssignForm = ({ role }) => {
           const projectsRes = await getAllProjects();
           const sortedProjects = [...projectsRes.response]
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-          
+
           setRecentItems(sortedProjects);
           setDisplayedItems(viewAll ? sortedProjects : sortedProjects.slice(0, 4));
-            
+
           setStats(prev => ({
             ...prev,
             totalProjects: projectsRes.response.length,
@@ -473,353 +474,299 @@ const AssignForm = ({ role }) => {
   };
 
   return (
-    <div className="assign-container">
-      <div className="assign-header">
-        <h1 className="assign-title">
-          {role === "mentor" ? (
-            <>
-              <FaClipboardList className="assign-icon" /> TASKS MANAGEMENT
-            </>
-          ) : (
-            <>
-              <FaProjectDiagram className="assign-icon" /> PROJECTS MANAGEMENT
-            </>
-          )}
-        </h1>
-      </div>
-
-      {/* Stats Cards Section */}
-      <div className="stats-container">
-        {role === "mentor" ? (
-          <>
-            <StatsCard 
-              title="Total Tasks" 
-              value={stats.totalTasks} 
-              icon={<FaClipboardList />} 
-              color="#4a90e2"
-            />
-            <StatsCard 
-              title="Not Submitted" 
-              value={stats.submittedTasks} 
-              icon={<FaExclamationTriangle />} 
-              color="#f39c12"
-            />
-            <StatsCard 
-              title="To Be Reviewed" 
-              value={stats.toBeReviewedTasks} 
-              icon={<FaCheckCircle />} 
-              color="#27ae60"
-            />
-            <StatsCard 
-              title="Total Projects" 
-              value={stats.totalProjects} 
-              icon={<FaProjectDiagram />} 
-              color="#8e44ad"
-            />
-          </>
-        ) : (
-          <>
-            <StatsCard 
-              title="Total Projects" 
-              value={stats.totalProjects} 
-              icon={<FaProjectDiagram />} 
-              color="#8e44ad"
-            />
-            <StatsCard 
-              title="Active Projects" 
-              value={stats.activeProjects} 
-              icon={<FaTachometerAlt />} 
-              color="#2ecc71"
-            />
-            <StatsCard 
-              title="Total Mentors" 
-              value={stats.totalMentors || 0} 
-              icon={<FaUsers />} 
-              color="#3498db"
-            />
-            <StatsCard 
-              title="Total Students" 
-              value={stats.totalStudents || 0} 
-              icon={<FaUsers />} 
-              color="#e74c3c"
-            />
-          </>
-        )}
-      </div>
-
-      <div className="content-layout">
-        {/* Form Section */}
-        <div className="form-container">
-          <div className="form-header">
-            <h2>
-              {role === "mentor" ? "Assign New Task" : "Create New Project"}
-            </h2>
-            <p>
-              {role === "mentor" 
-                ? "Create a new task for project teams" 
-                : "Setup a new project with mentor and students"}
-            </p>
-          </div>
-
-          {/* Status Messages */}
-          {successMessage && (
-            <div className="alert success">
-              <FaCheckCircle /> {successMessage}
-            </div>
-          )}
-          {errorMessage && (
-            <div className="alert error">
-              <FaExclamationTriangle /> {errorMessage}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit}>
-            {/* Common Fields */}
-            <div className="form-group">
-              <label>{role === "mentor" ? "Task Name" : "Project Name"}</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                placeholder={role === "mentor" 
-                  ? "Enter task name" 
-                  : "Enter project name"}
-                className="form-control"
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Description</label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                required
-                placeholder="Provide detailed description"
-                rows="4"
-                className="form-control"
-              />
-            </div>
-
-            {/* Role-specific fields */}
+    <DashboardLayout>
+      <div className="assign-container">
+        <div className="assign-header">
+          <h1 className="assign-title">
             {role === "mentor" ? (
               <>
-                <div className="form-row">
-                  <div className="form-group half">
-                    <label>Due Date</label>
-                    <div className="date-picker-container">
-                      <DatePicker
-                        selected={formData.dueDate ? new Date(formData.dueDate) : null}
-                        onChange={handleDateChange}
-                        minDate={new Date()}
-                        dateFormat="yyyy-MM-dd"
-                        placeholderText="Select due date"
-                        required
-                        className="form-control date-picker"
-                      />
-                      <FaCalendarAlt className="calendar-icon" />
-                    </div>
-                  </div>
-                  
-                  <div className="form-group half">
-                    <label>Project</label>
-                    <Select
-                      options={projectOptions}
-                      onChange={(opt) => handleSelectChange(opt, 'projectId')}
-                      value={projectOptions.find(opt => opt.value === formData.projectId) || null}
-                      placeholder="Select project"
-                      styles={customSelectStyles}
-                      isClearable
-                      required
-                      className="react-select-container"
-                      classNamePrefix="react-select"
-                    />
-                  </div>
-                </div>
-
-                <div className="form-row">
-                  <div className="form-group half">
-                    <label>Priority</label>
-                    <div className="select-container">
-                      <select
-                        name="priority"
-                        value={formData.priority}
-                        onChange={handleChange}
-                        required
-                        className="form-control"
-                      >
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                      </select>
-                      <FaFlag className="select-icon" />
-                    </div>
-                  </div>
-                  <div className="form-group half">
-                    <label>Estimated Hours</label>
-                    <div className="input-with-icon">
-                      <input
-                        type="number"
-                        name="estimatedHours"
-                        value={formData.estimatedHours}
-                        onChange={handleChange}
-                        min="1"
-                        required
-                        className="form-control"
-                      />
-                      <FaClock className="input-icon" />
-                    </div>
-                  </div>
-                </div>
+                <FaClipboardList className="assign-icon" /> TASKS MANAGEMENT
               </>
             ) : (
               <>
-                <div className="form-row">
-                  <div className="form-group half">
-                    <label>College</label>
-                    <Select
-                      options={collegeOptions}
-                      onChange={handleCollegeChange}
-                      value={collegeOptions.find(opt => opt.value === selectedCollege) || null}
-                      placeholder="Select college"
-                      styles={customSelectStyles}
-                      isClearable
-                      required
-                      className="react-select-container"
-                      classNamePrefix="react-select"
-                    />
-                  </div>
-                  
-                  <div className="form-group half">
-                    <label>Mentor</label>
-                    <Select
-                      options={mentorOptions}
-                      onChange={(opt) => handleSelectChange(opt, 'mentorId')}
-                      value={mentorOptions.find(opt => opt.value === formData.mentorId) || null}
-                      placeholder="Select mentor"
-                      styles={customSelectStyles}
-                      isClearable
-                      required
-                      className="react-select-container"
-                      classNamePrefix="react-select"
-                    />
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label>Team Members</label>
-                  <Select
-                    options={studentOptions}
-                    onChange={(opt) => handleMultiSelectChange(opt, 'members')}
-                    value={studentOptions.filter(opt => formData.members.includes(opt.value))}
-                    isMulti
-                    placeholder="Select team members"
-                    styles={customSelectStyles}
-                    required
-                    className="react-select-container"
-                    classNamePrefix="react-select"
-                  />
-                </div>
+                <FaProjectDiagram className="assign-icon" /> PROJECTS MANAGEMENT
               </>
             )}
-
-            <div className="form-actions">
-              <button 
-                type="button" 
-                className="btn-secondary"
-                onClick={resetForm}
-                disabled={isLoading}
-              >
-                Reset
-              </button>
-              <button 
-                type="submit" 
-                className="btn-primary"
-                disabled={isLoading}
-              >
-                {isLoading ? "Processing..." : (
-                  role === "mentor" ? "Assign Task" : "Create Project"
-                )}
-              </button>
-            </div>
-          </form>
+          </h1>
         </div>
 
-        {/* History Section */}
-        <div className="history-container">
-          <div className="history-header">
-            
-            <button 
-              className="view-all-btn"
-              onClick={toggleViewAll}
-            >
-              <FaEye className="view-icon" /> {viewAll ? "Show Less" : "View All"}
-            </button>
-          </div>
-          
-          {displayedItems.length === 0 ? (
-            <div className="no-data-message">
-              <p>No {role === "mentor" ? "tasks" : "projects"} available yet.</p>
-            </div>
-          ) : (
-            role === "mentor" ? (
-              <TaskHistory tasks={displayedItems} />
-            ) : (
-              <ProjectHistory projects={displayedItems} />
-            )
-          )}
-        </div>
-      </div>
+        {/* Stats Cards Section */}
 
-      {/* Student Selection Modal */}
-      {isModalOpen && (
-        <div className="modal-backdrop">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h3>Select a Student</h3>
-              <button 
-                type="button" 
-                className="close-modal" 
-                onClick={() => setIsModalOpen(false)}
-              >
-                <FaTimes />
-              </button>
+
+        <div className="content-layout">
+          {/* Form Section */}
+          <div className="form-container">
+            <div className="form-header">
+              <h2>
+                {role === "mentor" ? "Assign New Task" : "Create New Project"}
+              </h2>
+              <p>
+                {role === "mentor"
+                  ? "Create a new task for project teams"
+                  : "Setup a new project with mentor and students"}
+              </p>
             </div>
-            <div className="modal-body">
-              {filteredStudents.length > 0 ? (
-                <ul className="student-list">
-                  {filteredStudents.map((student) => (
-                    <li 
-                      key={student.id} 
-                      className="student-item"
-                      onClick={() => handleStudentSelect(student)}
-                    >
-                      <FaUsers className="student-icon" /> {student.name}
-                    </li>
-                  ))}
-                </ul>
+
+            {/* Status Messages */}
+            {successMessage && (
+              <div className="alert success">
+                <FaCheckCircle /> {successMessage}
+              </div>
+            )}
+            {errorMessage && (
+              <div className="alert error">
+                <FaExclamationTriangle /> {errorMessage}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit}>
+              {/* Common Fields */}
+              <div className="form-group">
+                <label>{role === "mentor" ? "Task Name" : "Project Name"}</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  placeholder={role === "mentor"
+                    ? "Enter task name"
+                    : "Enter project name"}
+                  className="form-control"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Description</label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  required
+                  placeholder="Provide detailed description"
+                  rows="4"
+                  className="form-control"
+                />
+              </div>
+
+              {/* Role-specific fields */}
+              {role === "mentor" ? (
+                <>
+                  <div className="form-row">
+                    <div className="form-group half">
+                      <label>Due Date</label>
+                      <div className="date-picker-container">
+                        <DatePicker
+                          selected={formData.dueDate ? new Date(formData.dueDate) : null}
+                          onChange={handleDateChange}
+                          minDate={new Date()}
+                          dateFormat="yyyy-MM-dd"
+                          placeholderText="Select due date"
+                          required
+                          className="form-control date-picker"
+                        />
+                        <FaCalendarAlt className="calendar-icon" />
+                      </div>
+                    </div>
+
+                    <div className="form-group half">
+                      <label>Project</label>
+                      <Select
+                        options={projectOptions}
+                        onChange={(opt) => handleSelectChange(opt, 'projectId')}
+                        value={projectOptions.find(opt => opt.value === formData.projectId) || null}
+                        placeholder="Select project"
+                        styles={customSelectStyles}
+                        isClearable
+                        required
+                        className="react-select-container"
+                        classNamePrefix="react-select"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-row">
+                    <div className="form-group half">
+                      <label>Priority</label>
+                      <div className="select-container">
+                        <select
+                          name="priority"
+                          value={formData.priority}
+                          onChange={handleChange}
+                          required
+                          className="form-control"
+                        >
+                          <option value="low">Low</option>
+                          <option value="medium">Medium</option>
+                          <option value="high">High</option>
+                        </select>
+                        <FaFlag className="select-icon" />
+                      </div>
+                    </div>
+                    <div className="form-group half">
+                      <label>Estimated Hours</label>
+                      <div className="input-with-icon">
+                        <input
+                          type="number"
+                          name="estimatedHours"
+                          value={formData.estimatedHours}
+                          onChange={handleChange}
+                          min="1"
+                          required
+                          className="form-control"
+                        />
+                        <FaClock className="input-icon" />
+                      </div>
+                    </div>
+                  </div>
+                </>
               ) : (
-                <p className="no-students-message">
-                  {collegeName ? 
-                    "No available students found for this college." : 
-                    "Please select a college first to view students."}
-                </p>
+                <>
+                  <div className="form-row">
+                    <div className="form-group half">
+                      <label>College</label>
+                      <Select
+                        options={collegeOptions}
+                        onChange={handleCollegeChange}
+                        value={collegeOptions.find(opt => opt.value === selectedCollege) || null}
+                        placeholder="Select college"
+                        styles={customSelectStyles}
+                        isClearable
+                        required
+                        className="react-select-container"
+                        classNamePrefix="react-select"
+                      />
+                    </div>
+
+                    <div className="form-group half">
+                      <label>Mentor</label>
+                      <Select
+                        options={mentorOptions}
+                        onChange={(opt) => handleSelectChange(opt, 'mentorId')}
+                        value={mentorOptions.find(opt => opt.value === formData.mentorId) || null}
+                        placeholder="Select mentor"
+                        styles={customSelectStyles}
+                        isClearable
+                        required
+                        className="react-select-container"
+                        classNamePrefix="react-select"
+                      />
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label>Team Members</label>
+                    <Select
+                      options={studentOptions}
+                      onChange={(opt) => handleMultiSelectChange(opt, 'members')}
+                      value={studentOptions.filter(opt => formData.members.includes(opt.value))}
+                      isMulti
+                      placeholder="Select team members"
+                      styles={customSelectStyles}
+                      required
+                      className="react-select-container"
+                      classNamePrefix="react-select"
+                    />
+                  </div>
+                </>
               )}
-            </div>
-            <div className="modal-footer">
-              <button 
-                type="button"
-                className="btn-secondary"
-                onClick={() => setIsModalOpen(false)}
+
+              <div className="form-actions">
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={resetForm}
+                  disabled={isLoading}
+                >
+                  Reset
+                </button>
+                <button
+                  type="submit"
+                  className="btn-primary"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Processing..." : (
+                    role === "mentor" ? "Assign Task" : "Create Project"
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* History Section */}
+          <div className="history-container">
+            <div className="history-header">
+
+              <button
+                className="view-all-btn"
+                onClick={toggleViewAll}
               >
-                Close
+                <FaEye className="view-icon" /> {viewAll ? "Show Less" : "View All"}
               </button>
             </div>
+
+            {displayedItems.length === 0 ? (
+              <div className="no-data-message">
+                <p>No {role === "mentor" ? "tasks" : "projects"} available yet.</p>
+              </div>
+            ) : (
+              role === "mentor" ? (
+                <TaskHistory tasks={displayedItems} />
+              ) : (
+                <ProjectHistory projects={displayedItems} />
+              )
+            )}
           </div>
         </div>
-      )}
-    </div>
+
+        {/* Student Selection Modal */}
+        {isModalOpen && (
+          <div className="modal-backdrop">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h3>Select a Student</h3>
+                <button
+                  type="button"
+                  className="close-modal"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  <FaTimes />
+                </button>
+              </div>
+              <div className="modal-body">
+                {filteredStudents.length > 0 ? (
+                  <ul className="student-list">
+                    {filteredStudents.map((student) => (
+                      <li
+                        key={student.id}
+                        className="student-item"
+                        onClick={() => handleStudentSelect(student)}
+                      >
+                        <FaUsers className="student-icon" /> {student.name}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="no-students-message">
+                    {collegeName ?
+                      "No available students found for this college." :
+                      "Please select a college first to view students."}
+                  </p>
+                )}
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </DashboardLayout>
   );
 };
 

@@ -1,32 +1,32 @@
 import React, { useState } from "react";
 import styles from "./studentTask.module.css";
-
+ 
 const StudentTasks = ({ projectTasks, projectList }) => {
   const [activeTab, setActiveTab] = useState("submitted");
   const [selectedTask, setSelectedTask] = useState(null); // For modal
-
-
-
+ 
+ 
+ 
   const submittedTasks = projectTasks.filter(
     (task) => task.status === "To Be Reviewed" || task.status === "Completed"
   );
-
+ 
   const toBeSubmittedTasks = projectTasks.filter(
     (task) => task.status === "Not Submitted"
   );
-
+ 
   const handleViewTask = (task) => {
     setSelectedTask(task);
   };
-
+ 
   const closeModal = () => {
     setSelectedTask(null);
   };
-
+ 
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>STUDENT TASKS</h2>
-
+ 
       <div className={styles.buttonGroup}>
         <button
           className={`${styles.tabButton} ${activeTab === "submitted" ? styles.active : ""}`}
@@ -41,7 +41,7 @@ const StudentTasks = ({ projectTasks, projectList }) => {
           To Be Submitted
         </button>
       </div>
-
+ 
       {activeTab === "submitted" && (
         <div className={styles.tableContainer}>
           {submittedTasks.length > 0 ? (
@@ -94,7 +94,7 @@ const StudentTasks = ({ projectTasks, projectList }) => {
           )}
         </div>
       )}
-
+ 
       {activeTab === "toBeSubmitted" && (
         <div className={styles.tableContainer}>
           {toBeSubmittedTasks.length > 0 ? (
@@ -131,7 +131,7 @@ const StudentTasks = ({ projectTasks, projectList }) => {
           )}
         </div>
       )}
-
+ 
       {/* Modal */}
       {selectedTask && (
         <div className={styles.modalOverlay} onClick={closeModal}>
@@ -150,5 +150,7 @@ const StudentTasks = ({ projectTasks, projectList }) => {
     </div>
   );
 };
-
+ 
 export default StudentTasks;
+ 
+ 
