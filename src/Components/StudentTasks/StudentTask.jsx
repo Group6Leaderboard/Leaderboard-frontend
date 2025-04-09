@@ -12,7 +12,7 @@ const StudentTasks = ({ projectTasks, projectList }) => {
   );
 
   const toBeSubmittedTasks = projectTasks.filter(
-    (task) => task.status === "Pending"
+    (task) => task.status === "Not Submitted"
   );
 
   const handleViewTask = (task) => {
@@ -104,7 +104,7 @@ const StudentTasks = ({ projectTasks, projectList }) => {
                   <th>Sl. No</th>
                   <th>Task Name</th>
                   <th>Project Name</th>
-                  <th>Assigned Date</th>
+                  {/* <th>Assigned Date</th> */}
                   <th>Due Date</th>
                   <th>Task</th>
                 </tr>
@@ -113,10 +113,10 @@ const StudentTasks = ({ projectTasks, projectList }) => {
                 {toBeSubmittedTasks.map((task, index) => (
                   <tr key={index}>
                     <td>{index + 1}</td>
-                    <td>{task.taskName}</td>
-                    <td>{task.projectName}</td>
-                    <td>{task.assignedDate}</td>
-                    <td>{task.dueDate}</td>
+                    <td>{task.name}</td>
+                    <td>{projectList?.[task.assignedTo] || "N/A"}</td>
+                    {/* <td>{task.assignedDate}</td> */}
+                    <td>{task.dueDate?.slice(0, 10)}</td>
                     <td>
                       <button className={styles.viewButton} onClick={() => handleViewTask(task)}>
                         View
@@ -137,10 +137,10 @@ const StudentTasks = ({ projectTasks, projectList }) => {
         <div className={styles.modalOverlay} onClick={closeModal}>
           <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
             <h3>Task Details</h3>
-            <p><strong>Task Name:</strong> {selectedTask.taskName}</p>
-            <p><strong>Project Name:</strong> {selectedTask.projectName}</p>
-            <p><strong>Assigned Date:</strong> {selectedTask.assignedDate}</p>
-            <p><strong>Due Date:</strong> {selectedTask.dueDate}</p>
+            <p><strong>Task Name:</strong> {selectedTask.name}</p>
+            <p><strong>Project Name:</strong> {projectList?.[selectedTask.assignedTo]}</p>
+            {/* <p><strong>Assigned Date:</strong> {selectedTask.assignedDate}</p> */}
+            <p><strong>Due Date:</strong> {selectedTask.dueDate?.slice(0, 10)}</p>
             <button className={styles.closeButton} onClick={closeModal}>
               Close
             </button>
