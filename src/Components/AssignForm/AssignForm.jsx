@@ -12,11 +12,11 @@ import Select from 'react-select';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useLocation } from "react-router-dom";
-import {
-  FaTachometerAlt,
-  FaCalendarAlt,
-  FaClipboardList,
-  FaExclamationTriangle,
+import { 
+  FaTachometerAlt, 
+  FaCalendarAlt, 
+  FaClipboardList, 
+  FaExclamationTriangle, 
   FaCheckCircle,
   FaUsers,
   FaProjectDiagram,
@@ -27,8 +27,7 @@ import {
   FaTimes,
   FaEye
 } from 'react-icons/fa';
-import DashboardLayout from "../../Layouts/Dashboard/DashboardLayout";
- 
+
 const AssignForm = ({ role }) => {
   // State management
   const [mentors, setMentors] = useState([]);
@@ -58,7 +57,7 @@ const AssignForm = ({ role }) => {
   const [members, setMembers] = useState([{ name: "" }]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentMemberIndex, setCurrentMemberIndex] = useState(null);
- 
+
   // Form state
   const [formData, setFormData] = useState({
     name: "",
@@ -67,12 +66,14 @@ const AssignForm = ({ role }) => {
     projectId: "",
     mentorId: "",
     collegeId: "",
+    priority: "medium",
+    estimatedHours: 2,
     members: []
   });
- 
+
   const location = useLocation();
   const passedProject = location.state?.projectId;
- 
+
   // Fetch initial data
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -84,7 +85,7 @@ const AssignForm = ({ role }) => {
             getAllTasks(),
             getAllProjects()
           ]);
- 
+
           setProjects(projectsRes.response);
           setStats({
             totalTasks: tasksRes.response.length,
@@ -93,13 +94,13 @@ const AssignForm = ({ role }) => {
             totalProjects: projectsRes.response.length,
             activeProjects: projectsRes.response.filter(p => !p.isCompleted).length
           });
- 
+
           const sortedTasks = [...tasksRes.response]
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
           
           setRecentItems(sortedTasks);
           setDisplayedItems(sortedTasks.slice(0, 4)); // Initially show only 4 items
-        }
+        } 
         else if (role === "admin") {
           const [mentorsRes, studentsRes, projectsRes, collegesRes] = await Promise.all([
             getUsers("MENTOR"),
@@ -107,7 +108,7 @@ const AssignForm = ({ role }) => {
             getAllProjects(),
             getAllColleges()
           ]);
- 
+
           setMentors(mentorsRes.response);
           setStudents(studentsRes.response);
           setProjects(projectsRes.response);
@@ -119,7 +120,7 @@ const AssignForm = ({ role }) => {
             totalMentors: mentorsRes.response.length,
             totalStudents: studentsRes.response.length
           });
- 
+
           const sortedProjects = [...projectsRes.response]
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
           
@@ -133,10 +134,10 @@ const AssignForm = ({ role }) => {
         setIsLoading(false);
       }
     };
- 
+
     fetchInitialData();
   }, [role]);
- 
+
   // Handle view all toggle
   const toggleViewAll = () => {
     if (viewAll) {
@@ -148,7 +149,7 @@ const AssignForm = ({ role }) => {
     }
     setViewAll(!viewAll);
   };
- 
+
   // Filter students when college is selected
   useEffect(() => {
     if (collegeName) {
@@ -158,7 +159,7 @@ const AssignForm = ({ role }) => {
       setFilteredStudents([]);
     }
   }, [collegeName, students]);
- 
+
   // Handle passed project from navigation
   useEffect(() => {
     if (passedProject && projects.length > 0) {
@@ -171,7 +172,7 @@ const AssignForm = ({ role }) => {
       }
     }
   }, [passedProject, projects]);
- 
+
   // Auto-hide success message after 5 seconds
   useEffect(() => {
     if (successMessage) {
@@ -182,20 +183,20 @@ const AssignForm = ({ role }) => {
       return () => clearTimeout(timer);
     }
   }, [successMessage]);
- 
+
   // Form handlers
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
- 
+
   const handleDateChange = (date) => {
     setFormData(prev => ({
       ...prev,
       dueDate: date ? date.toISOString() : ''
     }));
   };
- 
+
   const handleSelectChange = (selectedOption, field) => {
     if (!selectedOption) {
       setFormData(prev => ({ ...prev, [field]: "" }));
@@ -206,14 +207,14 @@ const AssignForm = ({ role }) => {
       [field]: selectedOption.value
     }));
   };
- 
+
   const handleMultiSelectChange = (selectedOptions, field) => {
     setFormData(prev => ({
       ...prev,
       [field]: selectedOptions ? selectedOptions.map(opt => opt.value) : []
     }));
   };
- 
+
   const handleCollegeChange = (selectedOption) => {
     if (!selectedOption) {
       setSelectedCollege("");
@@ -225,7 +226,7 @@ const AssignForm = ({ role }) => {
       }));
       return;
     }
- 
+
     const selectedCollegeId = selectedOption.value;
     const selectedCollegeObj = colleges.find(college => college.id === selectedCollegeId);
     
@@ -242,7 +243,7 @@ const AssignForm = ({ role }) => {
       setMembers([{ name: "" }]);
     }
   };
- 
+
   // Handle member selection
   const handleMemberClick = (index) => {
     if (!selectedCollege) {
@@ -276,7 +277,7 @@ const AssignForm = ({ role }) => {
     });
     
     // Remove selected student from filtered list
-    setFilteredStudents(prevFiltered =>
+    setFilteredStudents(prevFiltered => 
       prevFiltered.filter(s => s.id !== student.id)
     );
     
@@ -311,7 +312,7 @@ const AssignForm = ({ role }) => {
       return updatedMembers;
     });
   };
- 
+
   // Reset form
   const resetForm = () => {
     setFormData({
@@ -321,6 +322,8 @@ const AssignForm = ({ role }) => {
       projectId: "",
       mentorId: "",
       collegeId: "",
+      priority: "medium",
+      estimatedHours: 2,
       members: []
     });
     
@@ -331,14 +334,14 @@ const AssignForm = ({ role }) => {
     setSuccessMessage(null);
     setErrorMessage(null);
   };
- 
+
   // Form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setSuccessMessage(null);
     setErrorMessage(null);
- 
+
     try {
       if (role === "mentor") {
         // Task submission
@@ -347,9 +350,11 @@ const AssignForm = ({ role }) => {
           description: formData.description,
           dueDate: formData.dueDate,
           assignedTo: formData.projectId,
+          priority: formData.priority,
+          estimatedHours: formData.estimatedHours
         });
         setSuccessMessage("Task assigned successfully!");
-      }
+      } 
       else if (role === "admin") {
         // Project submission
         const projectData = {
@@ -377,10 +382,10 @@ const AssignForm = ({ role }) => {
           throw new Error("Project ID not found in response");
         }
       }
- 
+
       // Reset form
       resetForm();
- 
+
       // Refresh data
       const refreshData = async () => {
         if (role === "mentor") {
@@ -413,7 +418,7 @@ const AssignForm = ({ role }) => {
         }
       };
       await refreshData();
- 
+
       // Scroll to top to show success message
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error) {
@@ -423,7 +428,7 @@ const AssignForm = ({ role }) => {
       setIsLoading(false);
     }
   };
- 
+
   // Select options
   const projectOptions = projects.map(p => ({ value: p.id, label: p.name }));
   const mentorOptions = mentors.map(m => ({ value: m.id, label: m.name }));
@@ -468,7 +473,6 @@ const AssignForm = ({ role }) => {
   };
  
   return (
-    <DashboardLayout>
     <div className="assign-container">
       <div className="assign-header">
         <h1 className="assign-title">
@@ -483,66 +487,66 @@ const AssignForm = ({ role }) => {
           )}
         </h1>
       </div>
- 
+
       {/* Stats Cards Section */}
       <div className="stats-container">
         {role === "mentor" ? (
           <>
-            <StatsCard
-              title="Total Tasks"
-              value={stats.totalTasks}
-              icon={<FaClipboardList />}
+            <StatsCard 
+              title="Total Tasks" 
+              value={stats.totalTasks} 
+              icon={<FaClipboardList />} 
               color="#4a90e2"
             />
-            <StatsCard
-              title="Not Submitted"
-              value={stats.submittedTasks}
-              icon={<FaExclamationTriangle />}
+            <StatsCard 
+              title="Not Submitted" 
+              value={stats.submittedTasks} 
+              icon={<FaExclamationTriangle />} 
               color="#f39c12"
             />
-            <StatsCard
-              title="To Be Reviewed"
-              value={stats.toBeReviewedTasks}
-              icon={<FaCheckCircle />}
+            <StatsCard 
+              title="To Be Reviewed" 
+              value={stats.toBeReviewedTasks} 
+              icon={<FaCheckCircle />} 
               color="#27ae60"
             />
-            <StatsCard
-              title="Total Projects"
-              value={stats.totalProjects}
-              icon={<FaProjectDiagram />}
+            <StatsCard 
+              title="Total Projects" 
+              value={stats.totalProjects} 
+              icon={<FaProjectDiagram />} 
               color="#8e44ad"
             />
           </>
         ) : (
           <>
-            <StatsCard
-              title="Total Projects"
-              value={stats.totalProjects}
-              icon={<FaProjectDiagram />}
+            <StatsCard 
+              title="Total Projects" 
+              value={stats.totalProjects} 
+              icon={<FaProjectDiagram />} 
               color="#8e44ad"
             />
-            <StatsCard
-              title="Active Projects"
-              value={stats.activeProjects}
-              icon={<FaTachometerAlt />}
+            <StatsCard 
+              title="Active Projects" 
+              value={stats.activeProjects} 
+              icon={<FaTachometerAlt />} 
               color="#2ecc71"
             />
-            <StatsCard
-              title="Total Mentors"
-              value={stats.totalMentors || 0}
-              icon={<FaUsers />}
+            <StatsCard 
+              title="Total Mentors" 
+              value={stats.totalMentors || 0} 
+              icon={<FaUsers />} 
               color="#3498db"
             />
-            <StatsCard
-              title="Total Students"
-              value={stats.totalStudents || 0}
-              icon={<FaUsers />}
+            <StatsCard 
+              title="Total Students" 
+              value={stats.totalStudents || 0} 
+              icon={<FaUsers />} 
               color="#e74c3c"
             />
           </>
         )}
       </div>
- 
+
       <div className="content-layout">
         {/* Form Section */}
         <div className="form-container">
@@ -551,12 +555,12 @@ const AssignForm = ({ role }) => {
               {role === "mentor" ? "Assign New Task" : "Create New Project"}
             </h2>
             <p>
-              {role === "mentor"
-                ? "Create a new task for project teams"
+              {role === "mentor" 
+                ? "Create a new task for project teams" 
                 : "Setup a new project with mentor and students"}
             </p>
           </div>
- 
+
           {/* Status Messages */}
           {successMessage && (
             <div className="alert success">
@@ -568,7 +572,7 @@ const AssignForm = ({ role }) => {
               <FaExclamationTriangle /> {errorMessage}
             </div>
           )}
- 
+
           <form onSubmit={handleSubmit}>
             {/* Common Fields */}
             <div className="form-group">
@@ -579,13 +583,13 @@ const AssignForm = ({ role }) => {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                placeholder={role === "mentor"
-                  ? "Enter task name"
+                placeholder={role === "mentor" 
+                  ? "Enter task name" 
                   : "Enter project name"}
                 className="form-control"
               />
             </div>
- 
+
             <div className="form-group">
               <label>Description</label>
               <textarea
@@ -598,7 +602,7 @@ const AssignForm = ({ role }) => {
                 className="form-control"
               />
             </div>
- 
+
             {/* Role-specific fields */}
             {role === "mentor" ? (
               <>
@@ -615,7 +619,7 @@ const AssignForm = ({ role }) => {
                         required
                         className="form-control date-picker"
                       />
-                      
+                      <FaCalendarAlt className="calendar-icon" />
                     </div>
                   </div>
                   
@@ -634,8 +638,41 @@ const AssignForm = ({ role }) => {
                     />
                   </div>
                 </div>
- 
-  
+
+                <div className="form-row">
+                  <div className="form-group half">
+                    <label>Priority</label>
+                    <div className="select-container">
+                      <select
+                        name="priority"
+                        value={formData.priority}
+                        onChange={handleChange}
+                        required
+                        className="form-control"
+                      >
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                      </select>
+                      <FaFlag className="select-icon" />
+                    </div>
+                  </div>
+                  <div className="form-group half">
+                    <label>Estimated Hours</label>
+                    <div className="input-with-icon">
+                      <input
+                        type="number"
+                        name="estimatedHours"
+                        value={formData.estimatedHours}
+                        onChange={handleChange}
+                        min="1"
+                        required
+                        className="form-control"
+                      />
+                      <FaClock className="input-icon" />
+                    </div>
+                  </div>
+                </div>
               </>
             ) : (
               <>
@@ -686,18 +723,18 @@ const AssignForm = ({ role }) => {
                 </div>
               </>
             )}
- 
+
             <div className="form-actions">
-              <button
-                type="button"
+              <button 
+                type="button" 
                 className="btn-secondary"
                 onClick={resetForm}
                 disabled={isLoading}
               >
                 Reset
               </button>
-              <button
-                type="submit"
+              <button 
+                type="submit" 
                 className="btn-primary"
                 disabled={isLoading}
               >
@@ -708,12 +745,12 @@ const AssignForm = ({ role }) => {
             </div>
           </form>
         </div>
- 
+
         {/* History Section */}
         <div className="history-container">
           <div className="history-header">
             
-            <button
+            <button 
               className="view-all-btn"
               onClick={toggleViewAll}
             >
@@ -727,7 +764,6 @@ const AssignForm = ({ role }) => {
             </div>
           ) : (
             role === "mentor" ? (
-              
               <TaskHistory tasks={displayedItems} />
             ) : (
               <ProjectHistory projects={displayedItems} />
@@ -735,16 +771,16 @@ const AssignForm = ({ role }) => {
           )}
         </div>
       </div>
- 
+
       {/* Student Selection Modal */}
       {isModalOpen && (
         <div className="modal-backdrop">
           <div className="modal-content">
             <div className="modal-header">
               <h3>Select a Student</h3>
-              <button
-                type="button"
-                className="close-modal"
+              <button 
+                type="button" 
+                className="close-modal" 
                 onClick={() => setIsModalOpen(false)}
               >
                 <FaTimes />
@@ -754,8 +790,8 @@ const AssignForm = ({ role }) => {
               {filteredStudents.length > 0 ? (
                 <ul className="student-list">
                   {filteredStudents.map((student) => (
-                    <li
-                      key={student.id}
+                    <li 
+                      key={student.id} 
                       className="student-item"
                       onClick={() => handleStudentSelect(student)}
                     >
@@ -765,14 +801,14 @@ const AssignForm = ({ role }) => {
                 </ul>
               ) : (
                 <p className="no-students-message">
-                  {collegeName ?
-                    "No available students found for this college." :
+                  {collegeName ? 
+                    "No available students found for this college." : 
                     "Please select a college first to view students."}
                 </p>
               )}
             </div>
             <div className="modal-footer">
-              <button
+              <button 
                 type="button"
                 className="btn-secondary"
                 onClick={() => setIsModalOpen(false)}
@@ -784,7 +820,6 @@ const AssignForm = ({ role }) => {
         </div>
       )}
     </div>
-    </DashboardLayout>
   );
 };
  
