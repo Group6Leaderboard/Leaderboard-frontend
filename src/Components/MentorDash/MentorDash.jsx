@@ -12,7 +12,8 @@ import {
 import styles from "./mentorDash.module.css";
 import DashboardLayout from "../../Layouts/Dashboard/DashboardLayout";
 
-const MentorDash = ({ projects, loading, error }) => {
+const MentorDash = ({ projects, userData, college, loading, error }) => {
+  
   if (loading) {
     return <div className={styles.loadingState}>Loading dashboard data...</div>;
   }
@@ -34,20 +35,23 @@ const MentorDash = ({ projects, loading, error }) => {
   const completedProjects = projects.filter(project => project.score > 70).length;
   const completionRate = Math.round((completedProjects / projectCount) * 100) || 0;
 
-  // College distribution data
+  
   const getCollegeDistribution = () => {
     const collegeMap = {};
+  
+    // Count number of projects per collegeId
     projects.forEach(project => {
-      if (project.collegeName) {
-        collegeMap[project.collegeName] = (collegeMap[project.collegeName] || 0) + 1;
+      if (project.collegeId) {
+        collegeMap[project.collegeId] = (collegeMap[project.collegeId] || 0) + 1;
       }
     });
-
-    return Object.keys(collegeMap).map(college => ({
-      name: college,
-      count: collegeMap[college]
+  
+    return Object.entries(collegeMap).map(([collegeId, count]) => ({
+      name: college[collegeId]?.name || "Unknown College",
+      count
     }));
   };
+  
 
   // Project score distribution for bar chart
 
@@ -71,7 +75,8 @@ const MentorDash = ({ projects, loading, error }) => {
         <div className="header-banner">
           <div className="header-content">
             <div className="date">{formatDateForDisplay(new Date())}</div>
-            <h2>Welcome back, John!</h2>
+            <h2>Welcome back, {userData && userData.name
+              ? userData.name.split(" ")[0] : "John"}!</h2>
             <p>Always stay updated in your  portal</p>
           </div>
           <div className="header-graphics">
@@ -81,7 +86,6 @@ const MentorDash = ({ projects, loading, error }) => {
           </div>
         </div>
 
-        {/* Summary Cards - Enhanced with more metrics */}
         <div className={styles.summaryCards}>
           <div className={styles.card}>
             <div className={styles.cardIcon}>
@@ -142,10 +146,10 @@ const MentorDash = ({ projects, loading, error }) => {
                       axisLine={{ stroke: '#eaeaea' }}
                     />
                     <YAxis
-                      tick={{ fill: '#6c757d', fontSize: 12 }}
+                      tick={false}
                       axisLine={{ stroke: '#eaeaea' }}
                       tickLine={false}
-                      domain={[0, 100]} // Explicitly set the domain to ensure consistent scale
+                      
                     />
                     <Tooltip
                       contentStyle={{
@@ -252,10 +256,10 @@ const MentorDash = ({ projects, loading, error }) => {
                     <h3>{project.name}</h3>
                     <span
                       className={`${styles.projectScore} ${project.score > 70
-                          ? styles.scoreHigh
-                          : project.score > 0
-                            ? styles.scoreMedium
-                            : styles.scoreLow
+                        ? styles.scoreHigh
+                        : project.score > 0
+                          ? styles.scoreMedium
+                          : styles.scoreLow
                         }`}
                     >
                       Score: {project.score}
@@ -267,8 +271,7 @@ const MentorDash = ({ projects, loading, error }) => {
                       : project.description || "No description available"}
                   </p>
                   <div className={styles.projectMeta}>
-                    <span>College: {project.collegeName || "N/A"}</span>
-                    <span>Mentor: {project.mentorName || "N/A"}</span>
+                    <span>College: {college[project.collegeId].name || "N/A"}</span>
                   </div>
                 </div>
               ))
