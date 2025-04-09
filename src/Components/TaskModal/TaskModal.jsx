@@ -69,26 +69,27 @@ const TaskModal = ({
       uploadTaskFile();
     }
   };
-
   const uploadTaskFile = async () => {
     try {
       setIsSubmitting(true);
-      
-      // Create form data to send the file as multipart data
+  
       const formData = new FormData();
-      formData.append('file', selectedFile);
-      
- 
+      formData.append("file", selectedFile);
+  
       const response = await updateTask(taskId, { file: selectedFile });
-      
-      
-      if (response && response.status === "success") {
-        submitSuccessful();
+  
+      // ✅ Check if task was actually updated
+      if (
+        response?.status === 200 || 
+        response?.data?.message?.toLowerCase().includes("updated")
+      ) {
+        submitSuccessful(); // Show success alert
       } else {
-        throw new Error(response?.message || "Failed to submit task");
+        throw new Error(response?.data?.message || "Failed to submit task");
       }
     } catch (error) {
       console.error("Error submitting task:", error);
+      // ❌ Only show error if it's really an error
       Swal.fire({
         icon: "error",
         title: "Submission Failed",
@@ -99,10 +100,17 @@ const TaskModal = ({
       setIsSubmitting(false);
     }
   };
+  
 
   const submitSuccessful = () => {
-    AlertModal.success("Done", "Task submitted successfully");
+    Swal.fire({
+      icon: "success",
+      title: "Success",
+      text: "Task submitted successfully!",
+      confirmButtonColor: "#4CAF50",
+    });
   };
+  
 
   const handleBackTask = () => {
     onClose();
