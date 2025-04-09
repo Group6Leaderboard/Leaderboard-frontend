@@ -4,7 +4,7 @@ import fallbackImage from "../../assets/fallback.jpg";
 import { BsFolder2Open } from "react-icons/bs";
 import { getMembersForProject } from "../../services/studentProjectService";
 import { useNavigate } from "react-router-dom";
-
+import DashboardLayout from "../../Layouts/Dashboard/DashboardLayout";
 
 
 const MentorProjectView = ({ projects }) => {

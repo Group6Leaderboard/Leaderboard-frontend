@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaSearch, FaFileAlt, FaClock, FaCheckCircle, FaExclamationCircle, FaEllipsisH, FaPlus, FaEdit } from "react-icons/fa";
 import styles from "./mentorTaskView.module.css";
 import { getAllTasks } from "../../services/taskService"; // Adjust the path as needed
+import DashboardLayout from "../../Layouts/Dashboard/DashboardLayout";
 
 const MentorTaskView = () => {
   const [tasks, setTasks] = useState([]);
@@ -106,6 +107,7 @@ const MentorTaskView = () => {
   const filteredTasks = getFilteredTasks();
 
   return (
+    <DashboardLayout>
     <div className={styles.container}>
       <div className={styles.header}>
         <h1 className={styles.title}>
@@ -278,6 +280,7 @@ const MentorTaskView = () => {
         </div>
       )}
     </div>
+    </DashboardLayout>
   );
 };
 
