@@ -5,36 +5,56 @@ import ProfileEdit from "../ProfileEdit/ProfileEdit";
 import styles from "./navbar.module.css";
 import { getUsers } from "../../services/userService";
 import { logout } from "../../services/authService";
-
+ 
 const Navbar = ({ userType, userData }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [userD, setUserD] = useState(null);
-
+ 
   const dropdownRef = useRef(null);
   const mobileMenuRef = useRef(null);
   const modalRef = useRef(null);
-
+ 
   const navigate = useNavigate();
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await getUsers();
-        if (res?.status === 200 && res?.response) {
-          setUserD(res.response);
-          console.log(userD);
-        } else {
-          console.error("Invalid user data", res);
-        }
-      } catch (error) {
-        console.error("Failed to fetch user data", error);
-      }
-    };
-
-    fetchUser();
-  }, []);
-
+  // useEffect(() => {
+  //   const fetchUser = async () => {
+  //     try {
+  //       const res = await getUsers();
+  //       if (res?.status === 200 && res?.response) {
+  //         setUserD(res.response);
+  //         console.log(userD);
+  //       } else {
+  //         console.error("Invalid user data", res);
+  //       }
+  //     } catch (error) {
+  //       console.error("Failed to fetch user data", error);
+  //     }
+  //   };
+ 
+  //   fetchUser();
+  // }, []);
+ 
+  // Inside Navbar component, before useEffect
+const fetchUser = async () => {
+  try {
+    const res = await getUsers();
+    if (res?.status === 200 && res?.response) {
+      setUserD(res.response);
+      console.log("Updated user:", res.response);
+    } else {
+      console.error("Invalid user data", res);
+    }
+  } catch (error) {
+    console.error("Failed to fetch user data", error);
+  }
+};
+ 
+useEffect(() => {
+  fetchUser();
+}, []);
+ 
+ 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -47,23 +67,23 @@ const Navbar = ({ userType, userData }) => {
         setIsProfileModalOpen(false);
       }
     };
-
+ 
     if (isOpen || isProfileModalOpen || isMobileMenuOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
-
+ 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOpen, isMobileMenuOpen, isProfileModalOpen]);
-
+ 
   const handleLogout = async () => {
     try {
-      const response = await logout(); 
-
+      const response = await logout();
+ 
       localStorage.removeItem("token");
       localStorage.removeItem("role");
-
+ 
       navigate("/leaderboard/colleges", { replace: true });
     } catch (error) {
       console.error("Logout failed:", error);
@@ -71,14 +91,14 @@ const Navbar = ({ userType, userData }) => {
       navigate("/leaderboard/colleges", { replace: true });
     }
   };
-
+ 
   return (
     <>
       <nav className={styles.navbar}>
         <div className={styles.logo}></div>
-
+ 
         <div className={styles.desktopRightSection}>
-
+ 
           <div className={styles.userSection}>
             {userD?.image ? (
               <img src={`data:image/jpeg;base64,${userD.image}`} alt="Profile" className={styles.profileImage} />
@@ -106,7 +126,7 @@ const Navbar = ({ userType, userData }) => {
             </div>
           </div>
         </div>
-
+ 
         {/* Mobile Navbar */}
         <div className={styles.mobileTopBar}>
           <div className={styles.mobileUserInfo} onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
@@ -118,7 +138,7 @@ const Navbar = ({ userType, userData }) => {
             <span className={styles.mobileUsername}>{userD?.name || "Loading..."}</span>
             <FaCaretDown className={styles.dropdownIcon} />
           </div>
-
+ 
           {isOpen && (
             <ul className={styles.mobileDropdownMenu} ref={dropdownRef}>
               <li onClick={() => setIsProfileModalOpen(true)}>
@@ -130,8 +150,8 @@ const Navbar = ({ userType, userData }) => {
             </ul>
           )}
         </div>
-
-
+ 
+ 
         {/* Mobile Dropdown Menu */}
         {isMobileMenuOpen && (
           <ul className={styles.mobileDropdownMenu} ref={mobileMenuRef}>
@@ -144,19 +164,25 @@ const Navbar = ({ userType, userData }) => {
           </ul>
         )}
       </nav>
-
+ 
       {isProfileModalOpen && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent} ref={modalRef}>
             <button className={styles.closeButton} onClick={() => setIsProfileModalOpen(false)}>
               ✖
             </button>
-            <ProfileEdit userType={userType} userData={userData} />
+            <ProfileEdit
+  userType={userType}
+  userData={userD}
+  onClose={() => setIsProfileModalOpen(false)}
+  onUpdate={fetchUser}
+/>
+ 
           </div>
         </div>
       )}
     </>
   );
 };
-
+ 
 export default Navbar;
