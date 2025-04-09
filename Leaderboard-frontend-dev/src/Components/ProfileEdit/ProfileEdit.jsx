@@ -118,7 +118,8 @@ const ProfileEdit = (props) => {
     return Object.keys(newErrors).length === 0;
   };
  
- 
+  console.log("userData:", userData);
+
  
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -137,6 +138,8 @@ const ProfileEdit = (props) => {
     }
   
     setIsLoading(true);
+  
+
   
     // const userDto = {
     //   id: userData.id,
@@ -470,3 +473,4 @@ const ProfileEdit = (props) => {
 };
  
 export default ProfileEdit;
+ 
