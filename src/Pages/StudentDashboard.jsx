@@ -251,10 +251,16 @@ console.log(projectList);
                   <button
                     className={styles.viewTasksButton}
                     onClick={() => {
-                      const matchingTasks = tasks.filter(
-                        (t) => t.assignedTo === project.id && t.status === "Not Submitted"
-                        
-                      );
+                      const matchingTasks = tasks.filter((t) => {
+                        const dueDate = new Date(t.dueDate);
+                        const now = new Date();
+                      
+                        return (
+                          t.assignedTo === project.id &&
+                          (t.status === "Not Submitted" || t.status === "To be reviewed") &&
+                          dueDate > now
+                        );
+                      });
                       console.log(matchingTasks);
                       if (matchingTasks.length > 0) {
                         setActiveProjectTasks(matchingTasks);

@@ -138,6 +138,7 @@ const StudentTasks = ({ projectTasks, projectList }) => {
           <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
             <h3>Task Details</h3>
             <p><strong>Task Name:</strong> {selectedTask.name}</p>
+            <p><strong>Task Description:</strong> {selectedTask.description}</p>
             <p><strong>Project Name:</strong> {projectList?.[selectedTask.assignedTo]}</p>
             {/* <p><strong>Assigned Date:</strong> {selectedTask.assignedDate}</p> */}
             <p><strong>Due Date:</strong> {selectedTask.dueDate?.slice(0, 10)}</p>

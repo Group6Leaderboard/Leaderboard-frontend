@@ -8,6 +8,7 @@ import { PieChart, Pie, Tooltip, Cell, Legend, ResponsiveContainer } from 'recha
 import Cookies from 'js-cookie';
 import { Link } from "react-router-dom";
 import { Calendar, Activity, Award } from "lucide-react";
+import { PiFlagBanner } from 'react-icons/pi';
  
 const AdminDash = ({userD}) => {
   const [stats, setStats] = useState({
@@ -215,7 +216,7 @@ const AdminDash = ({userD}) => {
  
   return (
     <div className={styles.dashboardContainer}>
-      <div className="header-banner">
+      <div className={styles.headerBanner}>
         <div className="header-content">
           <div className="date">{formatDateForDisplay(new Date())}</div>
           <h2>Welcome back, {studentName}!</h2>

@@ -182,7 +182,7 @@ const TaskModal = ({
 
           <div className={styles.calendarSection}>
             <h3>Due Date Highlight</h3>
-            <Calender highlightDate={dueDate} />
+            <Calender highlightDate={new Date(dueDate)} />
           </div>
         </div>
 
