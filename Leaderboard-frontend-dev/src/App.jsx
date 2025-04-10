@@ -27,7 +27,7 @@ const App = () => {
       <Route path="/*" element={<DashboardRoutes />} />
 
       <Route path="/login/*" element={<NotFound />} />
-      <Route path="/" element={<Navigate to="/leaderboard/colleges" />} />
+      <Route path="/" element={<Navigate to="/leaderboard/students" />} />
         <Route path="/leaderboard/colleges" element={<CollegeLeaderboard />} />
         <Route path="/leaderboard/projects" element={<ProjectLeaderboard />} />
         <Route path="/leaderboard/students" element={<StudentLeaderboard />} />

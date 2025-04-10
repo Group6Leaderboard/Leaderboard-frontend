@@ -270,4 +270,14 @@
   margin-right: 6px;
   font-size: 0.9rem;
 }
-
+.form-control :focus{
+  border-color:  #5EB5AE !important; 
+  box-shadow: none !important;
+  outline: none !important;
+}
+@media screen and (max-width: 600px) {
+  .assign-header h1 {
+      font-size: 35px;
+  }
+  
+}

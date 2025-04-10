@@ -14,7 +14,7 @@
   display: flex;
   justify-content: space-between;
   padding: 24px 32px;
-  color: rgb(105, 187, 139);
+  color: #5EB5AE;
   position: relative;
   overflow: hidden;
   height: 180px;
@@ -462,6 +462,34 @@
   justify-content: center;
   align-items: center;
 }
+.event-list {
+  margin-top: 15px;
+  background: #f9f9f9;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.event-list h4 {
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.event-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 14px;
+}
+
+.remove-button {
+  background: none;
+  border: none;
+  color: red;
+  cursor: pointer;
+  font-size: 16px;
+}
+
 
 /* Responsive adjustments */
 @media (max-width: 768px) {

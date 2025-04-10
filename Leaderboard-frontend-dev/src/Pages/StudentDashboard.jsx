@@ -129,20 +129,6 @@ console.log(projectList);
     }
   };
 
-  const getProgressBar = (project) => {
-    const progressPercent = project.completed ? 100 : Math.floor(Math.random() * 80) + 10;
-    return (
-      <div className={styles.progressContainer}>
-        <div className={styles.progressBar}>
-          <div
-            className={styles.progressFill}
-            style={{ width: `${progressPercent}%` }}
-          />
-        </div>
-        <span className={styles.progressPercent}>{progressPercent}%</span>
-      </div>
-    );
-  };
 
   const filteredProjects = projects.filter((project) => {
     const matchesSearch = project.name.toLowerCase().includes(searchQuery.toLowerCase());

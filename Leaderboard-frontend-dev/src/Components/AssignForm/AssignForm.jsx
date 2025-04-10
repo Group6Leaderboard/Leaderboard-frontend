@@ -192,7 +192,7 @@ const AssignForm = ({ role }) => {
   const handleDateChange = (date) => {
     if (date) {
       const endOfDay = new Date(date);
-      endOfDay.setHours(23, 59, 59, 999); // Set time to 23:59:59
+      endOfDay.setHours(23, 59, 59, 999); 
       setFormData({ ...formData, dueDate: endOfDay.toISOString() });
     }
   };

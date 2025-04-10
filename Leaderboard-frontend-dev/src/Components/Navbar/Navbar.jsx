@@ -84,11 +84,11 @@ useEffect(() => {
       localStorage.removeItem("token");
       localStorage.removeItem("role");
  
-      navigate("/leaderboard/colleges", { replace: true });
+      navigate("/leaderboard/students", { replace: true });
     } catch (error) {
       console.error("Logout failed:", error);
       localStorage.clear();
-      navigate("/leaderboard/colleges", { replace: true });
+      navigate("/leaderboard/students", { replace: true });
     }
   };
  

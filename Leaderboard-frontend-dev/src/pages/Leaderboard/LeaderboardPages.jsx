@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import "./LeaderboardStyles.css";
 import { getLeaderboard } from "../../services/leaderboardService";
+import LoadingSpinner from "../../Components/LoadingSpinner/LoadingSpinner";
+
 
 const LeaderboardPages = ({ type = "college" }) => {
   const navigate = useNavigate();
@@ -16,30 +18,39 @@ const LeaderboardPages = ({ type = "college" }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
-        const data = await getLeaderboard(type);
+        if (type === "student") setLoading(true);
+  
+        const [data] = await Promise.all([
+          getLeaderboard(type),
+          type === "student"
+            ? new Promise(resolve => setTimeout(resolve, 2300)) // delay only for student
+            : Promise.resolve() // resolve instantly for college/project
+        ]);
+  
         setLeaderboardData(prev => ({
           ...prev,
           [type]: data
         }));
-        setLoading(false);
       } catch (err) {
         console.error("Error fetching leaderboard data:", err);
         setError("Failed to load leaderboard.");
-        setLoading(false);
+      } finally {
+        if (type === "student") setLoading(false);
       }
     };
-
+  
     fetchData();
   }, [type]);
+  
 
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm]);
 
-  if (loading) {
-    return <div className="loader">Loading...</div>;
+  if (loading && type === "student") {
+    return <LoadingSpinner />;
   }
+  
 
   if (error) {
     return <div className="error">{error}</div>;
@@ -78,7 +89,7 @@ const LeaderboardPages = ({ type = "college" }) => {
         </div>
         <div className="user-menu">
           <div className="user-icon" onClick={() => setShowLoginOption(!showLoginOption)}>
-            <img src="/settings.png" alt="User" />
+            <img src="/admin.png" alt="User" />
             <img src="/da.png" className="arrow-icon" alt="Arrow" />
           </div>
           {showLoginOption && (

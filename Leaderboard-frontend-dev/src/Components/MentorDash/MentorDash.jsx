@@ -83,6 +83,21 @@ const MentorDash = ({ projects, userData, college, loading, error }) => {
             <div className="avatar-container">
               <img src={profilePic} alt="Profile" className="profile-image" />
             </div>
+            {/* <div className="avatar-container">
+    {userData?.image ? (
+      <img
+        src={`data:image/jpeg;base64,${userData.image}`}
+        alt="Profile"
+        className="profile-image"
+      />
+    ) : (
+      <img
+        src="https://via.placeholder.com/150"
+        alt="Default Profile"
+        className="profile-image"
+      />
+    )}
+  </div> */}
           </div>
         </div>
 
