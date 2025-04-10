@@ -150,17 +150,5 @@
   }
   
   .closeButton:hover {
-    background-color: #08a896;
-  }
-  .table tbody tr:nth-child(odd) {
-    background-color: #e1f3f1; /* light grey */
-  }
-   
-  .table tbody tr:nth-child(even) {
-    background-color: #d2ebe8; /* white */
-  }
-
-  
-  .table tbody tr:hover {
-    background-color: #e0f7f5;
+    background-color: #4ca399;
   }

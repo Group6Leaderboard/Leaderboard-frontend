@@ -28,7 +28,7 @@
 .headerAdminType h2 {
     font-size: 64px;
     color: #2c3e50;
-    font-weight: bold;
+    /* font-weight: bold; */
     text-transform: uppercase;
     z-index: 1000;
 }

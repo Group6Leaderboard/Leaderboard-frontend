@@ -26,10 +26,16 @@
     background: #5EB5AE;
   }
   
-  .highlight {
-    background: #5EB5AE !important;
+  .highlightDueDate {
+    background: #db5858 !important;
     color: #000 !important;
     font-weight: bold;
     border-radius: 50%;
   }
+  .isToday {
+    background-color: #a8e6e2 !important; /* Light teal for today */
+    color: #008080 !important;
+    border-radius: 50%;
+  }
+  
   

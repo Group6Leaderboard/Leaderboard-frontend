@@ -8,7 +8,7 @@ import AlertModal from "../AlertModal/AlertModal";
 // CSS styles
 const styles = {
   container: {
-    backgroundColor: "#f8f8f8",
+    backgroundColor: "#fff",
     padding: "20px",
   },
   content: {
@@ -46,7 +46,7 @@ const styles = {
     backgroundColor: "#fff",
     borderRadius: "10px",
     padding: "25px",
-    boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.05)",
+    boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.1)",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",

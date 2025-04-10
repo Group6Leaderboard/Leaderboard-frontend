@@ -23,8 +23,8 @@ const LeaderboardPages = ({ type = "college" }) => {
         const [data] = await Promise.all([
           getLeaderboard(type),
           type === "student"
-            ? new Promise(resolve => setTimeout(resolve, 2300)) // delay only for student
-            : Promise.resolve() // resolve instantly for college/project
+            ? new Promise(resolve => setTimeout(resolve, 2600)) 
+            : Promise.resolve() 
         ]);
   
         setLeaderboardData(prev => ({

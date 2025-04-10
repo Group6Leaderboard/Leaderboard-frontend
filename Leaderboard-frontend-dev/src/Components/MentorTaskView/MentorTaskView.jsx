@@ -117,7 +117,7 @@ const MentorTaskView = () => {
       await fetchTasks();
     } catch (error) {
       console.error("Error updating score:", error);
-      AlertModal.error("Failed", "Something went wrong. Try again.");
+      AlertModal.error("Failed", "Cannot score before duedate.");
     }
   };
 
@@ -129,11 +129,12 @@ const MentorTaskView = () => {
   return (
     <DashboardLayout>
       <div className={styles.container}>
+        
         <div className={styles.header}>
           <h1 className={styles.title}>
             <FaFileAlt className={styles.titleIcon} /> TASKS
           </h1>
-          <div className={styles.searchBar}>
+          {/* <div className={styles.searchBar}>
             <FaSearch className={styles.searchIcon} />
             <input
               type="text"
@@ -141,7 +142,7 @@ const MentorTaskView = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-          </div>
+          </div> */}
         </div>
 
         <div className={styles.tabContainer}>
@@ -155,8 +156,20 @@ const MentorTaskView = () => {
             </button>
           ))}
         </div>
+        <div className={styles.taskdisplay}>
 
         <div className={styles.taskListContainer}>
+        <div className={styles.searchBar}>
+            <FaSearch className={styles.searchIcon} />
+            <input
+              type="text"
+              placeholder="Search here"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+
           {filteredTasks.length > 0 ? (
             <div className={styles.taskList}>
               {filteredTasks.map((task) => (
@@ -310,6 +323,7 @@ const MentorTaskView = () => {
             </div>
           </div>
         )}
+        </div>
       </div>
     </DashboardLayout>
   );
