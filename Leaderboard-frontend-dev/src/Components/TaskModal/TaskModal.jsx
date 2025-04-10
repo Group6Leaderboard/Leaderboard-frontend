@@ -72,15 +72,15 @@ const TaskModal = ({
   const uploadTaskFile = async () => {
     try {
       setIsSubmitting(true);
-  
+
       const formData = new FormData();
       formData.append("file", selectedFile);
-  
+
       const response = await updateTask(taskId, { file: selectedFile });
-  
+
       // ✅ Check if task was actually updated
       if (
-        response?.status === 200 || 
+        response?.status === 200 ||
         response?.data?.message?.toLowerCase().includes("updated")
       ) {
         submitSuccessful(); // Show success alert
@@ -100,7 +100,7 @@ const TaskModal = ({
       setIsSubmitting(false);
     }
   };
-  
+
 
   const submitSuccessful = () => {
     Swal.fire({
@@ -110,7 +110,7 @@ const TaskModal = ({
       confirmButtonColor: "#4CAF50",
     });
   };
-  
+
 
   const handleBackTask = () => {
     onClose();
@@ -119,7 +119,7 @@ const TaskModal = ({
 
   const formatDate = (dateString) => {
     if (!dateString) return "No date specified";
-    
+
     const options = {
       weekday: "long",
       year: "numeric",
@@ -161,10 +161,10 @@ const TaskModal = ({
               Upload File
               {isDueDatePassed && <span className={styles.overdueTag}> (Late submission)</span>}
             </label>
-            <input 
-              type="file" 
-              className={styles.upload} 
-              onChange={handleFileChange} 
+            <input
+              type="file"
+              className={styles.upload}
+              onChange={handleFileChange}
               disabled={isSubmitting}
             />
             {fileError && <p className={styles.errorMessage}>{fileError}</p>}
@@ -181,8 +181,11 @@ const TaskModal = ({
           </div>
 
           <div className={styles.calendarSection}>
-            <h3>Due Date Highlight</h3>
-            <Calender highlightDate={dueDate} />
+            <h3>Due Date Highlight </h3>
+            <Calender
+              highlightDate={new Date(dueDate)}
+              key={dueDate} // Add this line
+            />
           </div>
         </div>
 
@@ -195,8 +198,8 @@ const TaskModal = ({
           >
             {isSubmitting ? "Submitting..." : isDueDatePassed ? "Submit Late Task" : "Submit Task"}
           </button>
-          <button 
-            className={styles.backButton} 
+          <button
+            className={styles.backButton}
             onClick={handleBackTask}
             disabled={isSubmitting}
           >
@@ -208,16 +211,16 @@ const TaskModal = ({
         {showArrows && (
           <div className={styles.arrowControls}>
             <>
-              <button 
-                onClick={onPrev} 
+              <button
+                onClick={onPrev}
                 className={`${styles.arrowBtn} ${styles.leftArrow}`}
                 disabled={isSubmitting}
               >
                 <HiChevronLeft size={20} />
               </button>
 
-              <button 
-                onClick={onNext} 
+              <button
+                onClick={onNext}
                 className={`${styles.arrowBtn} ${styles.rightArrow}`}
                 disabled={isSubmitting}
               >

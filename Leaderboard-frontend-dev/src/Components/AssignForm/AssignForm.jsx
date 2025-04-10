@@ -28,7 +28,7 @@ import {
   FaEye
 } from 'react-icons/fa';
 import DashboardLayout from "../../Layouts/Dashboard/DashboardLayout";
-
+ 
 const AssignForm = ({ role }) => {
   // State management
   const [mentors, setMentors] = useState([]);
@@ -50,7 +50,7 @@ const AssignForm = ({ role }) => {
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [viewAll, setViewAll] = useState(false);
-
+ 
   // Student selection
   const [selectedCollege, setSelectedCollege] = useState("");
   const [collegeName, setCollegeName] = useState("");
@@ -58,7 +58,7 @@ const AssignForm = ({ role }) => {
   const [members, setMembers] = useState([{ name: "" }]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentMemberIndex, setCurrentMemberIndex] = useState(null);
-
+ 
   // Form state
   const [formData, setFormData] = useState({
     name: "",
@@ -67,24 +67,26 @@ const AssignForm = ({ role }) => {
     projectId: "",
     mentorId: "",
     collegeId: "",
+    priority: "medium",
+    estimatedHours: 2,
     members: []
   });
-
+ 
   const location = useLocation();
   const passedProject = location.state?.projectId;
-
+ 
   // Fetch initial data
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
         setIsLoading(true);
-
+ 
         if (role === "mentor") {
           const [tasksRes, projectsRes] = await Promise.all([
             getAllTasks(),
             getAllProjects()
           ]);
-
+ 
           setProjects(projectsRes.response);
           setStats({
             totalTasks: tasksRes.response.length,
@@ -93,12 +95,12 @@ const AssignForm = ({ role }) => {
             totalProjects: projectsRes.response.length,
             activeProjects: projectsRes.response.filter(p => !p.isCompleted).length
           });
-
+ 
           const sortedTasks = [...tasksRes.response]
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
+ 
           setRecentItems(sortedTasks);
-          setDisplayedItems(sortedTasks.slice(0, 4)); // Initially show only 4 items
+          setDisplayedItems(sortedTasks.slice(0, 3)); // Initially show only 4 items
         }
         else if (role === "admin") {
           const [mentorsRes, studentsRes, projectsRes, collegesRes] = await Promise.all([
@@ -107,24 +109,24 @@ const AssignForm = ({ role }) => {
             getAllProjects(),
             getAllColleges()
           ]);
-
+ 
           setMentors(mentorsRes.response);
           setStudents(studentsRes.response);
           setProjects(projectsRes.response);
           setColleges(collegesRes.response || []);
-
+ 
           setStats({
             totalProjects: projectsRes.response.length,
             activeProjects: projectsRes.response.filter(p => !p.isCompleted).length,
             totalMentors: mentorsRes.response.length,
             totalStudents: studentsRes.response.length
           });
-
+ 
           const sortedProjects = [...projectsRes.response]
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
+ 
           setRecentItems(sortedProjects);
-          setDisplayedItems(sortedProjects.slice(0, 4)); // Initially show only 4 items
+          setDisplayedItems(sortedProjects.slice(0, 3)); // Initially show only 4 items
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -133,22 +135,22 @@ const AssignForm = ({ role }) => {
         setIsLoading(false);
       }
     };
-
+ 
     fetchInitialData();
   }, [role]);
-
+ 
   // Handle view all toggle
   const toggleViewAll = () => {
     if (viewAll) {
       // Show only the first 4 items
-      setDisplayedItems(recentItems.slice(0, 4));
+      setDisplayedItems(recentItems.slice(0, 3));
     } else {
       // Show all items
       setDisplayedItems(recentItems);
     }
     setViewAll(!viewAll);
   };
-
+ 
   // Filter students when college is selected
   useEffect(() => {
     if (collegeName) {
@@ -158,7 +160,7 @@ const AssignForm = ({ role }) => {
       setFilteredStudents([]);
     }
   }, [collegeName, students]);
-
+ 
   // Handle passed project from navigation
   useEffect(() => {
     if (passedProject && projects.length > 0) {
@@ -171,33 +173,35 @@ const AssignForm = ({ role }) => {
       }
     }
   }, [passedProject, projects]);
-
+ 
   // Auto-hide success message after 5 seconds
   useEffect(() => {
     if (successMessage) {
       const timer = setTimeout(() => {
-        setSuccessMessage(null);
-      }, 5000);
-
+        const element = document.querySelector('.alert-success');
+        if (element) {
+          element.classList.add('hiding');
+          setTimeout(() => setSuccessMessage(null), 500);
+        }
+      }, 4500);
+  
       return () => clearTimeout(timer);
     }
   }, [successMessage]);
-
+ 
   // Form handlers
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
-
+ 
   const handleDateChange = (date) => {
-    if (date) {
-      const endOfDay = new Date(date);
-      endOfDay.setHours(23, 59, 59, 999); // Set time to 23:59:59
-      setFormData({ ...formData, dueDate: endOfDay.toISOString() });
-    }
+    setFormData(prev => ({
+      ...prev,
+      dueDate: date ? date.toISOString() : ''
+    }));
   };
-  
-
+ 
   const handleSelectChange = (selectedOption, field) => {
     if (!selectedOption) {
       setFormData(prev => ({ ...prev, [field]: "" }));
@@ -208,14 +212,14 @@ const AssignForm = ({ role }) => {
       [field]: selectedOption.value
     }));
   };
-
+ 
   const handleMultiSelectChange = (selectedOptions, field) => {
     setFormData(prev => ({
       ...prev,
       [field]: selectedOptions ? selectedOptions.map(opt => opt.value) : []
     }));
   };
-
+ 
   const handleCollegeChange = (selectedOption) => {
     if (!selectedOption) {
       setSelectedCollege("");
@@ -227,35 +231,35 @@ const AssignForm = ({ role }) => {
       }));
       return;
     }
-
+ 
     const selectedCollegeId = selectedOption.value;
     const selectedCollegeObj = colleges.find(college => college.id === selectedCollegeId);
-
+ 
     if (selectedCollegeObj) {
       setSelectedCollege(selectedCollegeId);
       setCollegeName(selectedCollegeObj.name);
-
+ 
       setFormData(prev => ({
         ...prev,
         collegeId: selectedCollegeId
       }));
-
+ 
       // Reset member selection
       setMembers([{ name: "" }]);
     }
   };
-
+ 
   // Handle member selection
   const handleMemberClick = (index) => {
     if (!selectedCollege) {
       setErrorMessage("Please select a college first");
       return;
     }
-
+ 
     setCurrentMemberIndex(index);
     setIsModalOpen(true);
   };
-
+ 
   const handleStudentSelect = (student) => {
     // Update members list
     setMembers(prevMembers => {
@@ -263,7 +267,7 @@ const AssignForm = ({ role }) => {
       newMembers[currentMemberIndex] = student;
       return newMembers;
     });
-
+ 
     // Update form data
     setFormData(prev => {
       const currentMembers = [...prev.members];
@@ -276,30 +280,30 @@ const AssignForm = ({ role }) => {
         members: currentMembers
       };
     });
-
+ 
     // Remove selected student from filtered list
     setFilteredStudents(prevFiltered =>
       prevFiltered.filter(s => s.id !== student.id)
     );
-
+ 
     setIsModalOpen(false);
   };
-
+ 
   const addMember = () => {
     if (members.length < 4) {
       setMembers([...members, { name: "" }]);
     }
   };
-
+ 
   const removeMember = (index) => {
     setMembers(prevMembers => {
       const removedMember = prevMembers[index];
       const updatedMembers = prevMembers.filter((_, i) => i !== index);
-
+ 
       // Add removed student back to filtered list
       if (removedMember?.id) {
         setFilteredStudents(prevFiltered => [...prevFiltered, removedMember]);
-
+ 
         // Also remove from form data
         setFormData(prev => {
           const updatedFormMembers = prev.members.filter((_, i) => i !== index);
@@ -309,11 +313,11 @@ const AssignForm = ({ role }) => {
           };
         });
       }
-
+ 
       return updatedMembers;
     });
   };
-
+ 
   // Reset form
   const resetForm = () => {
     setFormData({
@@ -327,74 +331,127 @@ const AssignForm = ({ role }) => {
       estimatedHours: 2,
       members: []
     });
-
+ 
     setSelectedCollege("");
     setCollegeName("");
-
+ 
     setFilteredStudents([]);
     setSuccessMessage(null);
     setErrorMessage(null);
   };
-
+ 
   // Form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setSuccessMessage(null);
-    setErrorMessage(null);
-  
-    try {
-      if (role === "mentor") {
-        // Task submission
-        await createTask({
-          name: formData.name,
-          description: formData.description,
-          dueDate: formData.dueDate,
-          assignedTo: formData.projectId,
-          priority: formData.priority,
-          estimatedHours: formData.estimatedHours
-        });
-        setSuccessMessage("Task assigned successfully!");
-      }
-      else if (role === "admin") {
-        // Project submission
-        const projectData = {
-          name: formData.name,
-          description: formData.description,
-          collegeId: selectedCollege,
-          mentorId: formData.mentorId
-        };
-  
-        const response = await createProject(projectData);
-        const projectId = response?.response?.id;
-  
-        if (projectId) {
-          if (formData.members && formData.members.length > 0) {
-            await Promise.all(
-              formData.members.map(memberId => assignProject(memberId, projectId))
-            );
-          } else {
-            console.warn("No members selected for project assignment");
-          }
-  
-          setSuccessMessage("Project assigned successfully!");
+// In the handleSubmit function, after successfully creating a task or project
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
+  setSuccessMessage(null);
+  setErrorMessage(null);
+ 
+  try {
+    if (role === "mentor") {
+      // Task submission
+      const taskData = {
+        name: formData.name,
+        description: formData.description,
+        dueDate: formData.dueDate,
+        assignedTo: formData.projectId,
+        priority: formData.priority,
+        estimatedHours: formData.estimatedHours
+      };
+      
+      const response = await createTask(taskData);
+      const createdTask = response?.response;
+      
+      // Add the new task to the history
+      if (createdTask) {
+        // Add created timestamp for sorting
+        createdTask.createdAt = new Date().toISOString();
+        
+        // Update the recent items and displayed items
+        const updatedRecentItems = [createdTask, ...recentItems];
+        setRecentItems(updatedRecentItems);
+        
+        // Update displayed items based on current view state
+        if (viewAll) {
+          setDisplayedItems(updatedRecentItems);
         } else {
-          throw new Error("Project ID not found in response");
+          setDisplayedItems(updatedRecentItems.slice(0, 3));
         }
       }
-  
-      // Reset form
-      resetForm();
- 
-  
-    } catch (error) {
-      console.error("Submission error:", error);
-      setErrorMessage(error.message || "Submission failed. Please try again.");
-    } finally {
-      setIsLoading(false);
+      
+      setSuccessMessage("Task assigned successfully!");
     }
-  };
-
+    else if (role === "admin") {
+      // Project submission
+      const projectData = {
+        name: formData.name,
+        description: formData.description,
+        collegeId: selectedCollege,
+        mentorId: formData.mentorId
+      };
+ 
+      const response = await createProject(projectData);
+      const createdProject = response?.response;
+ 
+      if (createdProject) {
+        const projectId = createdProject.id;
+        
+        // Assign members to the project
+        if (formData.members && formData.members.length > 0) {
+          await Promise.all(
+            formData.members.map(memberId => assignProject(memberId, projectId))
+          );
+        } else {
+          console.warn("No members selected for project assignment");
+        }
+        
+        // Add mentor name to the created project for display
+        if (formData.mentorId) {
+          const mentor = mentors.find(m => m.id === formData.mentorId);
+          createdProject.mentorName = mentor ? mentor.name : "Unknown Mentor";
+        }
+        
+        // Add college name
+        if (selectedCollege) {
+          const college = colleges.find(c => c.id === selectedCollege);
+          createdProject.collegeName = college ? college.name : "Unknown College";
+        }
+        
+        // Set initial score
+        createdProject.score = 0;
+        
+        // Update the recent items and displayed items
+        const updatedRecentItems = [createdProject, ...recentItems];
+        setRecentItems(updatedRecentItems);
+        
+        // Update displayed items based on current view state
+        if (viewAll) {
+          setDisplayedItems(updatedRecentItems);
+        } else {
+          setDisplayedItems(updatedRecentItems.slice(0, 3));
+        }
+ 
+        setSuccessMessage("Project created and assigned successfully!");
+      } else {
+        throw new Error("Project ID not found in response");
+      }
+    }
+ 
+    // Reset form after successful submission
+    setTimeout(() => {
+      resetForm();
+    }, 5000); // Reset form after message disappears
+ 
+  } catch (error) {
+    console.error("Submission error:", error);
+    setErrorMessage(error.response?.data?.message ||
+                   error.message ||
+                   "Submission failed. Please try again.");
+  } finally {
+    setIsLoading(false);
+  }
+};
   // Select options
   const projectOptions = projects.map(p => ({ value: p.id, label: p.name }));
   const mentorOptions = mentors.map(m => ({ value: m.id, label: m.name }));
@@ -404,13 +461,19 @@ const AssignForm = ({ role }) => {
   const customSelectStyles = {
     control: (provided) => ({
       ...provided,
-      minHeight: '42px',
-      borderColor: '#ddd',
-      '&:hover': { borderColor: '#5eb5ae' },
-      backgroundColor: '#fafafa',
-      padding: '0.2rem',
+      width: '100%',
+      padding: '0.05rem 0.5rem',
+      fontSize: '1rem ',
+      border: '1px solid #ddd',
+      borderColor:'#ddd',
       borderRadius: '8px',
-      boxShadow: 'none'
+      backgroundColor: '#fff',
+      boxShadow: 'none',
+      transition: 'all 0.3s ease',
+      outline: 'none',
+      '&:hover': {
+        borderColor: '#5eb5ae'
+      },
     }),
     option: (provided, state) => ({
       ...provided,
@@ -437,7 +500,7 @@ const AssignForm = ({ role }) => {
       display: 'none',
     })
   };
-
+ 
   return (
     <DashboardLayout>
       <div className="assign-container">
@@ -445,18 +508,18 @@ const AssignForm = ({ role }) => {
           <h1 className="assign-title">
             {role === "mentor" ? (
               <>
-                <FaClipboardList className="assign-icon" /> TASKS MANAGEMENT
+                <FaClipboardList className="assign-icon" /> TASK MANAGEMENT
               </>
             ) : (
               <>
-                <FaProjectDiagram className="assign-icon" /> PROJECTS MANAGEMENT
+                <FaProjectDiagram className="assign-icon" /> PROJECT MANAGEMENT
               </>
             )}
           </h1>
         </div>
-
-
-
+ 
+ 
+ 
         <div className="content-layout">
           {/* Form Section */}
           <div className="form-container">
@@ -470,7 +533,7 @@ const AssignForm = ({ role }) => {
                   : "Setup a new project with mentor and students"}
               </p>
             </div>
-
+ 
             {/* Status Messages */}
             {successMessage && (
               <div className="alert success">
@@ -482,8 +545,12 @@ const AssignForm = ({ role }) => {
                 <FaExclamationTriangle /> {errorMessage}
               </div>
             )}
-
+ 
             <form onSubmit={handleSubmit}>
+ 
+  
+ 
+    
               {/* Common Fields */}
               <div className="form-group">
                 <label>{role === "mentor" ? "Task Name" : "Project Name"}</label>
@@ -499,7 +566,7 @@ const AssignForm = ({ role }) => {
                   className="form-control"
                 />
               </div>
-
+ 
               <div className="form-group">
                 <label>Description</label>
                 <textarea
@@ -512,7 +579,7 @@ const AssignForm = ({ role }) => {
                   className="form-control"
                 />
               </div>
-
+ 
               {/* Role-specific fields */}
               {role === "mentor" ? (
                 <>
@@ -529,10 +596,10 @@ const AssignForm = ({ role }) => {
                           required
                           className="form-control date-picker"
                         />
-                       
+                        {/* <FaCalendarAlt className="calendar-icon" /> */}
                       </div>
                     </div>
-
+ 
                     <div className="form-group half">
                       <label>Project</label>
                       <Select
@@ -548,8 +615,8 @@ const AssignForm = ({ role }) => {
                       />
                     </div>
                   </div>
-
-
+ 
+ 
                 </>
               ) : (
                 <>
@@ -568,7 +635,7 @@ const AssignForm = ({ role }) => {
                         classNamePrefix="react-select"
                       />
                     </div>
-
+ 
                     <div className="form-group half">
                       <label>Mentor</label>
                       <Select
@@ -600,7 +667,7 @@ const AssignForm = ({ role }) => {
                   </div>
                 </>
               )}
-
+ 
               <div className="form-actions">
                 <button
                   type="button"
@@ -622,11 +689,11 @@ const AssignForm = ({ role }) => {
               </div>
             </form>
           </div>
-
+ 
           {/* History Section */}
           <div className="history-container">
             <div className="history-header">
-
+ 
               <button
                 className="view-all-btn"
                 onClick={toggleViewAll}
@@ -634,7 +701,7 @@ const AssignForm = ({ role }) => {
                 <FaEye className="view-icon" /> {viewAll ? "Show Less" : "View All"}
               </button>
             </div>
-
+ 
             {displayedItems.length === 0 ? (
               <div className="no-data-message">
                 <p>No {role === "mentor" ? "tasks" : "projects"} available yet.</p>
@@ -648,7 +715,7 @@ const AssignForm = ({ role }) => {
             )}
           </div>
         </div>
-
+ 
         {/* Student Selection Modal */}
         {isModalOpen && (
           <div className="modal-backdrop">
@@ -700,5 +767,5 @@ const AssignForm = ({ role }) => {
     </DashboardLayout>
   );
 };
-
+ 
 export default AssignForm;

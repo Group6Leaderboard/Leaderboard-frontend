@@ -1,0 +1,15 @@
+.webm-loader-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: #ffffff; /* White background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.webm-loader {
+  width: 200px;   /* Adjust size */
+  height: 200px;
+  object-fit: contain;
+}

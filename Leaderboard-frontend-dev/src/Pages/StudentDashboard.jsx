@@ -129,20 +129,6 @@ console.log(projectList);
     }
   };
 
-  const getProgressBar = (project) => {
-    const progressPercent = project.completed ? 100 : Math.floor(Math.random() * 80) + 10;
-    return (
-      <div className={styles.progressContainer}>
-        <div className={styles.progressBar}>
-          <div
-            className={styles.progressFill}
-            style={{ width: `${progressPercent}%` }}
-          />
-        </div>
-        <span className={styles.progressPercent}>{progressPercent}%</span>
-      </div>
-    );
-  };
 
   const filteredProjects = projects.filter((project) => {
     const matchesSearch = project.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -251,10 +237,17 @@ console.log(projectList);
                   <button
                     className={styles.viewTasksButton}
                     onClick={() => {
-                      const matchingTasks = tasks.filter(
-                        (t) => t.assignedTo === project.id && t.status === "Not Submitted"
-                        
-                      );
+                      const matchingTasks = tasks.filter((t) => {
+                        const dueDate = new Date(t.dueDate);
+                        const now = new Date();
+                      
+                        return (
+                          t.assignedTo === project.id &&
+                          (t.status === "Not Submitted" || t.status === "To be reviewed") &&
+                          dueDate > now
+                        );
+                      });
+ 
                       console.log(matchingTasks);
                       if (matchingTasks.length > 0) {
                         setActiveProjectTasks(matchingTasks);

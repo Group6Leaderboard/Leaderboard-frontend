@@ -109,7 +109,9 @@ const MentorProjectView = ({ projects }) => {
   return (
 
     <>
+   
       <DashboardLayout>
+      <div className={styles.mentorfull}>
         <div className={styles.headerMentorContainer}>
           <div className={styles.headermentorContent}>
             <div className={styles.headerMentorType}>
@@ -365,7 +367,9 @@ const MentorProjectView = ({ projects }) => {
             </div>
           )}
         </div>
+        </div>
       </DashboardLayout>
+     
     </>
 
   );

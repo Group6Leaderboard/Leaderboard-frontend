@@ -1,5 +1,13 @@
 .dashboardContainer {
+  min-height: 100vh;
+  padding: 20px;
+  max-width: 100vw;
+  overflow-x: hidden;
+  background-color: #f6f8fa;
+  display: flex;
+  flex-direction: column;
     padding: 20px;
+
   }
 
 

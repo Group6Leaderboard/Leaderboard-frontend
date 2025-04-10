@@ -67,13 +67,12 @@ const AdminDash = () => {
           const admin = res.response.find((user) => user.role === 'ADMIN');
           const selectedUser = admin || res.response[0];
     
-          // Load events from cookies BEFORE setting userD
           const cookieKey = `events_${selectedUser.id}`;
           const storedEvents = Cookies.get(cookieKey);
           if (storedEvents) {
             setImportantDates(JSON.parse(storedEvents));
           }
-    
+          console.log(selectedUser);
           setUserD(selectedUser);
         }
       } catch (error) {
@@ -229,17 +228,7 @@ const AdminDash = () => {
         </div>
       </div>
  
-      <div className={styles.statsGrid}>
-        {cards.map((card, index) => (
-          <div key={index} className={`${styles.statCard} ${styles[card.color]}`}>
-            <div className={styles.cardIcon}>{card.icon}</div>
-            <div className={styles.cardContent}>
-              <h3>{card.title}</h3>
-              <div className={styles.statValue}>{card.value}</div>
-            </div>
-          </div>
-        ))}
-      </div>
+ 
  
       <div className={styles.chartSection}>
         <div className={styles.pieContainer}>

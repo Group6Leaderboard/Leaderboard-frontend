@@ -149,7 +149,18 @@ const StudentDash = ({ projects }) => {
   const studentName = userD && userD.name
     ? userD.name.split(" ")[0]
     : "John";
-
+    const handleRemoveEvent = (eventIndex, date) => {
+      const updatedEvents = importantDates.filter((event, idx) => {
+        const eventDate = new Date(event.date);
+        return !(idx === eventIndex && eventDate.toDateString() === date.toDateString());
+      });
+    
+      setImportantDates(updatedEvents);
+    
+      const cookieKey = `events_${userD.id}`;
+      Cookies.set(cookieKey, JSON.stringify(updatedEvents), { expires: 30 });
+    };
+    
   return (
     <div className="dashboard-container">
       {/* Header */}
@@ -204,6 +215,31 @@ const StudentDash = ({ projects }) => {
           <div className="calendar-grid">
             {calendarDays}
           </div>
+          {selectedDate && (
+  <div className="event-list">
+    <h4>Events on {formatDateForDisplay(selectedDate)}:</h4>
+    <ul>
+      {importantDates
+        .filter(event => {
+          const eventDate = new Date(event.date);
+          return eventDate.toDateString() === selectedDate.toDateString();
+        })
+        .map((event, index) => (
+          <li key={index} className="event-item">
+            {event.name}
+            <button
+              className="remove-button"
+              onClick={() => handleRemoveEvent(index, selectedDate)}
+              title="Remove event"
+            >
+              ❌
+            </button>
+          </li>
+        ))}
+    </ul>
+  </div>
+)}
+
 
           {showInput && (
             <div className="event-input">
