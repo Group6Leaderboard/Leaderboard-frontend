@@ -1,0 +1,76 @@
+.card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.08); /* Reduce shadow */
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-3px); /* Reduce lifting effect */
+  box-shadow: 0px 4px 8px rgba(0, 0 ,0, 0.25 ); /* Softer shadow */
+}
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  
+  .projectIcon {
+    /* color: #007bff; */
+    font-size: 20px;
+    color: #000000;
+    margin-top: 10px;
+  }
+  
+  .projectName {
+    font-size: 18px;
+    font-weight: bold;
+    color: #000000;
+  }
+  
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+  }
+  
+  .mentor {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #666;
+  }
+  
+  /* .userIcon {
+    color: #28a745;
+  } */
+  
+  .viewMore {
+    background: none;
+    border: none;
+    color: #5EB5AE;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: auto;
+  }
+  
+  .viewMore:hover {
+    text-decoration: underline;
+  }
+  
+  .arrowIcon {
+    font-size: 14px;
+  }
+  

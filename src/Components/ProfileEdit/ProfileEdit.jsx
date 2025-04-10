@@ -66,7 +66,7 @@ const ProfileEdit = ({ userType, userData }) => {
         {/* Profile Image Section */}
         <div className={styles.imageSection}>
           <div className={styles.profileImage}>
-            <img src={image} alt="Profile" />
+            <img src={image} />
           </div>
           <div className={styles.imageUpload}>
             <label htmlFor="profileImage" className={styles.uploadButton}>

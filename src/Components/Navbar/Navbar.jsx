@@ -4,6 +4,7 @@ import { FaSearch, FaUserCircle, FaCaretDown, FaSignOutAlt, FaUser, FaBars } fro
 import ProfileEdit from "../ProfileEdit/ProfileEdit";
 import styles from "./navbar.module.css";
 import { getUsers } from "../../services/userService";
+import { logout } from "../../services/authService";
 
 const Navbar = ({ userType, userData }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,8 +20,13 @@ const Navbar = ({ userType, userData }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await getUsers(); // Call API
-        setUserD(response.response); // Store data in state
+        const res = await getUsers();
+        if (res?.status === 200 && res?.response) {
+          setUserD(res.response);
+          console.log(userD);
+        } else {
+          console.error("Invalid user data", res);
+        }
       } catch (error) {
         console.error("Failed to fetch user data", error);
       }
@@ -51,8 +57,19 @@ const Navbar = ({ userType, userData }) => {
     };
   }, [isOpen, isMobileMenuOpen, isProfileModalOpen]);
 
-  const handleLogout = () => {
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      const response = await logout(); 
+
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+
+      navigate("/leaderboard/colleges", { replace: true });
+    } catch (error) {
+      console.error("Logout failed:", error);
+      localStorage.clear();
+      navigate("/leaderboard/colleges", { replace: true });
+    }
   };
 
   return (
@@ -61,10 +78,14 @@ const Navbar = ({ userType, userData }) => {
         <div className={styles.logo}></div>
 
         <div className={styles.desktopRightSection}>
-      
+
           <div className={styles.userSection}>
-            <FaUserCircle className={styles.profileIcon} />
-            <span className={styles.username}>Abhishek</span>
+            {userD?.image ? (
+              <img src={`data:image/jpeg;base64,${userD.image}`} alt="Profile" className={styles.profileImage} />
+            ) : (
+              <FaUserCircle className={styles.profileIcon} />
+            )}
+            <span className={styles.username}>{userD?.name || "Loading..."}</span>
             <div
               className={styles.dropdown}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -89,8 +110,12 @@ const Navbar = ({ userType, userData }) => {
         {/* Mobile Navbar */}
         <div className={styles.mobileTopBar}>
           <div className={styles.mobileUserInfo} onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-            <FaUserCircle className={styles.mobileProfileIcon} />
-            <span className={styles.mobileUsername}>Abhishek</span>
+            {userD?.image ? (
+              <img src={`data:image/jpeg;base64,${userD.image}`} alt="Profile" className={styles.profileImage} />
+            ) : (
+              <FaUserCircle className={styles.mobileProfileIcon} />
+            )}
+            <span className={styles.mobileUsername}>{userD?.name || "Loading..."}</span>
             <FaCaretDown className={styles.dropdownIcon} />
           </div>
 

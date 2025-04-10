@@ -27,16 +27,18 @@
 
 /* Style the heading */
 .headerAdminType h2 {
-    font-size: 40px;
+    font-size: 70px;
     color: #5EB5AE;
     font-weight: bold;
     text-transform: uppercase;
+    z-index: 1000;
 }
 
 /* Style the dynamic icons */
 .headerIcon {
     font-size: 50px;
     color: #5EB5AE;
+    margin-bottom: 13px;
 }
 
 /* Styling for the add button */

@@ -1,82 +1,127 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import styles from "./mentorDashboard.module.css";
 import AssignForm from "../Components/AssignForm/AssignForm";
-import MentorProjectCard from "../Components/MentorProjectCard/MentorProjectCard";
-import MentorProjectDescriptionCard from "../Components/MentorprojectDescription/MentorProjectDescription";
-import { getAllProjects } from "../services/projectService";
-import SubmittedTask from "../Components/MentorProject/SubmittedTask";
+import MentorProjectView from "../Components/MentorProjectView/MentorProjectView";
+import { getUsers } from "../services/userService";
 import MentorDash from "../Components/MentorDash/MentorDash";
+import { getAllProjects } from "../services/projectService";
+import MentorTaskView from "../Components/MentorTaskView/MentorTaskView";
+import { getAllColleges } from "../services/collegeService";
 
 const MentorDashboard = () => {
   const location = useLocation();
   const [projects, setProjects] = useState([]);
-  const [selectedProject, setSelectedProject] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [userD, setUserD] = useState(null);
+  const [collegeMap, setCollegeMap] = useState(null);
 
   useEffect(() => {
-    const fetchProjects = async () => {
+    const fetchProjectsAndColleges = async () => {
       try {
-        const response = await getAllProjects();
-        setProjects(response.response);
-      } catch (error) {
-        console.error("Error fetching projects:", error);
+        setLoading(true);
+
+        const [projectRes, collegeRes] = await Promise.all([
+          getAllProjects(),
+          getAllColleges(),
+        ]);
+
+        if (projectRes?.response && collegeRes?.response) {
+          const projects = projectRes.response;
+          const colleges = collegeRes.response;
+
+          // Save projects
+          setProjects(projects);
+
+          // Build college map
+          const map = {};
+          projects.forEach((project) => {
+            const college = colleges.find((col) => col.id === project.collegeId);
+            if (college && !map[college.id]) {
+              map[college.id] = {
+                name: college.name,
+                score: college.score || 0,
+                place: college.place || "",
+              };
+            }
+          });
+
+          setCollegeMap(map);
+        } else {
+          throw new Error("Invalid response from project or college API");
+        }
+      } catch (err) {
+        console.error("Error fetching projects/colleges:", err);
+        setError("Failed to load data. Please try again later.");
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchProjects();
+    fetchProjectsAndColleges();
   }, []);
 
-  return ( 
-    <div className={styles.dashboardContainer}>
-      {location.pathname === "/mentor" ? ( <MentorDash /> ) 
-      : location.pathname === "/mentor/assign-task" ? (
-        <AssignForm role="mentor" />
-      ) : location.pathname === "/mentor/task" ? (
-        <SubmittedTask />
-      ) : (
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await getUsers();
+        if (res?.status === 200 && res?.response) {
+          setUserD(res.response);
+        } else {
+          console.error("Invalid user data response", res);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user data", error);
+      }
+    };
 
-        <div className={styles.projectLayout}>
-      
-          <div className={styles.projectList}>
-            {projects.map((project) => (
-              <div className={styles.projectCardContainer} key={project.id} onClick={() => setSelectedProject(project)}>
-                <MentorProjectCard project={project} />
-              </div>
-            ))}
-          </div>
-          
-          <div className={styles.projectDetails}>
-            <MentorProjectDescriptionCard project={selectedProject} />
-          </div>
-        </div>
-      )}
+    fetchUser();
+  }, []);
+
+  const renderContent = () => {
+    if (location.pathname === "/mentor") {
+      return (
+        <MentorDash
+          projects={projects}
+          userData={userD}
+          college={collegeMap}
+          loading={loading}
+          error={error}
+        />
+      );
+    } else if (location.pathname === "/mentor/assign-task") {
+      return <AssignForm role="mentor" />;
+    } else if (location.pathname === "/mentor/task") {
+      if (loading) {
+        return <div className={styles.loadingState}>Loading projects...</div>;
+      }
+
+      if (error) {
+        return <div className={styles.errorState}>{error}</div>;
+      }
+
+      return <MentorTaskView projects={projects} />;
+    } else if (location.pathname === "/mentor/projects") {
+      if (loading) {
+        return <div className={styles.loadingState}>Loading projects...</div>;
+      }
+
+      if (error) {
+        return <div className={styles.errorState}>{error}</div>;
+      }
+
+      return <MentorProjectView projects={projects} />;
+    }
+
+    return <MentorDash />;
+  };
+
+  return (
+    <div className={styles.dashboardContainer}>
+      {renderContent()}
     </div>
   );
 };
 
 export default MentorDashboard;
-
-
-          {/* <div className={styles.pieChartContainer}>
-            <h3>Mentor Assignment Status</h3>
-            <PieChart width={300} height={300}>
-              <Pie
-                data={data}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={100}
-                fill="#02414B"
-                paddingAngle={5}
-                dataKey="value"
-                label
-              >
-                {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </div> */}

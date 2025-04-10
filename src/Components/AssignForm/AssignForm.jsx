@@ -1,535 +1,703 @@
 import React, { useEffect, useState } from "react";
-import styles from "./assignForm.module.css";
-import StatsCard from "../RectangleCards/Statscard";
-import { createProject, getAllProjects } from "../../services/projectService";
+import "./assignForm.css";
+import StatsCard from "../RectangleCards/Statscard/";
+import TaskHistory from "../TaskHistory/TaskHistory";
+import ProjectHistory from "../ProjectHistory/ProjectHistory";
+import { getAllProjects, createProject } from "../../services/projectService";
 import { getAllColleges } from "../../services/collegeService";
 import { getUsers } from "../../services/userService";
 import { assignProject } from "../../services/studentProjectService";
 import { getAllTasks, createTask } from "../../services/taskService";
-import ListModal from "../ListModal/ListModal";
+import Select from 'react-select';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { useLocation } from "react-router-dom";
+import {
+  FaTachometerAlt,
+  FaCalendarAlt,
+  FaClipboardList,
+  FaExclamationTriangle,
+  FaCheckCircle,
+  FaUsers,
+  FaProjectDiagram,
+  FaClock,
+  FaFlag,
+  FaUniversity,
+  FaPlus,
+  FaTimes,
+  FaEye
+} from 'react-icons/fa';
+import DashboardLayout from "../../Layouts/Dashboard/DashboardLayout";
 
 const AssignForm = ({ role }) => {
-  const [colleges, setColleges] = useState([]);
+  // State management
   const [mentors, setMentors] = useState([]);
-  const [selectedCollege, setSelectedCollege] = useState("");
-  const [selectedMentor, setSelectedMentor] = useState("");
-  const [members, setMembers] = useState([""]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isListModal, setIsListModal] = useState(false);
   const [students, setStudents] = useState([]);
-  const [currentMemberIndex, setCurrentMemberIndex] = useState(null);
-  const [totalProjects, setTotalProjects] = useState(0);
-  const [totalStudents, setTotalStudents] = useState(0);
-  const [totalMentors, setTotalMentors] = useState(0);
-  const [totalTasks, setTotalTasks] = useState(0);
-  const [submittedTasks, setSubmittedTasks] = useState(0);
-  const [toBeReviewedTasks, setToBeReviewedTasks] = useState(0);
   const [projects, setProjects] = useState([]);
-  const [collegename, setCollegeName] = useState("");
+  const [colleges, setColleges] = useState([]);
+  const [stats, setStats] = useState({
+    totalTasks: 0,
+    submittedTasks: 0,
+    toBeReviewedTasks: 0,
+    totalProjects: 0,
+    activeProjects: 0,
+    totalMentors: 0,
+    totalStudents: 0
+  });
+  const [recentItems, setRecentItems] = useState([]);
+  const [displayedItems, setDisplayedItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [viewAll, setViewAll] = useState(false);
+
+  // Student selection
+  const [selectedCollege, setSelectedCollege] = useState("");
+  const [collegeName, setCollegeName] = useState("");
   const [filteredStudents, setFilteredStudents] = useState([]);
+  const [members, setMembers] = useState([{ name: "" }]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentMemberIndex, setCurrentMemberIndex] = useState(null);
 
-
+  // Form state
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    collegeId: "",
-    mentorId: "",
-    members: [],
-    collegeName: "",
-    lastDate: "",
-    localDateTime: "",
+    dueDate: "",
     projectId: "",
-    projectName: ""
+    mentorId: "",
+    collegeId: "",
+    priority: "medium",
+    estimatedHours: 2,
+    members: []
   });
 
+  const location = useLocation();
+  const passedProject = location.state?.projectId;
 
+  // Fetch initial data
   useEffect(() => {
-    if (collegename) {
-      const collegeStudents = students.filter(student => student.collegeName === collegename);
-      console.log("Filtered Students:", collegeStudents);
+    const fetchInitialData = async () => {
+      try {
+        setIsLoading(true);
+
+        if (role === "mentor") {
+          const [tasksRes, projectsRes] = await Promise.all([
+            getAllTasks(),
+            getAllProjects()
+          ]);
+
+          setProjects(projectsRes.response);
+          setStats({
+            totalTasks: tasksRes.response.length,
+            submittedTasks: tasksRes.response.filter(t => t.status === "Not Submitted").length,
+            toBeReviewedTasks: tasksRes.response.filter(t => t.status === "To be Reviewed").length,
+            totalProjects: projectsRes.response.length,
+            activeProjects: projectsRes.response.filter(p => !p.isCompleted).length
+          });
+
+          const sortedTasks = [...tasksRes.response]
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+          setRecentItems(sortedTasks);
+          setDisplayedItems(sortedTasks.slice(0, 4)); // Initially show only 4 items
+        }
+        else if (role === "admin") {
+          const [mentorsRes, studentsRes, projectsRes, collegesRes] = await Promise.all([
+            getUsers("MENTOR"),
+            getUsers("STUDENT"),
+            getAllProjects(),
+            getAllColleges()
+          ]);
+
+          setMentors(mentorsRes.response);
+          setStudents(studentsRes.response);
+          setProjects(projectsRes.response);
+          setColleges(collegesRes.response || []);
+
+          setStats({
+            totalProjects: projectsRes.response.length,
+            activeProjects: projectsRes.response.filter(p => !p.isCompleted).length,
+            totalMentors: mentorsRes.response.length,
+            totalStudents: studentsRes.response.length
+          });
+
+          const sortedProjects = [...projectsRes.response]
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+          setRecentItems(sortedProjects);
+          setDisplayedItems(sortedProjects.slice(0, 4)); // Initially show only 4 items
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setErrorMessage("Failed to load initial data");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchInitialData();
+  }, [role]);
+
+  // Handle view all toggle
+  const toggleViewAll = () => {
+    if (viewAll) {
+      // Show only the first 4 items
+      setDisplayedItems(recentItems.slice(0, 4));
+    } else {
+      // Show all items
+      setDisplayedItems(recentItems);
+    }
+    setViewAll(!viewAll);
+  };
+
+  // Filter students when college is selected
+  useEffect(() => {
+    if (collegeName) {
+      const collegeStudents = students.filter(student => student.collegeName === collegeName);
       setFilteredStudents(collegeStudents);
     } else {
       setFilteredStudents([]);
     }
-  }, [collegename, students]);
+  }, [collegeName, students]);
 
-
+  // Handle passed project from navigation
   useEffect(() => {
-
-
-    const fetchStats = async () => {
-      try {
-
-        const tasks = await getAllTasks();
-        setTotalTasks(tasks.response.length);
-
-        const submittedCount = tasks.response.filter(task => task.status === "Not Submitted").length;
-        const toBeReviewedCount = tasks.response.filter(task => task.status.toLowerCase() === "to be reviewed").length;
-
-        setSubmittedTasks(submittedCount);
-        setToBeReviewedTasks(toBeReviewedCount);
-
-
-
-      } catch (error) {
-        console.error("Error fetching stats", error);
-      }
-    };
-
-    const fetchStatsAdmin = async () => {
-      try {
-        const projects = await getAllProjects();
-        setTotalProjects(projects.response.length);
-
-        const studentsResponse = await getUsers("STUDENT");
-        setStudents(studentsResponse.response);
-        setTotalStudents(studentsResponse.response.length);
-
-
-      } catch (error) {
-        console.error("Error fetching stats", error);
+    if (passedProject && projects.length > 0) {
+      const project = projects.find(p => p.id === passedProject);
+      if (project) {
+        setFormData(prev => ({
+          ...prev,
+          projectId: project.id
+        }));
       }
     }
+  }, [passedProject, projects]);
 
-    const fetchProjects = async () => {
-      try {
+  // Auto-hide success message after 5 seconds
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage(null);
+      }, 5000);
 
-        const projects = await getAllProjects();
-
-        setProjects(projects.response);
-
-      } catch (error) {
-        console.error("Error fetching stats", error);
-      }
+      return () => clearTimeout(timer);
     }
-    const fetchColleges = async () => {
-      try {
-        const response = await getAllColleges();
-        setColleges(response.response || []);
-      } catch (error) {
-        console.error("Error fetching colleges:", error);
-      }
-    };
+  }, [successMessage]);
 
-    const fetchMentors = async () => {
-      try {
-        const response = await getUsers("MENTOR");
-        setTotalMentors(response.response.length);
-        setMentors(response.response || []);
-      } catch (error) {
-        console.error("Error fetching mentors:", error);
-      }
-    };
-
-    if (role === "admin") {
-      fetchColleges();
-      fetchMentors();
-      fetchStatsAdmin();
-    } else {
-      fetchStats();
-      fetchProjects();
-    }
-  }, [role]);
-
-  const fetchStudentsByCollege = async (collegename) => {
-    console.log("Fetching students forhghhghcgf:", collegename);
-
-    if (!collegename) {
-      setAlertTitle("Error");
-      setAlertMessage("Please select a college first");
-      setShowAlert(true);
-      return [];
-    }
-
-    try {
-      const filteredStudents = students.filter(student => student.collegeName === collegename);
-      console.log("Filtered Students:", filteredStudents);
-      return filteredStudents;
-    } catch (error) {
-      console.error("Error fetching students:", error);
-      setAlertTitle("Error");
-      setAlertMessage("Error fetching students");
-      setShowAlert(true);
-      return [];
-    }
-  };
-
-
+  // Form handlers
   const handleChange = (e) => {
     const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
-    if (name === "lastDate") {
-      const localDateTime = `${value}T00:00:00`;
+  const handleDateChange = (date) => {
+    setFormData(prev => ({
+      ...prev,
+      dueDate: date ? date.toISOString() : ''
+    }));
+  };
 
-      setFormData((prevData) => ({
-        ...prevData,
-        lastDate: value,
-        localDateTime: localDateTime,
+  const handleSelectChange = (selectedOption, field) => {
+    if (!selectedOption) {
+      setFormData(prev => ({ ...prev, [field]: "" }));
+      return;
+    }
+    setFormData(prev => ({
+      ...prev,
+      [field]: selectedOption.value
+    }));
+  };
+
+  const handleMultiSelectChange = (selectedOptions, field) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: selectedOptions ? selectedOptions.map(opt => opt.value) : []
+    }));
+  };
+
+  const handleCollegeChange = (selectedOption) => {
+    if (!selectedOption) {
+      setSelectedCollege("");
+      setCollegeName("");
+      setFilteredStudents([]);
+      setFormData(prev => ({
+        ...prev,
+        collegeId: ""
       }));
-    } else {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
+      return;
+    }
+
+    const selectedCollegeId = selectedOption.value;
+    const selectedCollegeObj = colleges.find(college => college.id === selectedCollegeId);
+
+    if (selectedCollegeObj) {
+      setSelectedCollege(selectedCollegeId);
+      setCollegeName(selectedCollegeObj.name);
+
+      setFormData(prev => ({
+        ...prev,
+        collegeId: selectedCollegeId
       }));
+
+      // Reset member selection
+      setMembers([{ name: "" }]);
     }
   };
 
-
+  // Handle member selection
   const handleMemberClick = (index) => {
     if (!selectedCollege) {
-      setAlertTitle("Error");
-      setAlertMessage("Please select a college first");
-      setShowAlert(true);
+      setErrorMessage("Please select a college first");
       return;
     }
 
     setCurrentMemberIndex(index);
     setIsModalOpen(true);
   };
-  
+
   const handleStudentSelect = (student) => {
-    setMembers((prevMembers) => {
+    // Update members list
+    setMembers(prevMembers => {
       const newMembers = [...prevMembers];
       newMembers[currentMemberIndex] = student;
       return newMembers;
     });
-  
-    setFilteredStudents((prevFiltered) =>
-      prevFiltered.filter((s) => s.id !== student.id)
+
+    // Update form data
+    setFormData(prev => {
+      const currentMembers = [...prev.members];
+      // If this is a new member
+      if (!currentMembers.includes(student.id)) {
+        currentMembers[currentMemberIndex] = student.id;
+      }
+      return {
+        ...prev,
+        members: currentMembers
+      };
+    });
+
+    // Remove selected student from filtered list
+    setFilteredStudents(prevFiltered =>
+      prevFiltered.filter(s => s.id !== student.id)
     );
-  
+
     setIsModalOpen(false);
   };
 
   const addMember = () => {
     if (members.length < 4) {
-      setMembers([...members, ""]);
+      setMembers([...members, { name: "" }]);
     }
   };
 
   const removeMember = (index) => {
-    setMembers((prevMembers) => {
+    setMembers(prevMembers => {
       const removedMember = prevMembers[index];
       const updatedMembers = prevMembers.filter((_, i) => i !== index);
-  
-      if (removedMember) {
-        setFilteredStudents((prevFiltered) => [...prevFiltered, removedMember]);
+
+      // Add removed student back to filtered list
+      if (removedMember?.id) {
+        setFilteredStudents(prevFiltered => [...prevFiltered, removedMember]);
+
+        // Also remove from form data
+        setFormData(prev => {
+          const updatedFormMembers = prev.members.filter((_, i) => i !== index);
+          return {
+            ...prev,
+            members: updatedFormMembers
+          };
+        });
       }
-  
+
       return updatedMembers;
     });
   };
 
-
-  const handleCollegeChange = (e) => {
-    const selectedCollegeId = e.target.value;
-    const selectedCollegeObj = colleges.find(college => college.id === selectedCollegeId);
-
-    if (selectedCollegeObj) {
-      setCollegeName(selectedCollegeObj.name);
-      setSelectedCollege(selectedCollegeId);
-
-      setFormData(prevData => ({
-        ...prevData,
-        collegeId: selectedCollegeId,
-        collegeName: selectedCollegeObj.name
-      }));
-
-      setMembers([{ name: "" }]);
-      setFilteredStudents([]);
-    } else {
-      setCollegeName('');
-      setSelectedCollege('');
-    }
-
-    e.target.size = 1;
-    e.target.blur();
-  };
-
-  const handleProjectSelect = (selectedProject) => {
-    setFormData(prevData => ({
-      ...prevData,
-      projectId: selectedProject.id,
-      projectName: selectedProject.name
-    }));
-    setIsListModal(false);
-  };
-
-  const handleMentorChange = (e) => {
-    const selectedMentorId = e.target.value;
-    const selectedMentorObj = mentors.find(mentor => mentor.id === selectedMentorId);
-
-    setSelectedMentor(selectedMentorId);
-    setFormData(prevData => ({
-      ...prevData,
-      mentorId: selectedMentorId,
-      mentorName: selectedMentorObj ? `${selectedMentorObj.name} (${selectedMentorObj.email})` : ''
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      if (role === "admin") {
-        const projectData = {
-          name: formData.name,
-          description: formData.description,
-          collegeId: selectedCollege,
-          mentorId: selectedMentor
-        };
-
-        const response = await createProject(projectData);
-        const projectId = response?.response?.id;
-
-        console.log("Extracted Project ID:", projectId);
-        if (projectId) {
-          await Promise.all(
-            members.map(async (member) => {
-              await assignProject(member.id, projectId);
-            })
-          );
-
-          setAlertTitle("Success");
-          setAlertMessage("Project Assigned Successfully");
-          setShowAlert(true);
-          resetForm();
-        } else {
-          throw new Error("Project ID not found in response");
-        }
-      } else if (role === "mentor") {
-
-        const taskData = {
-          name: formData.name,
-          description: formData.description,
-          dueDate: formData.localDateTime,
-          assignedTo: formData.projectId
-        };
-        const response = await createTask(taskData);
-        alert("Task Assigned Successfully");
-        resetForm();
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      setAlertTitle("Error");
-      setAlertMessage(error.message || "Something went wrong");
-      setShowAlert(true);
-    }
-  };
-
-
+  // Reset form
   const resetForm = () => {
     setFormData({
       name: "",
       description: "",
-      collegeId: "",
-      mentorId: "",
-      members: "",
-      collegeName: "",
-      mentorName: "",
-      lastDate: "",
-      localDateTime: "",
+      dueDate: "",
       projectId: "",
-      projectName: "",
+      mentorId: "",
+      collegeId: "",
+      priority: "medium",
+      estimatedHours: 2,
+      members: []
     });
+
     setSelectedCollege("");
-    setSelectedMentor("");
-    setMembers([""]);
-    setProjects("");
+    setCollegeName("");
+
+    setFilteredStudents([]);
+    setSuccessMessage(null);
+    setErrorMessage(null);
+  };
+
+  // Form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setSuccessMessage(null);
+    setErrorMessage(null);
+  
+    try {
+      if (role === "mentor") {
+        // Task submission
+        await createTask({
+          name: formData.name,
+          description: formData.description,
+          dueDate: formData.dueDate,
+          assignedTo: formData.projectId,
+          priority: formData.priority,
+          estimatedHours: formData.estimatedHours
+        });
+        setSuccessMessage("Task assigned successfully!");
+      }
+      else if (role === "admin") {
+        // Project submission
+        const projectData = {
+          name: formData.name,
+          description: formData.description,
+          collegeId: selectedCollege,
+          mentorId: formData.mentorId
+        };
+  
+        const response = await createProject(projectData);
+        const projectId = response?.response?.id;
+  
+        if (projectId) {
+          if (formData.members && formData.members.length > 0) {
+            await Promise.all(
+              formData.members.map(memberId => assignProject(memberId, projectId))
+            );
+          } else {
+            console.warn("No members selected for project assignment");
+          }
+  
+          setSuccessMessage("Project assigned successfully!");
+        } else {
+          throw new Error("Project ID not found in response");
+        }
+      }
+  
+      // Reset form
+      resetForm();
+ 
+  
+    } catch (error) {
+      console.error("Submission error:", error);
+      setErrorMessage(error.message || "Submission failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Select options
+  const projectOptions = projects.map(p => ({ value: p.id, label: p.name }));
+  const mentorOptions = mentors.map(m => ({ value: m.id, label: m.name }));
+  const collegeOptions = colleges.map(c => ({ value: c.id, label: c.name }));
+  const studentOptions = filteredStudents.map(s => ({ value: s.id, label: s.name }));
+  // Custom select styles
+  const customSelectStyles = {
+    control: (provided) => ({
+      ...provided,
+      minHeight: '42px',
+      borderColor: '#ddd',
+      '&:hover': { borderColor: '#5eb5ae' },
+      backgroundColor: '#fafafa',
+      padding: '0.2rem',
+      borderRadius: '8px',
+      boxShadow: 'none'
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isSelected ? '#5eb5ae' : state.isFocused ? '#e6f7f5' : 'white',
+      color: state.isSelected ? 'white' : '#333',
+      padding: '0.75rem 1rem',
+      cursor: 'pointer'
+    }),
+    menu: (provided) => ({
+      ...provided,
+      borderRadius: '8px',
+      boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+      zIndex: 9999
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: '#888',
+    }),
+    dropdownIndicator: (provided) => ({
+      ...provided,
+      color: '#5eb5ae',
+    }),
+    indicatorSeparator: () => ({
+      display: 'none',
+    })
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.statsContainer}>
-        {role === "admin" ? (
-          <>
-            <StatsCard title="Total Projects" value={totalProjects} titleClass={styles.statsTitle} valueClass={styles.statsValue} />
-            <StatsCard title="Total Students" value={totalStudents} titleClass={styles.statsTitle} valueClass={styles.statsValue} />
-            <StatsCard title="Total Mentors" value={totalMentors} titleClass={styles.statsTitle} valueClass={styles.statsValue} />
-          </>
-        ) : (
-          <>
-            <StatsCard title="Total Tasks" value={totalTasks} titleClass={styles.statsTitle} valueClass={styles.statsValue} />
-            <StatsCard title="Not Submitted" value={submittedTasks} titleClass={styles.statsTitle} valueClass={styles.statsValue} />
-            <StatsCard title="To Be Reviewed" value={toBeReviewedTasks} titleClass={styles.statsTitle} valueClass={styles.statsValue} />
-          </>
-        )}
-      </div>
+    <DashboardLayout>
+      <div className="assign-container">
+        <div className="assign-header">
+          <h1 className="assign-title">
+            {role === "mentor" ? (
+              <>
+                <FaClipboardList className="assign-icon" /> TASKS MANAGEMENT
+              </>
+            ) : (
+              <>
+                <FaProjectDiagram className="assign-icon" /> PROJECTS MANAGEMENT
+              </>
+            )}
+          </h1>
+        </div>
 
-      <div className={styles.formContainer}>
-        <h2>{role === "admin" ? "CREATE PROJECT" : "ASSIGN TASK"}</h2>
-        <form onSubmit={handleSubmit}>
-          <div className={styles.formGroup}>
-            <label>Name</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className={styles.inputBox}
-              required
-            />
-          </div>
 
-          <div className={styles.formGroup}>
-            <label>Description</label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              className={styles.inputBox}
-              rows="3"
-              required
-            />
-          </div>
 
-          {role === "admin" ? (
-            <>
-              <div className={styles.formGroup}>
-                <label>Mentor</label>
-                <div className={styles.selectWrapper}>
-                  <select
-                    name="mentorId"
-                    value={selectedMentor}
-                    onChange={handleMentorChange}
-                    className={styles.selectBox}
-                    required
-                  >
-                    <option value="" disabled>Select Mentor</option>
-                    {mentors.map((mentor) => (
-                      <option
-                        key={mentor.id}
-                        value={mentor.id}
-                        className={styles.optionItem}
-                      >
-                        {mentor.name} ({mentor.email})
-                      </option>
-                    ))}
-                  </select>
-                </div>
+        <div className="content-layout">
+          {/* Form Section */}
+          <div className="form-container">
+            <div className="form-header">
+              <h2>
+                {role === "mentor" ? "Assign New Task" : "Create New Project"}
+              </h2>
+              <p>
+                {role === "mentor"
+                  ? "Create a new task for project teams"
+                  : "Setup a new project with mentor and students"}
+              </p>
+            </div>
+
+            {/* Status Messages */}
+            {successMessage && (
+              <div className="alert success">
+                <FaCheckCircle /> {successMessage}
               </div>
-
-              <div className={styles.formGroup}>
-
-                <label>College</label>
-                <div className={styles.selectWrapper}>
-                  <select
-                    name="collegeId"
-                    value={selectedCollege}
-                    onChange={handleCollegeChange}
-                    className={styles.selectBox}
-                    required
-                    // onFocus={(e) => e.target.size = 4}
-                    onBlur={(e) => e.target.size = 1}
-                  >
-                    <option value="" disabled>Select College</option>
-                    {colleges.map((college) => (
-                      <option key={college.id} value={college.id} className={styles.optionItem}>
-                        {college.name}
-                      </option>
-                    ))}
-                  </select>
-
-                </div>
+            )}
+            {errorMessage && (
+              <div className="alert error">
+                <FaExclamationTriangle /> {errorMessage}
               </div>
+            )}
 
-
-              <div className={styles.formGroup}>
-                <label>Members</label>
-                <div className={styles.memberContainer}>
-                  {members.map((member, index) => (
-                    <div key={index} className={styles.memberInputWrapper}>
-                      <input
-                        type="text"
-                        value={member.name}
-                        onClick={() => handleMemberClick(index)}
-                        readOnly
-                        className={styles.inputBox}
-                        placeholder="Click to select a student"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeMember(index)}
-                        className={styles.removeButton}
-                        style={{ display: members.length > 1 ? "flex" : "none" }}
-                      >
-                        ❌
-                      </button>
-                    </div>
-                  ))}
-
-                  {members.length < 4 && (
-                    <div className={styles.lastInputWrapper}>
-                      <button type="button" onClick={addMember} className={styles.addButton}
-                        style={{ flex: "0 0 auto" }}
-                      >
-                        ➕
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-            </>
-          ) : (
-            <>
-              <div className={styles.dropdownContainer}>
-                <label className={styles.dropdownLabel}>Select Project</label>
+            <form onSubmit={handleSubmit}>
+              {/* Common Fields */}
+              <div className="form-group">
+                <label>{role === "mentor" ? "Task Name" : "Project Name"}</label>
                 <input
                   type="text"
-                  className={styles.inputBox}
-                  readOnly
-                  value={formData.projectName || "Choose a project"}
-                  onClick={() => setIsListModal(true)}
-                />
-
-                <ListModal
-                  isOpen={isListModal}
-                  onClose={() => setIsListModal(false)}
-                  data={projects}
-                  onSelect={handleProjectSelect}
-                />
-              </div>
-
-              <div className={styles.dueDate}>
-                <label>Due Date</label>
-                <input
-                  type="date"
-                  name="lastDate"
-                  value={formData.lastDate}
+                  name="name"
+                  value={formData.name}
                   onChange={handleChange}
-                  className={styles.inputBox}
                   required
+                  placeholder={role === "mentor"
+                    ? "Enter task name"
+                    : "Enter project name"}
+                  className="form-control"
                 />
               </div>
-            </>
-          )}
 
-          <button type="submit" className={styles.submitButton}>
-            {role === "admin" ? "Assign Project" : "Assign Task"}
-          </button>
-        </form>
-      </div>
-      {isModalOpen && (
-        <div className={styles.modal}>
-          <div className={styles.modalContent}>
-            <h3>Select a Student</h3>
-            {filteredStudents.length > 0 ? (
-              <ul>
-                {filteredStudents.map((student) => (
-                  <li key={student.id} onClick={() => handleStudentSelect(student)}>
-                    {student.name} {/* ✅ Corrected this line */}
-                  </li>
-                ))}
-              </ul>
+              <div className="form-group">
+                <label>Description</label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  required
+                  placeholder="Provide detailed description"
+                  rows="4"
+                  className="form-control"
+                />
+              </div>
+
+              {/* Role-specific fields */}
+              {role === "mentor" ? (
+                <>
+                  <div className="form-row">
+                    <div className="form-group half">
+                      <label>Due Date</label>
+                      <div className="date-picker-container">
+                        <DatePicker
+                          selected={formData.dueDate ? new Date(formData.dueDate) : null}
+                          onChange={handleDateChange}
+                          minDate={new Date()}
+                          dateFormat="yyyy-MM-dd"
+                          placeholderText="Select due date"
+                          required
+                          className="form-control date-picker"
+                        />
+                        <FaCalendarAlt className="calendar-icon" />
+                      </div>
+                    </div>
+
+                    <div className="form-group half">
+                      <label>Project</label>
+                      <Select
+                        options={projectOptions}
+                        onChange={(opt) => handleSelectChange(opt, 'projectId')}
+                        value={projectOptions.find(opt => opt.value === formData.projectId) || null}
+                        placeholder="Select project"
+                        styles={customSelectStyles}
+                        isClearable
+                        required
+                        className="react-select-container"
+                        classNamePrefix="react-select"
+                      />
+                    </div>
+                  </div>
+
+
+                </>
+              ) : (
+                <>
+                  <div className="form-row">
+                    <div className="form-group half">
+                      <label>College</label>
+                      <Select
+                        options={collegeOptions}
+                        onChange={handleCollegeChange}
+                        value={collegeOptions.find(opt => opt.value === selectedCollege) || null}
+                        placeholder="Select college"
+                        styles={customSelectStyles}
+                        isClearable
+                        required
+                        className="react-select-container"
+                        classNamePrefix="react-select"
+                      />
+                    </div>
+
+                    <div className="form-group half">
+                      <label>Mentor</label>
+                      <Select
+                        options={mentorOptions}
+                        onChange={(opt) => handleSelectChange(opt, 'mentorId')}
+                        value={mentorOptions.find(opt => opt.value === formData.mentorId) || null}
+                        placeholder="Select mentor"
+                        styles={customSelectStyles}
+                        isClearable
+                        required
+                        className="react-select-container"
+                        classNamePrefix="react-select"
+                      />
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label>Team Members</label>
+                    <Select
+                      options={studentOptions}
+                      onChange={(opt) => handleMultiSelectChange(opt, 'members')}
+                      value={studentOptions.filter(opt => formData.members.includes(opt.value))}
+                      isMulti
+                      placeholder="Select team members"
+                      styles={customSelectStyles}
+                      required
+                      className="react-select-container"
+                      classNamePrefix="react-select"
+                    />
+                  </div>
+                </>
+              )}
+
+              <div className="form-actions">
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={resetForm}
+                  disabled={isLoading}
+                >
+                  Reset
+                </button>
+                <button
+                  type="submit"
+                  className="btn-primary"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Processing..." : (
+                    role === "mentor" ? "Assign Task" : "Create Project"
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* History Section */}
+          <div className="history-container">
+            <div className="history-header">
+
+              <button
+                className="view-all-btn"
+                onClick={toggleViewAll}
+              >
+                <FaEye className="view-icon" /> {viewAll ? "Show Less" : "View All"}
+              </button>
+            </div>
+
+            {displayedItems.length === 0 ? (
+              <div className="no-data-message">
+                <p>No {role === "mentor" ? "tasks" : "projects"} available yet.</p>
+              </div>
             ) : (
-              <p>No students found for this college.</p>
+              role === "mentor" ? (
+                <TaskHistory tasks={displayedItems} />
+              ) : (
+                <ProjectHistory projects={displayedItems} />
+              )
             )}
-            <button onClick={() => setIsModalOpen(false)}>Close</button>
           </div>
         </div>
-      )}
 
-    </div>
+        {/* Student Selection Modal */}
+        {isModalOpen && (
+          <div className="modal-backdrop">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h3>Select a Student</h3>
+                <button
+                  type="button"
+                  className="close-modal"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  <FaTimes />
+                </button>
+              </div>
+              <div className="modal-body">
+                {filteredStudents.length > 0 ? (
+                  <ul className="student-list">
+                    {filteredStudents.map((student) => (
+                      <li
+                        key={student.id}
+                        className="student-item"
+                        onClick={() => handleStudentSelect(student)}
+                      >
+                        <FaUsers className="student-icon" /> {student.name}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="no-students-message">
+                    {collegeName ?
+                      "No available students found for this college." :
+                      "Please select a college first to view students."}
+                  </p>
+                )}
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </DashboardLayout>
   );
 };
 

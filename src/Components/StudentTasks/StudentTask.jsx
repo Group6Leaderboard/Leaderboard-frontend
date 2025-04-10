@@ -1,61 +1,32 @@
 import React, { useState } from "react";
 import styles from "./studentTask.module.css";
-
-const StudentTasks = () => {
+ 
+const StudentTasks = ({ projectTasks, projectList }) => {
   const [activeTab, setActiveTab] = useState("submitted");
-
-  // Dummy data for submitted tasks
-  const submittedTasks = [
-    {
-      id: 1,
-      taskName: "Design Login Page",
-      projectName: "E-Commerce App",
-      dueDate: "2025-03-28",
-      submittedDate: "2025-03-27",
-      fileUrl: "https://example.com/login-page.pdf",
-      status: "To Be Reviewed",
-      score: null,
-    },
-    {
-      id: 2,
-      taskName: "Database Schema Design",
-      projectName: "Student Management System",
-      dueDate: "2025-04-05",
-      submittedDate: "2025-04-04",
-      fileUrl: "https://example.com/schema-design.pdf",
-      status: "Completed",
-      score: 85,
-    },
-  ];
-
-  // Dummy data for to-be-submitted tasks
-  const toBeSubmittedTasks = [
-    {
-      id: 1,
-      taskName: "API Integration",
-      projectName: "Online Food Delivery",
-      assignedDate: "2025-03-20",
-      dueDate: "2025-04-01",
-    },
-    {
-      id: 2,
-      taskName: "UI Testing",
-      projectName: "Social Media App",
-      assignedDate: "2025-03-22",
-      dueDate: "2025-04-03",
-    },
-  ];
-
-  // Function to handle viewing a task
+  const [selectedTask, setSelectedTask] = useState(null); // For modal
+ 
+ 
+ 
+  const submittedTasks = projectTasks.filter(
+    (task) => task.status === "To be reviewed" || task.status === "Completed"
+  );
+ 
+  const toBeSubmittedTasks = projectTasks.filter(
+    (task) => task.status === "Not Submitted"
+  );
+ 
   const handleViewTask = (task) => {
-    alert(`Viewing Task: ${task.taskName} for ${task.projectName}`);
+    setSelectedTask(task);
   };
-
+ 
+  const closeModal = () => {
+    setSelectedTask(null);
+  };
+ 
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>STUDENT TASKS</h2>
-
-      {/* Tab buttons */}
+ 
       <div className={styles.buttonGroup}>
         <button
           className={`${styles.tabButton} ${activeTab === "submitted" ? styles.active : ""}`}
@@ -70,8 +41,7 @@ const StudentTasks = () => {
           To Be Submitted
         </button>
       </div>
-
-      {/* Submitted Tasks Table */}
+ 
       {activeTab === "submitted" && (
         <div className={styles.tableContainer}>
           {submittedTasks.length > 0 ? (
@@ -82,7 +52,7 @@ const StudentTasks = () => {
                   <th>Task Name</th>
                   <th>Project Name</th>
                   <th>Due Date</th>
-                  <th>Submitted Date</th>
+                  {/* <th>Submitted Date</th> */}
                   <th>File</th>
                   <th>Status</th>
                   <th>Score</th>
@@ -90,15 +60,23 @@ const StudentTasks = () => {
               </thead>
               <tbody>
                 {submittedTasks.map((task, index) => (
-                  <tr key={task.id}>
+                  <tr key={index}>
                     <td>{index + 1}</td>
-                    <td>{task.taskName}</td>
-                    <td>{task.projectName}</td>
-                    <td>{task.dueDate}</td>
-                    <td>{task.submittedDate}</td>
+                    <td>{task.name}</td>
+                    <td>{projectList?.[task.assignedTo] || "N/A"}</td>
+                    <td>{task.dueDate?.slice(0, 10)}</td>
+                    {/* <td>{task.submittedDate || "—"}</td> */}
                     <td>
-                      {task.fileUrl ? (
-                        <a href={task.fileUrl} download className={styles.fileLink}>
+                      {task.file ? (
+                        <a
+                          href={URL.createObjectURL(
+                            new Blob([Uint8Array.from(atob(task.file), c => c.charCodeAt(0))], {
+                              type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                            })
+                          )}
+                          download={`${task.taskName || "task"}.xlsx`}
+                          className={styles.fileLink}
+                        >
                           Download
                         </a>
                       ) : (
@@ -106,7 +84,7 @@ const StudentTasks = () => {
                       )}
                     </td>
                     <td className={styles.status}>{task.status}</td>
-                    <td>{task.status === "To Be Reviewed" ? "N/A" : task.score}</td>
+                    <td>{task.status === "To be reviewed" ? "N/A" : task.score ?? "—"}</td>
                   </tr>
                 ))}
               </tbody>
@@ -116,8 +94,7 @@ const StudentTasks = () => {
           )}
         </div>
       )}
-
-      {/* To Be Submitted Tasks Table */}
+ 
       {activeTab === "toBeSubmitted" && (
         <div className={styles.tableContainer}>
           {toBeSubmittedTasks.length > 0 ? (
@@ -127,19 +104,19 @@ const StudentTasks = () => {
                   <th>Sl. No</th>
                   <th>Task Name</th>
                   <th>Project Name</th>
-                  <th>Assigned Date</th>
+                  {/* <th>Assigned Date</th> */}
                   <th>Due Date</th>
                   <th>Task</th>
                 </tr>
               </thead>
               <tbody>
                 {toBeSubmittedTasks.map((task, index) => (
-                  <tr key={task.id}>
+                  <tr key={index}>
                     <td>{index + 1}</td>
-                    <td>{task.taskName}</td>
-                    <td>{task.projectName}</td>
-                    <td>{task.assignedDate}</td>
-                    <td>{task.dueDate}</td>
+                    <td>{task.name}</td>
+                    <td>{projectList?.[task.assignedTo] || "N/A"}</td>
+                    {/* <td>{task.assignedDate}</td> */}
+                    <td>{task.dueDate?.slice(0, 10)}</td>
                     <td>
                       <button className={styles.viewButton} onClick={() => handleViewTask(task)}>
                         View
@@ -154,8 +131,27 @@ const StudentTasks = () => {
           )}
         </div>
       )}
+ 
+      {/* Modal */}
+      {selectedTask && (
+        <div className={styles.modalOverlay} onClick={closeModal}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <h3>Task Details</h3>
+            <p><strong>Task Name:</strong> {selectedTask.name}</p>
+            <p><strong>Task Description:</strong> {selectedTask.description}</p>
+            <p><strong>Project Name:</strong> {projectList?.[selectedTask.assignedTo]}</p>
+            {/* <p><strong>Assigned Date:</strong> {selectedTask.assignedDate}</p> */}
+            <p><strong>Due Date:</strong> {selectedTask.dueDate?.slice(0, 10)}</p>
+            <button className={styles.closeButton} onClick={closeModal}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
-
+ 
 export default StudentTasks;
+ 
+ 

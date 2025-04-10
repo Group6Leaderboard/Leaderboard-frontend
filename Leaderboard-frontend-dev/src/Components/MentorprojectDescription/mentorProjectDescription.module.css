@@ -1,0 +1,121 @@
+.card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.493);
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* Section 1: Name & Description */
+  .header h2 {
+    font-size: 22px;
+    color: #5EB5AE;
+    margin-bottom: 10px;
+  }
+  
+  .header p {
+    font-size: 16px;
+    color: #666;
+  }
+  
+  /* Section 2: Score & Tasks */
+  .scoreSection {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #d5ebe9;
+    padding: 15px;
+    border-radius: 8px;
+  }
+  
+  .score {
+    background-color: #5EB5AE; 
+     color: rgb(255, 255, 255);
+ 
+     padding: 5px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+ 
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 15px;
+  }
+  
+  .tasksButton {
+    background-color: #5EB5AE; 
+     color: rgb(255, 255, 255);
+     padding: 5px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 15px;
+  }
+  
+  .tasksButton .icon {
+    font-size: 18px;
+  }
+  
+  /* Section 3: Two Column Layout */
+  .detailsSection {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  
+  .column {
+    flex: 1;
+  }
+  
+  .column h3 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    color: #444;
+  }
+  
+  .userIcon {
+    color: #7f8285;
+  }
+  .memberItem {
+    margin-bottom: 2px; 
+    display: flex;
+    flex-direction: row;/* Adds space between members */
+   
+  }
+  
+  .memberName {
+    font-weight: bold;
+    margin-bottom: 50px; /* Adds space between name and email */
+  }
+  
+  .memberEmail {
+    color: #555;
+    margin-left: 250px;
+    margin-bottom: 50px; /* Optional: Change color for distinction */
+  }
+  

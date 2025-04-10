@@ -1,103 +1,122 @@
 import React, { useEffect, useState } from "react";
 import { getUsers } from "../services/userService";
 import { FaPlus } from "react-icons/fa";
-
+ 
 import styles from "./adminDashboard.module.css";
 import List from "../Components/List/List";
 import AddUser from "../Components/AddUser/AddUser";
-import HeaderAdmin from "../Components/HeaderAdmin/HeaderAdmin"; 
-
+import HeaderAdmin from "../Components/HeaderAdmin/HeaderAdmin";
+import DashboardLayout from "../Layouts/Dashboard/DashboardLayout";
+import AdminDash from "../Components/AdminDash/AdminDash";
+ 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showAddUser, setShowAddUser] = useState(false);
   const [userType, setUserType] = useState("");
-
+  const [userD, setUserD] = useState(null);
+ 
+  const path = window.location.pathname;
+ 
   // Determine user type based on the URL path
-  const type = window.location.pathname.includes("students")
+  const type = path.includes("students")
     ? "student"
-    : window.location.pathname.includes("colleges")
+    : path.includes("colleges")
     ? "college"
-    : window.location.pathname.includes("mentors")
+    : path.includes("mentors")
     ? "mentor"
     : "";
-
-    // Extract fetchUsers function to be reusable
-    const fetchUsers = async () => {
-      if (!type) return;
-      setLoading(true);
-      setError("");
-      try {
-        const roleMap = { student: "STUDENT", college: "COLLEGE", mentor: "MENTOR" };
-        const data = await getUsers(roleMap[type]);
-        setUsers(data.response);
-      } catch (err) {
-        setError(err.message || "Failed to load data");
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    useEffect(() => {
-      if (!type) return;
+ 
+  const isMainAdminRoute = path === "/admin" || type === "";
+ 
+  const fetchUsers = async () => {
+    if (!type) return;
+    setLoading(true);
+    setError("");
+    try {
+      const roleMap = { student: "STUDENT", college: "COLLEGE", mentor: "MENTOR" };
+      const data = await getUsers(roleMap[type]);
+      setUsers(data.response);
+    } catch (err) {
+      setError(err.message || "Failed to load data");
+    } finally {
+      setLoading(false);
+    }
+  };
+ 
+  useEffect(() => {
+    if (!type) return;
+    fetchUsers();
+  }, [type]);
+ 
+  const handleToggleAddUser = () => {
+    if (showAddUser) {
       fetchUsers();
-    }, [type]);
+    }
+    setShowAddUser(!showAddUser);
+    setUserType(type);
+  };
+    useEffect(() => {
+      const fetchUser = async () => {
+        try {
+          const res = await getUsers();
+          if (res?.status === 200 && res?.response) {
+            setUserD(res.response);
+          } else {
+            console.error("Invalid user data response", res);
+          }
+        } catch (error) {
+          console.error("Failed to fetch user data", error);
+        }
+      };
   
-    // Toggle AddUser card visibility and refresh users when closing the modal
-    const handleToggleAddUser = () => {
-      // When closing the modal, re-fetch the users to update the list
-      if (showAddUser) {
-        fetchUsers();
-      }
-      setShowAddUser(!showAddUser);
-      setUserType(type);
-    };
-
+      fetchUser();
+    }, []);
+  
+ 
   return (
-    <div className={styles.dashboardContainer}>
-      <div className={styles.header}>
-        {/* <h2 className={styles.title}>Welcome to Admin Dashboard</h2> */}
-        {/* {type && (
-          <button className={styles.addButton} onClick={handleToggleAddUser}>
-            <FaPlus className={styles.plusIcon} /> Add New {type.charAt(0).toUpperCase() + type.slice(1)}
-          </button>
-        )} */}
-      </div>
-
-      {/* Add HeaderAdmin component here */}
-      {type && (
-        <HeaderAdmin 
-          type={type} 
-          totalCount={users.length} 
-          onAddClick={handleToggleAddUser} 
-        />
-      )}
-
-      {/* Show AddUser card when button is clicked */}
-      {showAddUser && (
-        <div className={styles.overlay}>
-          <div className={styles.addUserCard}>
-            <AddUser type={userType} onClose={handleToggleAddUser} />
-          </div>
-        </div>
-      )}
-
-      <div className={styles.contentWrapper}>
-        {loading ? (
-          <p className={styles.loading}>Loading...</p>
-        ) : error ? (
-          <p className={styles.error}>{error}</p>
-        ) : type ? (
-          <div className={styles.listContainer}>
-            <List type={type} data={users} />
-          </div>
+    <DashboardLayout>
+      <div className={styles.dashboardContainer}>
+        {isMainAdminRoute ? (
+          <AdminDash userD = {userD} />
         ) : (
-          <p className={styles.info}>Select an option from the sidebar to view details.</p>
+          <>
+            {type && (
+              <HeaderAdmin
+                type={type}
+                totalCount={users.length}
+                onAddClick={handleToggleAddUser}
+              />
+            )}
+ 
+            {showAddUser && (
+              <div className={styles.overlay}>
+                <div className={styles.addUserCard}>
+                  <AddUser type={userType} onClose={handleToggleAddUser} />
+                </div>
+              </div>
+            )}
+ 
+            <div className={styles.contentWrapper}>
+              {loading ? (
+                <p className={styles.loading}>Loading...</p>
+              ) : error ? (
+                <p className={styles.error}>{error}</p>
+              ) : type ? (
+                <div className={styles.listContainer}>
+                  <List type={type} data={users} />
+                </div>
+              ) : (
+                <p className={styles.info}>No data available</p>
+              )}
+            </div>
+          </>
         )}
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
-
+ 
 export default AdminDashboard;
+ 
